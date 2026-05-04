@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marktimpulse</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root {
+    color-scheme: light;
+    --navy:      #1D4477;
+    --sky:       #00B1EB;
+    --teal:      #3ED8C3;
+    --dteal:     #00A19F;
+    --dkteal:    #005E65;
+    --charcoal:  #52555C;
+    --black:     #000000;
+    --white:     #FFFFFF;
+    --lgray:     #E8E8E4;
+    --mgray:     #ADAFB1;
+    --amber:     #F59E0B;
+    --red:       #E05050;
+    --green:     #10B981;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: #F4F5F7;
+    color: var(--black);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--dkteal) 100%);
+    color: var(--white);
+    padding: 36px 32px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(62,216,195,0.10);
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 60px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(0,177,235,0.08);
+  }
+  .hero-label {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .hero h1 {
+    font-size: 30px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    line-height: 1.15;
+    position: relative;
+  }
+  .hero-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 28px;
+    position: relative;
+    max-width: 520px;
+  }
+  .meta-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    position: relative;
+  }
+  .meta-chip {
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.20);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 11px;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .meta-chip .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--teal);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .filter-bar {
+    background: var(--white);
+    border-bottom: 1px solid var(--lgray);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .filter-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--mgray);
+    margin-right: 4px;
+  }
+  .filter-btn {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid var(--lgray);
+    background: var(--white);
+    color: var(--charcoal);
+    transition: all 0.18s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--navy);
+    color: var(--white);
+    border-color: var(--navy);
+  }
+
+  .content { padding: 28px 32px; }
+
+  .impulse-card {
+    background: var(--white);
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    margin-bottom: 20px;
+    overflow: hidden;
+    border: 1px solid var(--lgray);
+    transition: box-shadow 0.2s;
+  }
+  .impulse-card:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.11); }
+
+  .impulse-header {
+    display: flex;
+    align-items: stretch;
+    cursor: pointer;
+  }
+  .impulse-num {
+    background: var(--navy);
+    color: var(--teal);
+    font-size: 22px;
+    font-weight: 900;
+    padding: 22px 20px;
+    min-width: 74px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: -1px;
+  }
+  .impulse-num span {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 2px;
+  }
+  .impulse-meta {
+    flex: 1;
+    padding: 18px 20px;
+  }
+  .impulse-category {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: 5px;
+  }
+  .impulse-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 5px;
+    line-height: 1.2;
+  }
+  .impulse-sub {
+    font-size: 12px;
+    color: var(--charcoal);
+  }
+  .impulse-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+  .tag {
+    background: var(--lgray);
+    color: var(--charcoal);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 10px;
+  }
+  .impulse-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 18px 20px;
+    gap: 8px;
+  }
+  .impulse-date {
+    font-size: 10px;
+    color: var(--mgray);
+  }
+  .toggle-btn {
+    background: var(--lgray);
+    border: none;
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    color: var(--navy);
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+  .toggle-btn:hover { background: var(--sky); color: var(--white); }
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 10px;
+  }
+  .status-badge.live {
+    background: rgba(62,216,195,0.15);
+    color: var(--dkteal);
+  }
+  .status-badge.planned {
+    background: var(--lgray);
+    color: var(--mgray);
+  }
+  .status-badge .dot-sm {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .impulse-body {
+    display: none;
+    border-top: 1px solid var(--lgray);
+    padding: 24px 24px 28px;
+    background: #FAFAFA;
+    animation: fadeIn 0.2s ease;
+  }
+  .impulse-body.open { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+
+  .body-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .kpi-mini {
+    background: var(--navy);
+    border-radius: 10px;
+    padding: 16px 14px;
+    text-align: center;
+  }
+  .kpi-mini-val {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--teal);
+    line-height: 1;
+  }
+  .kpi-mini-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.65);
+    margin-top: 5px;
+    line-height: 1.35;
+  }
+
+  .body-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--teal);
+    display: inline-block;
+  }
+
+  .thesis-box {
+    background: linear-gradient(135deg, var(--teal) 0%, var(--sky) 100%);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+  }
+  .thesis-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--dkteal);
+    margin-bottom: 5px;
+  }
+  .thesis-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+    line-height: 1.6;
+  }
+
+  .insight-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .insight {
+    background: var(--white);
+    border-left: 3px solid var(--sky);
+    border-radius: 0 8px 8px 0;
+    padding: 12px 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  .insight.green { border-color: var(--green); }
+  .insight.amber { border-color: var(--amber); }
+  .insight.purple { border-color: #7C3AED; }
+  .insight-t { font-size: 11px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .insight-b { font-size: 11px; color: var(--charcoal); line-height: 1.5; }
+
+  .chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
+  .mini-chart-card {
+    background: var(--white);
+    border: 1px solid var(--lgray);
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .mini-chart-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 3px;
+  }
+  .mini-chart-src { font-size: 9px; color: var(--mgray); margin-bottom: 10px; }
+  .mini-chart-wrap { position: relative; height: 160px; }
+
+  .hurdle-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 18px; }
+  .hurdle {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--white);
+    border-radius: 7px;
+    padding: 9px 13px;
+    border: 1px solid var(--lgray);
+  }
+  .hurdle-label { font-size: 11px; color: var(--navy); font-weight: 600; flex: 0 0 230px; }
+  .hurdle-bar-wrap { flex: 1; background: var(--lgray); border-radius: 4px; height: 7px; overflow: hidden; }
+  .hurdle-bar { height: 100%; border-radius: 4px; background: var(--sky); }
+  .hurdle-bar.t { background: var(--teal); }
+  .hurdle-bar.d { background: var(--dteal); }
+  .hurdle-bar.r { background: #EF4444; }
+  .hurdle-bar.a { background: var(--amber); }
+  .hurdle-bar.p { background: #7C3AED; }
+  .hurdle-pct { font-size: 12px; font-weight: 800; color: var(--navy); flex: 0 0 40px; text-align: right; }
+
+  .open-artifact {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--navy);
+    color: var(--white);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 9px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+    margin-top: 4px;
+    transition: background 0.15s;
+  }
+  .open-artifact:hover { background: var(--dkteal); }
+  /* FREEZE-VERSION: Digest-Buttons ausgeblendet (window.sendPrompt nur in Cowork verfügbar). Zum Reaktivieren: nächste Zeile löschen. */
+  .open-artifact { display: none; }
+
+  .placeholder-card {
+    background: var(--white);
+    border: 2px dashed var(--lgray);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    opacity: 0.7;
+  }
+  .placeholder-icon {
+    font-size: 32px;
+    width: 60px;
+    text-align: center;
+    color: var(--mgray);
+  }
+  .placeholder-text { font-size: 13px; color: var(--charcoal); }
+  .placeholder-text strong { color: var(--navy); display: block; margin-bottom: 4px; font-size: 14px; }
+
+  .summary-bar {
+    background: var(--white);
+    border: 1px solid var(--lgray);
+    border-radius: 12px;
+    padding: 18px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+  .sum-item { text-align: center; }
+  .sum-val { font-size: 22px; font-weight: 900; color: var(--navy); }
+  .sum-lbl { font-size: 10px; color: var(--mgray); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; }
+  .sum-divider { width: 1px; height: 40px; background: var(--lgray); }
+
+  .footer {
+    background: var(--dkteal);
+    color: var(--mgray);
+    font-size: 10px;
+    padding: 12px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer span { color: var(--teal); font-weight: 600; }
+
+  @media (max-width: 700px) {
+    .body-grid { grid-template-columns: 1fr 1fr; }
+    .insight-grid { grid-template-columns: 1fr; }
+    .chart-row { grid-template-columns: 1fr; }
+    .hurdle-label { flex: 0 0 150px; font-size: 10px; }
+    .content { padding: 18px 16px; }
+    .hero { padding: 24px 16px 22px; }
+    .filter-bar { padding: 12px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-label">Project Vantum · Marktentwicklung</div>
+  <h1>Marktimpulse</h1>
+  <div class="hero-sub">Ein lebendes Dokument. Kuratierte Impulse zu strukturellen Marktverschiebungen — als Grundlage für strategische Positionierung und Geschäftsentwicklung.</div>
+  <div class="meta-row">
+    <div class="meta-chip"><div class="dot"></div> Lebendes Dokument</div>
+    <div class="meta-chip">📅 Stand: Mai 2026</div>
+    <div class="meta-chip">📌 7 aktive Impulse</div>
+    <div class="meta-chip">🔭 Weitere Impulse folgen</div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-btn active" onclick="filterImpulse('all', this)">Alle</button>
+  <button class="filter-btn" onclick="filterImpulse('demografie', this)">Demografie</button>
+  <button class="filter-btn" onclick="filterImpulse('technologie', this)">Technologie</button>
+  <button class="filter-btn" onclick="filterImpulse('wirtschaft', this)">Wirtschaft</button>
+  <button class="filter-btn" onclick="filterImpulse('gesellschaft', this)">Gesellschaft</button>
+  <button class="filter-btn" onclick="filterImpulse('arbeit', this)">Arbeit & OE</button>
+  <button class="filter-btn" onclick="filterImpulse('führung', this)">Führung</button>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <div class="summary-bar">
+    <div class="sum-item"><div class="sum-val">7</div><div class="sum-lbl">Aktive Impulse</div></div>
+    <div class="sum-divider"></div>
+    <div class="sum-item"><div class="sum-val">186K</div><div class="sum-lbl">Unternehmen vor Nachfolge</div></div>
+    <div class="sum-divider"></div>
+    <div class="sum-item"><div class="sum-val">780K</div><div class="sum-lbl">KMU nutzen KI (DE)</div></div>
+    <div class="sum-divider"></div>
+    <div class="sum-item"><div class="sum-val">85%</div><div class="sum-lbl">Unternehmen mit Change Fatigue</div></div>
+    <div class="sum-divider"></div>
+    <div class="sum-item"><div class="sum-val">79%</div><div class="sum-lbl">KI-Adoptions­hindernisse (Enterprise)</div></div>
+    <div class="sum-divider"></div>
+    <div class="sum-item"><div class="sum-val">78%</div><div class="sum-lbl">BYOAI — Mitarb. bringen eigene KI-Tools</div></div>
+  </div>
+
+  <!-- IMPULS #1: UNTERNEHMENSNACHFOLGE -->
+  <div class="impulse-card" data-tags="demografie wirtschaft">
+    <div class="impulse-header" onclick="toggleBody('i1')">
+      <div class="impulse-num">
+        <span>Impuls</span>
+        #01
+      </div>
+      <div class="impulse-meta">
+        <div class="impulse-category">📊 Demografie · Mittelstand</div>
+        <div class="impulse-title">Unternehmensnachfolge</div>
+        <div class="impulse-sub">Die stille Krise im deutschen Mittelstand — strukturelle, emotionale und finanzielle Dimension einer ungelösten Übergabeproblematik.</div>
+        <div class="impulse-tags">
+          <span class="tag">Demografie</span>
+          <span class="tag">KMU</span>
+          <span class="tag">Transformation</span>
+          <span class="tag">Deutschland</span>
+          <span class="tag">Mittelstand</span>
+        </div>
+      </div>
+      <div class="impulse-actions">
+        <div class="status-badge live"><div class="dot-sm"></div> Live</div>
+        <div class="impulse-date">Aufgenommen April 2026</div>
+        <button class="toggle-btn" id="btn-i1">▼ Öffnen</button>
+      </div>
+    </div>
+
+    <div class="impulse-body" id="body-i1">
+      <div class="body-grid" style="margin-bottom:20px">
+        <div class="kpi-mini">
+          <div class="kpi-mini-val">186K</div>
+          <div class="kpi-mini-label">Familienunternehmen vor Übergabe 2026–2030 (DE)</div>
+        </div>
+        <div class="kpi-mini">
+          <div class="kpi-mini-val">94%</div>
+          <div class="kpi-mini-label">Schließungswillige KMU finden keinen Nachfolger</div>
+        </div>
+        <div class="kpi-mini">
+          <div class="kpi-mini-val">30%</div>
+          <div class="kpi-mini-label">Familienunternehmen überleben die 2. Generation</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px"><div class="body-section-title">Kernthese</div></div>
+      <div class="thesis-box">
+        <div class="thesis-label">Positionierung</div>
+        <div class="thesis-text">Unternehmensnachfolge scheitert nicht primär an fehlenden Nachfolgern oder falschen Preisen — sie scheitert am fehlenden Übergangsdesign. Was als Transaktion behandelt wird, ist in Wirklichkeit ein tiefgreifender Identitäts- und Systemwandel.</div>
+      </div>
+
+      <div class="chart-row">
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">Übergabewelle 2014–2030 (Tsd.)</div>
+          <div class="mini-chart-src">Quelle: IfM Bonn / LBBW Research 2026</div>
+          <div class="mini-chart-wrap"><canvas id="cWave"></canvas></div>
+        </div>
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">Überlebensrate nach Generation</div>
+          <div class="mini-chart-src">Quelle: KPMG European Family Business Barometer</div>
+          <div class="mini-chart-wrap"><canvas id="cSurv"></canvas></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Systemische Hürden</div></div>
+      <div class="hurdle-list">
+        <div class="hurdle">
+          <div class="hurdle-label">🔍 Kein geeigneter Nachfolger</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar" style="width:69%"></div></div>
+          <div class="hurdle-pct">69%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🚫 Zu später Planungsbeginn</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar t" style="width:55%"></div></div>
+          <div class="hurdle-pct">~55%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">⚖️ Rechtl./steuerliche Komplexität</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar d" style="width:45%"></div></div>
+          <div class="hurdle-pct">45%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">💰 Kaufpreiseinigung scheitert</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar" style="width:30%"></div></div>
+          <div class="hurdle-pct">30%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">💔 Emotionale Ablösung</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar t" style="width:28%"></div></div>
+          <div class="hurdle-pct">28%</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Handlungsfelder</div></div>
+      <div class="insight-grid">
+        <div class="insight">
+          <div class="insight-t">Frühzeitigkeit als Erfolgsvariable</div>
+          <div class="insight-b">Optimaler Planungsbeginn liegt 5–10 Jahre vor Übergabe. Die meisten starten zu spät — oft erst unter gesundheitlichem oder wirtschaftlichem Druck.</div>
+        </div>
+        <div class="insight">
+          <div class="insight-t">Wissenssicherung als Kernaufgabe</div>
+          <div class="insight-b">Implizites Wissen — Netzwerke, Entscheidungslogik, Kulturmuster — ist der eigentliche Unternehmenswert. Muss aktiv externalisiert werden.</div>
+        </div>
+        <div class="insight">
+          <div class="insight-t">Identitätsarbeit begleiten</div>
+          <div class="insight-b">„Wer bin ich nach der Übergabe?" ist der entscheidende Hebel. Übergebende brauchen eine attraktive Zukunft — nicht nur einen Exit.</div>
+        </div>
+        <div class="insight">
+          <div class="insight-t">Generationsbrücke bewusst bauen</div>
+          <div class="insight-b">Übergebende und Übernehmende sprechen oft verschiedene Sprachen. Dieser Dialog muss explizit gemacht und moderiert werden.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:6px; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+        <button class="open-artifact" onclick="sendPromptHelper('Öffne das Unternehmensnachfolge Digest Artifact')">
+          📊 Vollständiges Digest öffnen →
+        </button>
+        <span style="font-size:11px; color:var(--mgray)">Quellen: LBBW Research, KfW, DIHK, IfM Bonn, KPMG · Stand Februar 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPULS #2: KI IM DEUTSCHEN MITTELSTAND -->
+  <div class="impulse-card" data-tags="technologie wirtschaft">
+    <div class="impulse-header" onclick="toggleBody('i2')">
+      <div class="impulse-num" style="background:var(--dkteal)">
+        <span>Impuls</span>
+        #02
+      </div>
+      <div class="impulse-meta">
+        <div class="impulse-category">🤖 Technologie · KMU · Regulatorik</div>
+        <div class="impulse-title">KI im deutschen Mittelstand</div>
+        <div class="impulse-sub">20% nutzen KI — das Fünffache von vor sechs Jahren. Und doch bleibt das Potenzial strukturell ungehoben. Adoption folgt organisationaler Reife, nicht Technologieverfügbarkeit.</div>
+        <div class="impulse-tags">
+          <span class="tag">KI / AI</span>
+          <span class="tag">Mittelstand</span>
+          <span class="tag">EU AI Act</span>
+          <span class="tag">Digitalisierung</span>
+          <span class="tag">Organisationsentwicklung</span>
+        </div>
+      </div>
+      <div class="impulse-actions">
+        <div class="status-badge live"><div class="dot-sm"></div> Live</div>
+        <div class="impulse-date">Aufgenommen April 2026</div>
+        <button class="toggle-btn" id="btn-i2">▼ Öffnen</button>
+      </div>
+    </div>
+
+    <div class="impulse-body" id="body-i2">
+      <div class="body-grid" style="margin-bottom:20px">
+        <div class="kpi-mini">
+          <div class="kpi-mini-val">20%</div>
+          <div class="kpi-mini-label">Mittelständler nutzen KI · ~780.000 Unternehmen · 5× mehr als 2016–18</div>
+        </div>
+        <div class="kpi-mini" style="background:var(--dkteal)">
+          <div class="kpi-mini-val" style="color:var(--sky)">+12,8%</div>
+          <div class="kpi-mini-label">BIP-Potenzial bis 2037 bei breiter KI-Diffusion (IAB/KfW)</div>
+        </div>
+        <div class="kpi-mini" style="background:#3a2200">
+          <div class="kpi-mini-val" style="color:#F59E0B">43%</div>
+          <div class="kpi-mini-label">der KMU haben keine KI-Strategie — trotz Nutzung</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px"><div class="body-section-title">Kernthese</div></div>
+      <div class="thesis-box">
+        <div class="thesis-label">Positionierung</div>
+        <div class="thesis-text">KI-Adoption im Mittelstand ist kein Technologie-, sondern ein Reifeproblem. Wer forscht, digitalisiert strategisch und beschäftigt akademisches Personal, nutzt KI dreimal häufiger. Der eigentliche Engpass ist Absorptionsfähigkeit — die Fähigkeit einer Organisation, Neues aufzunehmen, zu verarbeiten und zu integrieren. Die Interventionslogik lautet: Führung → Datenstrategie → Lernkultur → KI-Adoption.</div>
+      </div>
+
+      <div class="chart-row">
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">KI-Adoption Mittelstand — Entwicklung</div>
+          <div class="mini-chart-src">Quelle: KfW-Mittelstandspanel 2025, Feb. 2026</div>
+          <div class="mini-chart-wrap"><canvas id="cAdoptM"></canvas></div>
+        </div>
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">KI-Nutzung nach Unternehmensmerkmal (%)</div>
+          <div class="mini-chart-src">Quelle: KfW Research · Regressionsanalyse 2026</div>
+          <div class="mini-chart-wrap"><canvas id="cDriverM"></canvas></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Systemische Hürden für Digitalisierung &amp; KI</div></div>
+      <div class="hurdle-list">
+        <div class="hurdle">
+          <div class="hurdle-label">⏱ Mangelnde Zeit für das Thema</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar r" style="width:58%"></div></div>
+          <div class="hurdle-pct">58%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">❓ Unklares Kosten-Nutzen-Verhältnis</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar a" style="width:45%"></div></div>
+          <div class="hurdle-pct">45%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🎓 Fehlende Fachkräfte / KI-Knowhow</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar a" style="width:44%"></div></div>
+          <div class="hurdle-pct">44%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">⚖️ Rechtsunsicherheit / AI Act</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar" style="width:41%"></div></div>
+          <div class="hurdle-pct">41%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🗂 Datenqualität &amp; -silos</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar t" style="width:76%"></div></div>
+          <div class="hurdle-pct">76%</div>
+        </div>
+      </div>
+      <div style="font-size:9px;color:var(--mgray);margin-bottom:16px">Bundesnetzagentur-Studie 2023 · bidt Themenmonitor · Bitkom KI-Studie 2025</div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Handlungsfelder</div></div>
+      <div class="insight-grid">
+        <div class="insight green">
+          <div class="insight-t">Führung als Einstiegspunkt</div>
+          <div class="insight-b">KI-Transformation erfordert Führende, die KI nicht delegieren, sondern durchdringen und modellieren. Executive Coaching mit KI-Literacy als Kernmodul.</div>
+        </div>
+        <div class="insight green">
+          <div class="insight-t">Strategie als Prozess, nicht Produkt</div>
+          <div class="insight-b">43% haben keine KI-Strategie. Eine Strategie, die nicht aus eigenem Entscheiden wächst, wird nicht gelebt. Strategie-Journeys statt Strategie-Workshops.</div>
+        </div>
+        <div class="insight amber">
+          <div class="insight-t">EU AI Act als Reflexionsmoment</div>
+          <div class="insight-b">Compliance-Druck zwingt zur Bestandsaufnahme aller KI-Systeme — wer das nutzt, betreibt strategische Selbstklärung. Deadline: August 2026.</div>
+        </div>
+        <div class="insight amber">
+          <div class="insight-t">Datenstrategie vor KI-Strategie</div>
+          <div class="insight-b">76% leiden unter Datenqualitätsproblemen. Ohne Data Governance bleibt jede KI-Initiative punktuell. Datenreife ist die Voraussetzung, nicht das Ergebnis.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:6px; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+        <button class="open-artifact" onclick="sendPromptHelper('Öffne das KI Mittelstand Digest Artifact')">
+          🤖 Vollständiges Digest öffnen →
+        </button>
+        <span style="font-size:11px; color:var(--mgray)">Quellen: KfW Research, Bundesnetzagentur, Bitkom, bidt, IAB · Stand April 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPULS #3: VERÄNDERUNGSMÜDIGKEIT -->
+  <div class="impulse-card" data-tags="gesellschaft führung">
+    <div class="impulse-header" onclick="toggleBody('i3')">
+      <div class="impulse-num" style="background:#2D1B6E">
+        <span>Impuls</span>
+        #03
+      </div>
+      <div class="impulse-meta">
+        <div class="impulse-category">🧠 Gesellschaft · Führung · Organisationsentwicklung</div>
+        <div class="impulse-title">Veränderungsmüdigkeit</div>
+        <div class="impulse-sub">85% der Unternehmen berichten akuter Change Fatigue — und 70% der Transformationen scheitern. Das ist kein Stimmungsproblem. Es ist systemisches Führungs- und Designversagen.</div>
+        <div class="impulse-tags">
+          <span class="tag">Change Fatigue</span>
+          <span class="tag">Führung</span>
+          <span class="tag">Engagement</span>
+          <span class="tag">Transformation</span>
+          <span class="tag">OE</span>
+        </div>
+      </div>
+      <div class="impulse-actions">
+        <div class="status-badge live"><div class="dot-sm"></div> Live</div>
+        <div class="impulse-date">Aufgenommen April 2026</div>
+        <button class="toggle-btn" id="btn-i3">▼ Öffnen</button>
+      </div>
+    </div>
+
+    <div class="impulse-body" id="body-i3">
+      <div class="body-grid" style="margin-bottom:20px">
+        <div class="kpi-mini" style="background:#2D1B6E">
+          <div class="kpi-mini-val" style="color:var(--teal)">85%</div>
+          <div class="kpi-mini-label">der Unternehmen berichten akuter Veränderungsmüdigkeit · DACH</div>
+        </div>
+        <div class="kpi-mini" style="background:#7C3AED">
+          <div class="kpi-mini-val" style="color:#DDD6FE">10%</div>
+          <div class="kpi-mini-label">emotionale Hochbindung · 77% im „Energiesparmodus" · €142Mrd Schaden</div>
+        </div>
+        <div class="kpi-mini" style="background:#991B1B">
+          <div class="kpi-mini-val" style="color:#FCA5A5">70%</div>
+          <div class="kpi-mini-label">aller Transformationsvorhaben scheitern oder verfehlen ihre Ziele</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px"><div class="body-section-title">Kernthese</div></div>
+      <div class="thesis-box">
+        <div class="thesis-label">Positionierung</div>
+        <div class="thesis-text">Veränderungsmüdigkeit ist kein Befindlichkeitsproblem — sie ist das Symptom eines systemischen Führungs- und Designversagens. Organisationen initiieren zu viele, zu schlecht gestaltete Veränderungsprozesse ohne Erholungsphasen. Der Kern liegt nicht in der Anzahl der Veränderungen, sondern in ihrer Qualität, Gestaltung und menschlichen Begleitung. Die Lösung beginnt mit bewusstem Transformationsdesign — nicht mehr Change, sondern besserer Change.</div>
+      </div>
+
+      <div class="chart-row">
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">Emotionale Bindung Deutschland (Gallup 2025)</div>
+          <div class="mini-chart-src">Quelle: Gallup Engagement Index Deutschland 2025, März 2026</div>
+          <div class="mini-chart-wrap"><canvas id="cCF_eng"></canvas></div>
+        </div>
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">Unternehmens-Lagebild DACH (FTI/Quadriga 2026)</div>
+          <div class="mini-chart-src">Communications Heatmap 2025 · n=600 Entscheidungsträger</div>
+          <div class="mini-chart-wrap"><canvas id="cCF_fti"></canvas></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Systemische Hürden</div></div>
+      <div class="hurdle-list">
+        <div class="hurdle">
+          <div class="hurdle-label">🌀 Simultane Initiativen ohne Erholungsphasen</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar r" style="width:85%"></div></div>
+          <div class="hurdle-pct">85%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">📢 Informationsflut statt Dialog- &amp; Feedbackkultur</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar a" style="width:77%"></div></div>
+          <div class="hurdle-pct">77%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🪞 Selbsttäuschung: Mgmt überschätzt Transformationsfähigkeit</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar a" style="width:70%"></div></div>
+          <div class="hurdle-pct">70%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">⚖️ Führungskräfte im Loyalitätskonflikt</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar" style="width:54%"></div></div>
+          <div class="hurdle-pct">54%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🎯 Nur 43% fokussieren auf wenige Kernthemen</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar t" style="width:43%"></div></div>
+          <div class="hurdle-pct">43%</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Handlungsfelder</div></div>
+      <div class="insight-grid">
+        <div class="insight">
+          <div class="insight-t">Erholungsphasen als Designprinzip</div>
+          <div class="insight-b">Keine neue Change-Initiative ohne explizite Konsolidierungsphase. Transformation braucht Rhythmus — Spannung und Entspannung. Pausen sind die Voraussetzung für die nächste Welle.</div>
+        </div>
+        <div class="insight">
+          <div class="insight-t">Führungskräfte als Übersetzer, nicht Botschafter</div>
+          <div class="insight-b">Wer Botschaften weitergibt, die er nicht trägt, bricht Vertrauen. Führungskräfte brauchen Räume, um selbst zu verarbeiten — bevor sie kommunizieren. Leadership Development vor Change Deployment.</div>
+        </div>
+        <div class="insight amber">
+          <div class="insight-t">Dialog vor Kommunikation</div>
+          <div class="insight-b">77% fordern echte Feedbackkultur. Das bedeutet: Räume für Unsicherheit schaffen, nicht neue Kanäle. Vorhandene Kanäle anders nutzen — bidirektional, nicht nur als Sendeformat.</div>
+        </div>
+        <div class="insight amber">
+          <div class="insight-t">Kompetenz als härteste Währung</div>
+          <div class="insight-b">Kienbaum 2025: Technologie- und Datenkompetenz entscheidet über Transformationserfolg — nicht Vision oder Purpose. Die Investitionslogik muss sich verschieben.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:6px; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+        <button class="open-artifact" onclick="sendPromptHelper('Öffne das Change Fatigue Digest Artifact')">
+          🧠 Vollständiges Digest öffnen →
+        </button>
+        <span style="font-size:11px; color:var(--mgray)">Quellen: FTI/Quadriga, Gallup, TU Dresden, Kienbaum, AOK/WIdO · Stand April 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPULS #4: MENSCHENGERECHTE ARBEITSGESTALTUNG IM KI-ZEITALTER -->
+  <div class="impulse-card" data-tags="arbeit technologie gesellschaft">
+    <div class="impulse-header" onclick="toggleBody('i4')">
+      <div class="impulse-num" style="background:var(--dkteal)">
+        <span>Impuls</span>
+        #04
+      </div>
+      <div class="impulse-meta">
+        <div class="impulse-category">🏭 Arbeitswissenschaft · Führung · KI-Transformation</div>
+        <div class="impulse-title">Menschengerechte Arbeitsgestaltung im KI-Zeitalter</div>
+        <div class="impulse-sub">37% der Unternehmensorganisatoren nutzen bereits GenAI beruflich — doch Autonomie, Skill-Management und Führungs-Übersetzung entscheiden, ob KI Potenzial entfaltet oder verpufft. Wissenschaftliche Evidenz vom GfA Frühjahrskongress 2026.</div>
+        <div class="impulse-tags">
+          <span class="tag">Arbeitsgestaltung</span>
+          <span class="tag">KI-Adoption</span>
+          <span class="tag">Autonomie</span>
+          <span class="tag">Future Skills</span>
+          <span class="tag">OE</span>
+          <span class="tag">GfA 2026</span>
+        </div>
+      </div>
+      <div class="impulse-actions">
+        <div class="status-badge live"><div class="dot-sm"></div> Live</div>
+        <div class="impulse-date">Aufgenommen April 2026</div>
+        <button class="toggle-btn" id="btn-i4">▼ Öffnen</button>
+      </div>
+    </div>
+
+    <div class="impulse-body" id="body-i4">
+      <div class="body-grid" style="margin-bottom:20px">
+        <div class="kpi-mini">
+          <div class="kpi-mini-val">37,3%</div>
+          <div class="kpi-mini-label">in Unternehmensorganisation/-strategie nutzen GenAI beruflich · BIBB/BAuA ETB 2024 · n=20.006</div>
+        </div>
+        <div class="kpi-mini" style="background:#1B4332">
+          <div class="kpi-mini-val" style="color:#6EE7B7">β .245</div>
+          <div class="kpi-mini-label">Autonomie ist der stärkste Prädiktor für GenAI-Adoption — stärker als Tätigkeitsprofil oder Führungsrolle</div>
+        </div>
+        <div class="kpi-mini" style="background:#78350F">
+          <div class="kpi-mini-val" style="color:#FDE68A">0,9/5</div>
+          <div class="kpi-mini-label">Reifegrad strategische Zieldefinition im Skill-Management — niedrigste Dimension weltweit (Bosch Rexroth 2025)</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px"><div class="body-section-title">Kernthese</div></div>
+      <div class="thesis-box">
+        <div class="thesis-label">Positionierung · GfA Frühjahrskongress 2026, Kassel</div>
+        <div class="thesis-text">KI-Integration in Organisationen scheitert nicht an fehlender Technologie — sie scheitert an fehlender Arbeitsgestaltung. Wer KI wirksam machen will, muss zuerst Autonomie ermöglichen, Skill-Management vom Verwaltungs- in den Strategiemodus heben und Führungskräfte als Prozesspromotoren statt Power-User entwickeln. Das 30-jährige Prinzip der menschengerechten Arbeitsgestaltung (§4 ArbSchG) ist relevanter denn je.</div>
+      </div>
+
+      <div class="chart-row">
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">GenAI-Adoption: Autonomie als stärkster Prädiktor (β)</div>
+          <div class="mini-chart-src">Quelle: BIBB/BAuA ETB 2024 · Komorowski & Süße (GfA 2026, S. 323ff.)</div>
+          <div class="mini-chart-wrap"><canvas id="cGfA_auto"></canvas></div>
+        </div>
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">Future Skills: Stärkste Aufsteiger 2018→2025</div>
+          <div class="mini-chart-src">Quelle: Future Skills Radar · Fraunhofer IAO (Karapidis et al., GfA 2026, S. 706ff.) · 38 Studien</div>
+          <div class="mini-chart-wrap"><canvas id="cGfA_skills"></canvas></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Die drei systemischen Paradoxa</div></div>
+      <div class="hurdle-list">
+        <div class="hurdle">
+          <div class="hurdle-label">⚖️ Autonomie-Paradox: Vorgeschriebene Abläufe blockieren KI</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar r" style="width:79%"></div></div>
+          <div class="hurdle-pct">β −.234</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">📚 Kompetenz-Investment-Paradox: &gt;50% ohne messbares Ziel</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar a" style="width:52%"></div></div>
+          <div class="hurdle-pct">&gt;50%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🪞 Führungs-Übersetzungslücke: FK nutzen KI, befähigen nicht</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar t" style="width:68%"></div></div>
+          <div class="hurdle-pct">Systemisch</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🧠 Kognitives Risiko: unkritische GenAI-Nutzung reduziert Eigenleistung</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar" style="width:44%"></div></div>
+          <div class="hurdle-pct">Emergent</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🎓 79% der FK: Mitarbeitende fehlen grundlegende KI-Kenntnisse</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar r" style="width:79%"></div></div>
+          <div class="hurdle-pct">79%</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Handlungsfelder</div></div>
+      <div class="insight-grid">
+        <div class="insight green">
+          <div class="insight-t">Autonomie-Audit vor KI-Enabling</div>
+          <div class="insight-b">Wie viel Gestaltungsspielraum haben Mitarbeitende tatsächlich? Streng vorgeschriebene Arbeit = strukturelle KI-Adoption-Blockade. Arbeitsgestaltung ist die erste KI-Intervention.</div>
+        </div>
+        <div class="insight green">
+          <div class="insight-t">Skill-Management auf Stufe 3+ entwickeln</div>
+          <div class="insight-b">Von administrativ zu strategisch: klare Ziele, Skill-Gap-Analyse, KPI-basierte Lernwirksamkeit. Soziotechnischer 3-Monats-Regelkreis (Bosch Rexroth) als Praxismodell.</div>
+        </div>
+        <div class="insight amber">
+          <div class="insight-t">Führungskräfte als Prozesspromotoren</div>
+          <div class="insight-b">Nicht KI-Technologie erklären, sondern Führungsidentität im KI-Kontext entwickeln. GenAI-Literacy als Leadership-Modul — verbunden mit der Frage: Wie gestalte ich Autonomiebedingungen für mein Team?</div>
+        </div>
+        <div class="insight amber">
+          <div class="insight-t">Kritische KI-Reflexion institutionalisieren</div>
+          <div class="insight-b">Neurowissenschaftliche Warnung (Kosmyna 2025): unkritische Nutzung reduziert kognitive Eigenleistung. Human Centeredness = kritische Reflexion als Nutzungsprinzip, nicht als Bremse.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:6px; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+        <button class="open-artifact" onclick="sendPromptHelper('Öffne das GfA Arbeitsgestaltung KI Digest Artifact')">
+          🏭 Vollständiges Digest öffnen →
+        </button>
+        <span style="font-size:11px; color:var(--mgray)">Quellen: GfA Frühjahrskongress 2026 (Univ. Kassel), BIBB/BAuA ETB 2024, Fraunhofer IAO, Bosch Rexroth Academy, ifaa Düsseldorf · Stand April 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPULS #05: INSTITUTIONELLE IMMOBILITÄT -->
+  <div class="impulse-card" data-tags="wirtschaft führung">
+    <div class="impulse-header" onclick="toggleBody('i5')">
+      <div class="impulse-num">
+        <span>Impuls</span>
+        #05
+      </div>
+      <div class="impulse-meta">
+        <div class="impulse-category">🏛 Wirtschaft · Führung · OE</div>
+        <div class="impulse-title">Institutionelle Immobilität</div>
+        <div class="impulse-sub">Wenn Organisationen benennen, ohne zu lösen — VW, Tesla, KMU und Europas KI-Souveränität als Spiegel systemischer Handlungslücken.</div>
+        <div class="impulse-tags">
+          <span class="tag">VW</span>
+          <span class="tag">KMU</span>
+          <span class="tag">Führung</span>
+          <span class="tag">Transformationsblockade</span>
+          <span class="tag">Humanistisch</span>
+        </div>
+      </div>
+      <div class="impulse-actions">
+        <div class="status-badge live"><div class="dot-sm"></div> Live</div>
+        <div class="impulse-date">Aufgenommen April 2026</div>
+        <button class="toggle-btn" id="btn-i5">▼ Öffnen</button>
+      </div>
+    </div>
+
+    <div class="impulse-body" id="body-i5">
+      <div class="body-grid" style="margin-bottom:20px">
+        <div class="kpi-mini">
+          <div class="kpi-mini-val">1 Mio.</div>
+          <div class="kpi-mini-label">VW Fahrzeug-Überkapazität — 4 Werke (Emden, Zwickau, Hannover, Neckarsulm) strukturell unterausgelastet</div>
+        </div>
+        <div class="kpi-mini" style="background:#7f1d1d">
+          <div class="kpi-mini-val" style="color:#fca5a5">−30%</div>
+          <div class="kpi-mini-label">Tesla Produktion trotz 17→5% Krankenquoten-„Optimierung" — Metrik optimiert, System geschwächt</div>
+        </div>
+        <div class="kpi-mini">
+          <div class="kpi-mini-val">€49 Mrd.</div>
+          <div class="kpi-mini-label">KMU-Verlust 2024 durch Fachkräftemangel — selbstverstärkendes Hindernissystem</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px"><div class="body-section-title">Kernthese</div></div>
+      <div class="thesis-box">
+        <div class="thesis-label">Positionierung · April 2026</div>
+        <div class="thesis-text">Organisationen entwickeln eine kollektive Kompetenz im Benennen von Problemen — und eine ebenso kollektive Inkompetenz im Lösen davon. BCG-Reports, Strategiepapiere, Transformationsagenden erfüllen eine psychologische Funktion: Sie sind Ersatzhandlungen. Die Handlungslücke ist die eigentliche Transformationsaufgabe.</div>
+      </div>
+
+      <div class="chart-row">
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">VW: Unterauslastung nach Standort (Tsd. Fzg./Jahr)</div>
+          <div class="mini-chart-src">Quelle: Handelsblatt Briefing 27.04.2026 · BCG-Analyse (160 S.)</div>
+          <div class="mini-chart-wrap"><canvas id="cIll05M"></canvas></div>
+        </div>
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">KMU Top-5 Hindernisse 2025 (% betroffene Unternehmen)</div>
+          <div class="mini-chart-src">Quelle: Saubert (2025) · KOFA 02/2026 · IfM Bonn · 391K offene Stellen (Jun 2025)</div>
+          <div class="mini-chart-wrap"><canvas id="cKMU05M"></canvas></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Die drei VW-Illusionen (BCG, 160 Seiten)</div></div>
+      <div class="hurdle-list">
+        <div class="hurdle">
+          <div class="hurdle-label">🔴 Marktillusion: „Die Nachfrage kehrt zurück"</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar r" style="width:100%"></div></div>
+          <div class="hurdle-pct">1 Mio. Fzg.</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🟡 Technologieillusion: „Software & EV retten uns"</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar a" style="width:75%"></div></div>
+          <div class="hurdle-pct">8–10% Ziel</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🔵 Strukturillusion: „Wir lösen das intern"</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar t" style="width:60%"></div></div>
+          <div class="hurdle-pct">35K Stellen</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">⚡ Tesla-Paradox: Metrik optimiert, System geschwächt</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar r" style="width:86%"></div></div>
+          <div class="hurdle-pct">−30% Prod.</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Coaching-Handlungsfelder</div></div>
+      <div class="insight-grid">
+        <div class="insight">
+          <div class="insight-t">Immobilitätskarte ziehen</div>
+          <div class="insight-b">Welche Diagnosen der Organisation sind seit &gt;12 Monaten unverändert präsent? Das ist der erste Interventionspunkt — nicht die Problemidentifikation, sondern die Handlungslücke.</div>
+        </div>
+        <div class="insight amber">
+          <div class="insight-t">Humanistischer vs. koerziver Hebel</div>
+          <div class="insight-b">Tesla zeigt: Zwang optimiert Metriken, nicht Systeme. Gallup: +21% Produktivität bei hohem Engagement. Vertrauen, Autonomie und Sinn sind Wirksamkeitsfaktoren — keine Weichheit.</div>
+        </div>
+        <div class="insight green">
+          <div class="insight-t">Struktur vor Person</div>
+          <div class="insight-b">Nicht Menschen blockieren Umsetzung — Architekturen tun es. Anreizsysteme, Komplexität, Vermeidungskultur: Das sind die eigentlichen Hebel für Transformationsbegleitung.</div>
+        </div>
+        <div class="insight green">
+          <div class="insight-t">Europa: KI-Souveränität als Signal</div>
+          <div class="insight-b">Aleph Alpha + Cohere: erste nicht-US-KI mit institutionellem Gewicht. Schwarz Gruppe €500M + STACKIT. VC 2026: Profitabilität &gt; Wachstum, Resilienz als Kriterium.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:6px; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+        <button class="open-artifact" onclick="sendPromptHelper('Öffne das Impuls 05 Institutionelle Immobilität Digest')">
+          🏛 Vollständiges Digest öffnen →
+        </button>
+        <span style="font-size:11px; color:var(--mgray)">Quellen: Handelsblatt 24.+27.04.2026 · Saubert (2025) · BCG VW-Analyse · Gründer.de VC-Report · KOFA 02/2026 · Gallup 2024 · Stand April 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPULS #06: EMPATHISCHE KI-TRANSFORMATION -->
+  <div class="impulse-card" data-tags="führung technologie arbeit">
+    <div class="impulse-header" onclick="toggleBody('i6')">
+      <div class="impulse-num" style="background:#4C1D95">
+        <span>Impuls</span>
+        #06
+      </div>
+      <div class="impulse-meta">
+        <div class="impulse-category">🤝 Führung · KI-Transformation · Menschlicher Faktor</div>
+        <div class="impulse-title">Empathische KI-Transformation</div>
+        <div class="impulse-sub">79% aller Unternehmen scheitern bei der KI-Adoption — 29% der Mitarbeitenden sabotieren aktiv KI-Strategien. Der Unterschied liegt nicht in der Technologie: Empathie, Psychological Safety und Workflow-Reinvention entscheiden über den ROI.</div>
+        <div class="impulse-tags">
+          <span class="tag">Empathie</span>
+          <span class="tag">KI-Adoption</span>
+          <span class="tag">Psychological Safety</span>
+          <span class="tag">Micro-Productivity-Trap</span>
+          <span class="tag">ROI</span>
+          <span class="tag">FOBO</span>
+        </div>
+      </div>
+      <div class="impulse-actions">
+        <div class="status-badge live"><div class="dot-sm"></div> Live</div>
+        <div class="impulse-date">Aufgenommen 30. April 2026</div>
+        <button class="toggle-btn" id="btn-i6">▼ Öffnen</button>
+      </div>
+    </div>
+
+    <div class="impulse-body" id="body-i6">
+      <div class="body-grid" style="margin-bottom:20px">
+        <div class="kpi-mini" style="background:#7f1d1d">
+          <div class="kpi-mini-val" style="color:#fca5a5">29%</div>
+          <div class="kpi-mini-label">der Mitarbeitenden sabotieren aktiv KI-Strategien — bei Gen Z 44% (Survey 2026)</div>
+        </div>
+        <div class="kpi-mini" style="background:#4C1D95">
+          <div class="kpi-mini-val" style="color:#DDD6FE">84%</div>
+          <div class="kpi-mini-label">der Führungskräfte: Psychological Safety → messbare KI-Outcomes (MIT Survey 500 Leaders)</div>
+        </div>
+        <div class="kpi-mini" style="background:#1B4332">
+          <div class="kpi-mini-val" style="color:#6EE7B7">10–25%</div>
+          <div class="kpi-mini-label">EBITDA-Gewinn bei Unternehmen, die KI als Business-Reinvention betreiben (Bain 2025)</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px"><div class="body-section-title">Kernthese</div></div>
+      <div class="thesis-box">
+        <div class="thesis-label">Positionierung · April 2026 · Quellen: HBR, MIT Sloan, Bain/OpenAI</div>
+        <div class="thesis-text">Die KI-Transformationslücke ist keine Technologie-, sondern eine Empathie- und Designfrage. Drei interlocking Failure Modes blockieren den Weg vom Experiment zur Transformation: (1) Empathy Deficit at the Top — 59% der CEOs halten Empathie für „nice to have", während 76% von ihnen die Begeisterung ihrer Teams massiv überschätzen (real: 31%). (2) Micro-Productivity-Trap — KI beschleunigt Aufgaben, aber Workflows, Handoffs und Legacy-Logiken bleiben unberührt. (3) Psychological Safety Gap — ohne Sicherheit produzieren Teams „Workslop" und sabotieren Strategien. Wer KI-ROI will, muss zuerst menschliche Bedingungen schaffen — nicht Tools deployen.</div>
+      </div>
+
+      <div class="chart-row">
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">Enthusiasm-Gap: Wahrnehmung vs. Realität (%)</div>
+          <div class="mini-chart-src">BCG Survey 2025 · Businessolver State of Workplace Empathy 2025</div>
+          <div class="mini-chart-wrap"><canvas id="cI6gap"></canvas></div>
+        </div>
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">KI-ROI: Versprechen vs. Realität (% Unternehmen)</div>
+          <div class="mini-chart-src">Writer Enterprise AI 2026 · Gartner Q1 2026 · Masterofcode 2026</div>
+          <div class="mini-chart-wrap"><canvas id="cI6roi"></canvas></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Systemische Hürden</div></div>
+      <div class="hurdle-list">
+        <div class="hurdle">
+          <div class="hurdle-label">🧠 Psychological Safety-Defizit (61% unter „sehr hoch")</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar r" style="width:61%"></div></div>
+          <div class="hurdle-pct">61%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">👁 Enthusiasm-Gap Führung vs. Mitarbeitende (45 PP)</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar a" style="width:45%"></div></div>
+          <div class="hurdle-pct">45 PP</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🪤 Micro-Productivity-Trap: kein Workflow-Redesign</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar a" style="width:71%"></div></div>
+          <div class="hurdle-pct">~71%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🔥 42% abandonten die meisten KI-Initiativen 2025</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar r" style="width:42%"></div></div>
+          <div class="hurdle-pct">42%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">😤 Aktive Sabotage von KI-Strategien (Gen Z: 44%)</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar p" style="width:29%"></div></div>
+          <div class="hurdle-pct">29–44%</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Handlungsfelder</div></div>
+      <div class="insight-grid">
+        <div class="insight green">
+          <div class="insight-t">Empathie-Audit vor KI-Rollout</div>
+          <div class="insight-b">FOBO-Signale im Team messen. Wer den Enthusiasm-Gap nicht kennt, rollt KI gegen den eigenen Impuls aus. 61% mit empathischen Führungskräften innovieren — vs. 13% ohne (Catalyst 2021).</div>
+        </div>
+        <div class="insight green">
+          <div class="insight-t">KI-Strategie als Co-Creation, nicht Deployment</div>
+          <div class="insight-b">Gespräch statt Ankündigung. Augmentation-Frage stellen: „Auf welche Teile eurer Arbeit wollt ihr euch wirklich konzentrieren?" KI als Befreiung framen — Procedural Justice schaffen.</div>
+        </div>
+        <div class="insight amber">
+          <div class="insight-t">Workflow-Reinvention statt Prozessoptimierung</div>
+          <div class="insight-b">Bain/OpenAI: FabricationCo Quoting-Speed 15× durch Redesign. Lowe's demokratisiert Expertise. Nicht Aufgaben beschleunigen — Outcome-Logik hinterfragen. Was würden wir abschaffen, wenn KI wirklich leistungsfähig wäre?</div>
+        </div>
+        <div class="insight amber">
+          <div class="insight-t">Psychological Safety als KI-Readiness-Messgröße</div>
+          <div class="insight-b">Psychologische Sicherheit ist stärkster Adoption-Prädiktor (Initialphase). Messen vor KI-Deployment. Teams mit niedrigem Sicherheitsniveau benötigen Stabilisierung vor Enablement.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:6px; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+        <button class="open-artifact" onclick="sendPromptHelper('Öffne das Empathische KI-Transformation Digest Artifact')">
+          🤝 Vollständiges Digest öffnen →
+        </button>
+        <span style="font-size:11px; color:var(--mgray)">Quellen: HBR (Hill 2025/26), MIT Sloan (Macias-Aguayo 2025, Shay/Davenport 2026), Bain/OpenAI (HBR 2025), BCG, Writer, Gartner, MIT Tech Review · Stand 30. April 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== IMPULS #07: DER GENEHMIGTE TOOL-GAP (NEU) ===== -->
+  <div class="impulse-card" data-tags="technologie arbeit führung">
+    <div class="impulse-header" onclick="toggleBody('i7')">
+      <div class="impulse-num" style="background:#0F4C75">
+        <span>Impuls</span>
+        #07
+      </div>
+      <div class="impulse-meta">
+        <div class="impulse-category">🔧 Technologie · Arbeit · Führung · KI-Governance</div>
+        <div class="impulse-title">Der genehmigte Tool-Gap</div>
+        <div class="impulse-sub">78% der Wissensarbeiter bringen eigene KI-Tools mit — weil Copilot, Document Dialogue & Co. die eigentliche Arbeit nicht bewältigen. Die unsichtbare Produktivitätssteuer des falschen KI-Standards kostet Konzerne jährlich Millionen. Und fast niemand sagt es laut.</div>
+        <div class="impulse-tags">
+          <span class="tag">Tool-Gap</span>
+          <span class="tag">BYOAI</span>
+          <span class="tag">Copilot</span>
+          <span class="tag">Shadow AI</span>
+          <span class="tag">Produktivität</span>
+          <span class="tag">DAX40</span>
+        </div>
+      </div>
+      <div class="impulse-actions">
+        <div class="status-badge live"><div class="dot-sm"></div> Live</div>
+        <div class="impulse-date">Aufgenommen 1. Mai 2026</div>
+        <button class="toggle-btn" id="btn-i7">▼ Öffnen</button>
+      </div>
+    </div>
+
+    <div class="impulse-body" id="body-i7">
+      <div class="body-grid" style="margin-bottom:20px">
+        <div class="kpi-mini" style="background:#0F4C75">
+          <div class="kpi-mini-val" style="color:#3ED8C3">78%</div>
+          <div class="kpi-mini-label">bringen eigene KI-Tools unabhängig von Firmenrichtlinie (BYOAI-Trend 2025/26)</div>
+        </div>
+        <div class="kpi-mini" style="background:#7f1d1d">
+          <div class="kpi-mini-val" style="color:#fca5a5">6×</div>
+          <div class="kpi-mini-label">Produktivitätsdelta · 90 Min. (Default) vs. 15 Min. (Specialist) · gleicher Output · Sales-Ops-Fallbeispiel</div>
+        </div>
+        <div class="kpi-mini" style="background:#1B4332">
+          <div class="kpi-mini-val" style="color:#6EE7B7">56%</div>
+          <div class="kpi-mini-label">nutzen nicht-genehmigte Tools · vs. nur 23%, die offiziell bereitgestellte Tools aktiv einsetzen</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px"><div class="body-section-title">Kernthese</div></div>
+      <div class="thesis-box">
+        <div class="thesis-label">Positionierung · Mai 2026 · Quellen: MIT, ISACA, Recon Analytics, YouTube-Diskurs-Analyse</div>
+        <div class="thesis-text">Der Tool-Gap ist kein Technologie-, sondern ein Gouvernanz- und Kommunikationsversagen. Die Interchangeability-Illusion — die Annahme, KI-Tools seien fungibel — ist der eigentliche Produktivitätskiller. Was als Standardisierung verteidigt wird, ist in Wahrheit Trägheit. Die unsichtbare Steuer wird täglich personell absorbiert: in 30-Minuten-Chunks, Nacharbeitsschleifen und dem stillen Flinch vor dem Corporate-Chatbot. Der Durchbruch liegt nicht im Klagen, sondern im Messen: „Dieser Job kostet uns X Stunden unter dem Default — ich kann es beweisen."</div>
+      </div>
+
+      <div class="chart-row">
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">KI-Tool-Nutzung: Autorisiert vs. Shadow AI (2025/26)</div>
+          <div class="mini-chart-src">Quelle: MIT GenAI Divide Study (Fortune Aug. 2025) · ISACA Shadow AI Report 2025 · Recon Analytics</div>
+          <div class="mini-chart-wrap"><canvas id="cI7usage"></canvas></div>
+        </div>
+        <div class="mini-chart-card">
+          <div class="mini-chart-title">Zeitdelta: Default vs. Specialist (Min. pro Task)</div>
+          <div class="mini-chart-src">Quelle: YouTube-Diskurs-Analyse 2026 · Sales-Ops-Fallbeispiel · Wealthsimple/Pragmatic Engineer 2026</div>
+          <div class="mini-chart-wrap"><canvas id="cI7time"></canvas></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Systemische Hürden</div></div>
+      <div class="hurdle-list">
+        <div class="hurdle">
+          <div class="hurdle-label">🔒 Interchangeability-Illusion: Tools gelten als fungibel</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar r" style="width:86%"></div></div>
+          <div class="hurdle-pct">Systemisch</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">👁 Unsagbarkeits-Effekt: Wer klagt, klingt wie das Problem</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar a" style="width:78%"></div></div>
+          <div class="hurdle-pct">Kulturell</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">💸 Versteckte Steuer: nie als Linieneintrag sichtbar</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar r" style="width:70%"></div></div>
+          <div class="hurdle-pct">Strukturell</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">📉 Copilot Marktanteil: −39% in 6 Monaten (18,8→11,5%)</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar t" style="width:56%"></div></div>
+          <div class="hurdle-pct">−39%</div>
+        </div>
+        <div class="hurdle">
+          <div class="hurdle-label">🚪 Talent-Abwanderung: Tools bestimmen Karriere-Kompetenz</div>
+          <div class="hurdle-bar-wrap"><div class="hurdle-bar p" style="width:65%"></div></div>
+          <div class="hurdle-pct">Kritisch</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px"><div class="body-section-title">Handlungsfelder · Coaching- und OE-Perspektive</div></div>
+      <div class="insight-grid">
+        <div class="insight green">
+          <div class="insight-t">Evidenz statt Emotion: Messlog aufbauen</div>
+          <div class="insight-b">Einen konkreten, wiederkehrenden Job wählen. Selber Input, zwei Tools, eine Woche. Vier Metriken: Zeit, Nacharbeit, Qualitätsnote, „Würde ich es schicken?" — Das ist kein Geschmack mehr, das ist Performance-Daten.</div>
+        </div>
+        <div class="insight green">
+          <div class="insight-t">Routing-Prinzip statt Tool-Ersatz</div>
+          <div class="insight-b">Nicht „Raus mit Copilot" — sondern: Default wo er gewinnt, Specialist wo der Job es verlangt. Das bedroht keine Entscheidung und schafft einen Weg, den IT, Procurement und Budget genehmigen können.</div>
+        </div>
+        <div class="insight amber">
+          <div class="insight-t">Talent-Retention als Führungsverantwortung</div>
+          <div class="insight-b">Die Besten spüren den Tool-Gap am stärksten — und können ihn am deutlichsten artikulieren. Wer ihnen keine besseren Tools gibt, verliert sie als Erste. Tooling-Reife ist Arbeitgeberattraktivität im KI-Zeitalter 2026.</div>
+        </div>
+        <div class="insight amber">
+          <div class="insight-t">AI Value Capturing als Intrapreneur-Kompetenz</div>
+          <div class="insight-b">Der AI Value Capturer identifiziert Produktivitätslücken, misst sie evidenzbasiert und macht sie skalierbar organisational sichtbar. Das ist kein IT-Job — das ist Leadership-Arbeit und eine Schlüsselrolle für 2026.</div>
+        </div>
+      </div>
+
+      <div style="margin-top:6px; display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+        <button class="open-artifact" onclick="sendPromptHelper('Öffne das Tool Gap Digest Artifact')">
+          🔧 Vollständiges Digest öffnen →
+        </button>
+        <span style="font-size:11px; color:var(--mgray)">Quellen: MIT GenAI Divide Study · Fortune/MIT 2025 · ISACA Shadow AI 2025 · Recon Analytics Jan. 2026 · Business of Apps · YouTube-Diskurs-Analyse 2026 · Stand 1. Mai 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="placeholder-card">
+    <div class="placeholder-icon">＋</div>
+    <div class="placeholder-text">
+      <strong>Dieses Dokument wächst mit</strong>
+      Weitere Marktimpulse werden hier aufgenommen, sobald sie entstehen. Themen könnten sein: Fractional Leadership, demografischer Wandel in Leadership-Teams, New Work als Wettbewerbsfaktor, u.v.m.
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<div class="footer">
+  <div>Marktimpulse · Lebendes Dokument · <span>Mai 2026</span></div>
+  <div>Project Vantum · <span>Jay Manuzon</span></div>
+</div>
+
+<script>
+function filterImpulse(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.impulse-card').forEach(card => {
+    const tags = card.dataset.tags || '';
+    card.style.display = (tag === 'all' || tags.includes(tag)) ? '' : 'none';
+  });
+}
+
+function toggleBody(id) {
+  const body = document.getElementById('body-' + id);
+  const btn  = document.getElementById('btn-' + id);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  btn.textContent = isOpen ? '▼ Öffnen' : '▲ Schließen';
+  if (!isOpen) renderCharts(id);
+}
+
+function sendPromptHelper(text) {
+  if (window.sendPrompt) window.sendPrompt(text);
+}
+
+const NAVY  = '#1D4477';
+const SKY   = '#00B1EB';
+const TEAL  = '#3ED8C3';
+const DTEAL = '#00A19F';
+const GRAY  = '#ADAFB1';
+const LGRAY = '#E8E8E4';
+const AMBER = '#F59E0B';
+const RED   = '#EF4444';
+const GREEN = '#10B981';
+const PURPLE= '#7C3AED';
+
+const base = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: { legend: { display: false } },
+  animation: { duration: 400 }
+};
+
+const rendered = {};
+function renderCharts(openedId) {
+  // Impuls #1
+  if (openedId === 'i1' && !rendered['i1']) {
+    rendered['i1'] = true;
+    new Chart(document.getElementById('cWave'), {
+      type: 'bar',
+      data: {
+        labels: ['2014–18', '2018–22', '2022–26', '2026–30'],
+        datasets: [{ data: [135, 150, 190, 186], backgroundColor: [GRAY, DTEAL, SKY, NAVY], borderRadius: 6 }]
+      },
+      options: { ...base, scales: {
+        y: { beginAtZero:true, ticks:{font:{size:9},color:'#52555C',callback:v=>v+'K'}, grid:{color:LGRAY} },
+        x: { ticks:{font:{size:9},color:'#52555C'}, grid:{display:false} }
+      }}
+    });
+    new Chart(document.getElementById('cSurv'), {
+      type: 'bar',
+      data: {
+        labels: ['Gründer', '2. Generation', '3. Generation'],
+        datasets: [{ data: [100, 30, 10], backgroundColor: [TEAL, SKY, NAVY], borderRadius: 6 }]
+      },
+      options: { ...base, scales: {
+        y: { beginAtZero:true, max:100, ticks:{font:{size:9},color:'#52555C',callback:v=>v+'%'}, grid:{color:LGRAY} },
+        x: { ticks:{font:{size:9},color:'#52555C'}, grid:{display:false} }
+      }}
+    });
+  }
+
+  // Impuls #2
+  if (openedId === 'i2' && !rendered['i2']) {
+    rendered['i2'] = true;
+    new Chart(document.getElementById('cAdoptM'), {
+      type: 'line',
+      data: {
+        labels: ['2016–18','2019–21','2022–24'],
+        datasets: [{
+          data: [4, 10, 20],
+          borderColor: TEAL, backgroundColor: 'rgba(62,216,195,0.12)',
+          borderWidth: 3, fill: true, tension: 0.4,
+          pointBackgroundColor: NAVY, pointRadius: 6
+        }]
+      },
+      options: { ...base, scales: {
+        y: { beginAtZero:true, max:25, ticks:{font:{size:9},color:GRAY,callback:v=>v+'%'}, grid:{color:LGRAY} },
+        x: { ticks:{font:{size:9},color:GRAY}, grid:{display:false} }
+      }}
+    });
+    new Chart(document.getElementById('cDriverM'), {
+      type: 'bar',
+      data: {
+        labels: ['Keine Innovation','Mit HS-Abschluss','Mit Innovation','Gelegentl. F&E','Kontinuierl. F&E','Digit.-Strategie'],
+        datasets: [{ data: [8, 13, 19, 33, 53, 35], backgroundColor: [GRAY, LGRAY, SKY, TEAL, DTEAL, NAVY], borderRadius: 5 }]
+      },
+      options: { ...base, indexAxis:'y', scales: {
+        x: { beginAtZero:true, max:60, ticks:{font:{size:9},color:GRAY,callback:v=>v+'%'}, grid:{color:LGRAY} },
+        y: { ticks:{font:{size:9},color:GRAY}, grid:{display:false} }
+      }}
+    });
+  }
+
+  // Impuls #3
+  if (openedId === 'i3' && !rendered['i3']) {
+    rendered['i3'] = true;
+    new Chart(document.getElementById('cCF_eng'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Hoch gebunden (10%)', 'Energiesparmodus (77%)', 'Innere Kündiger (13%)'],
+        datasets: [{ data: [10, 77, 13], backgroundColor: [TEAL, '#A5B4FC', RED], borderWidth: 0, hoverOffset: 6 }]
+      },
+      options: {
+        ...base,
+        plugins: { legend: { display: true, position: 'bottom', labels: { font:{size:9}, color:'#52555C', boxWidth:10, padding:6 } } },
+        cutout: '56%'
+      }
+    });
+    new Chart(document.getElementById('cCF_fti'), {
+      type: 'bar',
+      data: {
+        labels: ['Veränderungsmüdigkeit', 'Zukunftsängste', 'Vertrauensverlust', 'Transparenz nötig', 'Dialogkultur nötig'],
+        datasets: [{ data: [85, 81, 77, 77, 77], backgroundColor: [RED, AMBER, AMBER, SKY, TEAL], borderRadius: 5 }]
+      },
+      options: { ...base, indexAxis:'y', scales: {
+        x: { beginAtZero:true, max:100, ticks:{font:{size:9},color:GRAY,callback:v=>v+'%'}, grid:{color:LGRAY} },
+        y: { ticks:{font:{size:9},color:GRAY}, grid:{display:false} }
+      }}
+    });
+  }
+
+  // Impuls #4
+  if (openedId === 'i4' && !rendered['i4']) {
+    rendered['i4'] = true;
+    new Chart(document.getElementById('cGfA_auto'), {
+      type: 'bar',
+      data: {
+        labels: ['Mitbestimmen\n(Bedingung)','Kreative\nAnforderungen','Forschen/\nEntwickeln','Informationen\nRecherchieren','Führungs-\nverantwortung','Vorgeschriebene\nAbläufe','Repetitive\nVorgänge'],
+        datasets: [{
+          data: [24.5, 23.2, 23.6, 22.3, 13.3, -23.4, -22.8],
+          backgroundColor: [TEAL, TEAL, DTEAL, DTEAL, NAVY, RED, RED],
+          borderRadius: 5
+        }]
+      },
+      options: { ...base, indexAxis:'y', scales: {
+        x: { ticks:{font:{size:9},color:GRAY,callback:v=>v>0?'+'+v:v}, grid:{color:LGRAY} },
+        y: { ticks:{font:{size:9},color:GRAY}, grid:{display:false} }
+      }}
+    });
+    new Chart(document.getElementById('cGfA_skills'), {
+      type: 'bar',
+      data: {
+        labels: ['Innovation\n(Methodisch)','KI & ML\n(Fachlich)','Cybersecurity\n(Fachlich)','Führung\n(Sozial)','Syst. Denken\n(Persönlich)'],
+        datasets: [
+          { label: '2018/19', data: [2, 3, 5, 6, 7], backgroundColor: LGRAY, borderRadius: [4,0,0,4] },
+          { label: '2024/25', data: [16, 15, 18, 13, 15], backgroundColor: [PURPLE, PURPLE, RED, SKY, DTEAL], borderRadius: [0,4,4,0] }
+        ]
+      },
+      options: { ...base, indexAxis:'y',
+        plugins: { legend: { display: true, position: 'bottom', labels: { font:{size:9}, color:GRAY, boxWidth:10, padding:6 } } },
+        scales: {
+          x: { beginAtZero:true, max:22, stacked:false, ticks:{font:{size:9},color:GRAY,callback:v=>v+'%'}, grid:{color:LGRAY} },
+          y: { ticks:{font:{size:9},color:GRAY}, grid:{display:false} }
+        }
+      }
+    });
+  }
+
+  // Impuls #5
+  if (openedId === 'i5' && !rendered['i5']) {
+    rendered['i5'] = true;
+    new Chart(document.getElementById('cIll05M'), {
+      type: 'bar',
+      data: {
+        labels: ['Emden', 'Zwickau', 'Hannover', 'Neckarsulm'],
+        datasets: [{ data: [280, 320, 240, 160], backgroundColor: ['#fca5a5','#fca5a5','#fca5a5','#fca5a5'], borderColor: [RED,RED,RED,RED], borderWidth: 1, borderRadius: 5 }]
+      },
+      options: { ...base, indexAxis:'y', scales: {
+        x: { beginAtZero:true, ticks:{font:{size:9},color:GRAY,callback:v=>v+'K'}, grid:{color:LGRAY} },
+        y: { ticks:{font:{size:9},color:GRAY}, grid:{display:false} }
+      }}
+    });
+    new Chart(document.getElementById('cKMU05M'), {
+      type: 'bar',
+      data: {
+        labels: ['Fachkräfte', 'Bürokratie', 'Finanzierung', 'Digitalisierung', 'Nachfolge'],
+        datasets: [{ data: [68, 61, 47, 43, 38], backgroundColor: [NAVY, SKY, TEAL, DTEAL, '#005E65'], borderRadius: 5, borderWidth: 0 }]
+      },
+      options: { ...base, indexAxis:'y', scales: {
+        x: { beginAtZero:true, max:80, ticks:{font:{size:9},color:GRAY,callback:v=>v+'%'}, grid:{color:LGRAY} },
+        y: { ticks:{font:{size:9},color:GRAY}, grid:{display:false} }
+      }}
+    });
+  }
+
+  // Impuls #6
+  if (openedId === 'i6' && !rendered['i6']) {
+    rendered['i6'] = true;
+    new Chart(document.getElementById('cI6gap'), {
+      type: 'bar',
+      data: {
+        labels: ['FK glauben: MA enthusiastisch', 'MA sind tatsächl. enthusiastisch', 'CEOs: Empathie nicht essenziell', 'CEOs: keine Zeit für Verbindung'],
+        datasets: [{
+          data: [76, 31, 59, 49],
+          backgroundColor: [NAVY, TEAL, RED, AMBER],
+          borderRadius: 6
+        }]
+      },
+      options: { ...base, indexAxis:'y', scales: {
+        x: { beginAtZero:true, max:100, ticks:{font:{size:9},color:GRAY,callback:v=>v+'%'}, grid:{color:LGRAY} },
+        y: { ticks:{font:{size:9},color:GRAY}, grid:{display:false} }
+      }}
+    });
+    new Chart(document.getElementById('cI6roi'), {
+      type: 'bar',
+      data: {
+        labels: ['Investieren >$1M/Jahr in KI', 'Sehen signifikanten GenAI-ROI', 'Abandonten KI-Initiativen 2025', 'Sehen ROI aus KI-Agents'],
+        datasets: [{
+          data: [59, 29, 42, 23],
+          backgroundColor: [DTEAL, GREEN, RED, AMBER],
+          borderRadius: 6
+        }]
+      },
+      options: { ...base, indexAxis:'y', scales: {
+        x: { beginAtZero:true, max:70, ticks:{font:{size:9},color:GRAY,callback:v=>v+'%'}, grid:{color:LGRAY} },
+        y: { ticks:{font:{size:9},color:GRAY}, grid:{display:false} }
+      }}
+    });
+  }
+
+  // Impuls #7 — NEU
+  if (openedId === 'i7' && !rendered['i7']) {
+    rendered['i7'] = true;
+
+    // Chart: KI-Tool-Nutzung (authorized vs shadow)
+    new Chart(document.getElementById('cI7usage'), {
+      type: 'bar',
+      data: {
+        labels: [
+          'BYOAI: Eigene Tools\nmitgebracht',
+          'Nicht-genehmigte\nTools aktiv',
+          'Offiziell bereitgestellte\nTools genutzt',
+          'Pers. Account\nfür firma Zwecke',
+          '76% wählen ChatGPT\nwenn Wahl besteht'
+        ],
+        datasets: [{
+          data: [78, 56, 23, 47, 76],
+          backgroundColor: ['#0F4C75', RED, TEAL, AMBER, DTEAL],
+          borderRadius: 6
+        }]
+      },
+      options: { ...base, indexAxis:'y', scales: {
+        x: { beginAtZero:true, max:100, ticks:{font:{size:9},color:GRAY,callback:v=>v+'%'}, grid:{color:LGRAY} },
+        y: { ticks:{font:{size:9},color:GRAY,font:{size:8}}, grid:{display:false} }
+      }}
+    });
+
+    // Chart: Zeitdelta Default vs Specialist
+    new Chart(document.getElementById('cI7time'), {
+      type: 'bar',
+      data: {
+        labels: ['Pipeline-Report', 'Strategiedokument', 'Kundensynthese', 'Code Review'],
+        datasets: [
+          {
+            label: 'Default (Copilot)',
+            data: [90, 75, 60, 50],
+            backgroundColor: 'rgba(239,68,68,0.8)',
+            borderRadius: 4
+          },
+          {
+            label: 'Specialist (Claude/GPT)',
+            data: [15, 22, 15, 18],
+            backgroundColor: 'rgba(62,216,195,0.9)',
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        ...base,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: { font:{size:9}, color:GRAY, boxWidth:10, padding:6 }
+          }
+        },
+        scales: {
+          y: { beginAtZero:true, max:100, ticks:{font:{size:9},color:GRAY,callback:v=>v+' Min.'}, grid:{color:LGRAY} },
+          x: { ticks:{font:{size:9},color:GRAY}, grid:{display:false} }
+        }
+      }
+    });
+  }
+}
+</script>
+</body>
+</html>
