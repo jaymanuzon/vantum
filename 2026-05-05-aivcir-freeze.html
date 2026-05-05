@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Value Capture Infrastructure ROI</title>
+:root { color-scheme: light }
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+:root {
+  --apex-navy: #1D4477;
+  --apex-sky: #00B1EB;
+  --apex-teal: #3ED8C3;
+  --apex-deep-teal: #00A19F;
+  --apex-dark-teal: #005E65;
+  --apex-charcoal: #52555C;
+  --apex-black: #000000;
+  --apex-white: #FFFFFF;
+  --apex-light-gray: #E8E8E4;
+  --apex-mid-gray: #ADAFB1;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--apex-white); color: var(--apex-black); }
+.nav { display: flex; background: var(--apex-navy); overflow-x: auto; }
+.nav-tab { padding: 12px 20px; color: rgba(255,255,255,.7); cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap; border-bottom: 3px solid transparent; transition: all .2s; }
+.nav-tab:hover { color: #fff; background: rgba(255,255,255,.06); }
+.nav-tab.active { color: #fff; border-bottom-color: var(--apex-teal); }
+.hero { background: var(--apex-navy); color: #fff; padding: 32px 28px 24px; }
+.hero h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.hero p { font-size: 13px; opacity: .8; }
+.meta-bar { display: flex; gap: 24px; margin-top: 14px; flex-wrap: wrap; }
+.meta-item { background: rgba(255,255,255,.1); padding: 8px 14px; border-radius: 6px; font-size: 12px; }
+.meta-item strong { color: var(--apex-teal); }
+.content { padding: 24px 28px; display: none; }
+.content.active { display: block; }
+.card { background: #fff; border: 1px solid var(--apex-light-gray); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+.card h3 { color: var(--apex-navy); font-size: 15px; margin-bottom: 10px; }
+.card p { color: var(--apex-charcoal); font-size: 13px; line-height: 1.6; }
+.dim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.dim-card { border-left: 4px solid var(--apex-sky); }
+.dim-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.dim-score { font-size: 28px; font-weight: 700; color: var(--apex-navy); }
+.dim-label { font-size: 11px; color: var(--apex-mid-gray); }
+.score-bar { height: 6px; background: var(--apex-light-gray); border-radius: 3px; margin: 8px 0; }
+.score-fill { height: 100%; border-radius: 3px; transition: width .5s; }
+.sub-list { list-style: none; font-size: 12px; color: var(--apex-charcoal); }
+.sub-list li { padding: 3px 0; display: flex; justify-content: space-between; }
+.roi-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.roi-table th { background: var(--apex-navy); color: #fff; padding: 10px 12px; text-align: left; font-weight: 600; }
+.roi-table td { padding: 10px 12px; border-bottom: 1px solid var(--apex-light-gray); }
+.roi-table tr:nth-child(even) { background: #fafafa; }
+.priority-high { color: #c0392b; font-weight: 700; }
+.priority-mid { color: #e67e22; font-weight: 600; }
+.priority-low { color: var(--apex-deep-teal); font-weight: 500; }
+.gap-bar-container { width: 100px; height: 8px; background: var(--apex-light-gray); border-radius: 4px; display: inline-block; vertical-align: middle; margin-left: 6px; }
+.gap-bar-fill { height: 100%; border-radius: 4px; }
+.budget-input { border: 1px solid var(--apex-mid-gray); border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 120px; }
+.payback-input { border: 1px solid var(--apex-mid-gray); border-radius: 4px; padding: 4px 8px; font-size: 12px; width: 80px; }
+.config-group { margin-bottom: 20px; }
+.config-group label { display: block; font-size: 12px; color: var(--apex-charcoal); margin-bottom: 4px; font-weight: 600; }
+.config-input { border: 1px solid var(--apex-mid-gray); border-radius: 6px; padding: 8px 12px; font-size: 13px; width: 260px; }
+.config-score { border: 1px solid var(--apex-mid-gray); border-radius: 6px; padding: 6px 10px; font-size: 13px; width: 70px; text-align: center; }
+.config-target { border: 1px solid var(--apex-sky); border-radius: 6px; padding: 6px 10px; font-size: 13px; width: 70px; text-align: center; background: rgba(0,177,235,.05); }
+.journey-step { display: flex; gap: 16px; margin-bottom: 20px; align-items: flex-start; }
+.step-num { width: 36px; height: 36px; background: var(--apex-navy); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+.step-content h4 { color: var(--apex-navy); font-size: 14px; margin-bottom: 4px; }
+.step-content p { color: var(--apex-charcoal); font-size: 12px; line-height: 1.5; }
+.chart-container { max-width: 100%; margin: 0 auto; }
+.footer { background: var(--apex-dark-teal); color: rgba(255,255,255,.8); padding: 16px 28px; font-size: 11px; display: flex; justify-content: space-between; }
+@media (max-width: 600px) {
+  .dim-grid { grid-template-columns: 1fr; }
+  .meta-bar { flex-direction: column; gap: 8px; }
+}
+</style>
+</head>
+<body>
+<nav class="nav" id="nav"></nav>
+<div class="hero">
+  <h1>AI Value Capture Infrastructure ROI</h1>
+  <p>Infrastructure Maturity &amp; Investment Prioritization for AI Readiness</p>
+  <div class="meta-bar">
+    <div class="meta-item">Client: <strong id="metaClient">Example Corp</strong></div>
+    <div class="meta-item">Date: <strong id="metaDate">2026-04-29</strong></div>
+    <div class="meta-item">n = <strong id="metaN">8</strong></div>
+    <div class="meta-item">Avg. Score: <strong id="metaAvg">—</strong></div>
+    <div class="meta-item">Investment Gap: <strong id="metaGap">—</strong></div>
+  </div>
+</div>
+<div class="content" id="tab-overview"></div>
+<div class="content" id="tab-dimensions"></div>
+<div class="content" id="tab-roi"></div>
+<div class="content" id="tab-action"></div>
+<div class="content" id="tab-journey"></div>
+<div class="content" id="tab-config"></div>
+<div class="footer">
+  <span>Project Apex — AI Value Capture Infrastructure ROI</span>
+  <span>6 Dimensions · 18 Sub-Dimensions · 42 Items · Hybrid ROI</span>
+</div>
+<script>
+const TABS=[{id:'overview',label:'Overview'},{id:'dimensions',label:'6 Dimensions'},{id:'roi',label:'ROI Analysis'},{id:'action',label:'Action Plan'},{id:'journey',label:'Infrastructure Journey'},{id:'config',label:'Configuration'}];
+const DIMS=[
+{code:'D1',name:'Cloud & Compute Infrastructure',color:'#1D4477',subs:['Cloud Readiness & Migration','Scalability & Elasticity','Compute Capacity & Performance'],desc:'Assesses the maturity of cloud infrastructure, scaling capability and compute capacity for AI workloads.',findings:{low:'Significant investment needed in cloud migration and compute capacities. Legacy systems are blocking AI initiatives.',mid:'Basic cloud presence established, but scaling and GPU availability need to be expanded.',high:'Strong cloud foundation with elastic scaling. Focus on optimization and cost management.'},measures:['Define and prioritize cloud migration strategy','Evaluate GPU/TPU capacities (on-demand vs. reserved)','Implement auto-scaling policies','Introduce container orchestration (Kubernetes)']},
+{code:'D2',name:'Data Infrastructure & Architecture',color:'#00B1EB',subs:['Data Quality & Consistency','Data Availability & Pipelines','Storage & Data Governance'],desc:'Measures the quality of the data landscape — from data silos and pipelines to governance structures.',findings:{low:'Data in silos, no automated pipelines, missing governance. The foundational prerequisite for AI is absent.',mid:'First data pipelines in place, but quality issues and lack of a central platform limit AI usage.',high:'Solid data platform with good governance. Optimization needed for real-time pipelines and unstructured data.'},measures:['Build a central data platform / data lake','Implement automated data quality checks','Establish a data governance framework','Standardize ETL/ELT pipelines']},
+{code:'D3',name:'Integration & API Landscape',color:'#3ED8C3',subs:['Interface Coverage','Middleware & Orchestration','Interoperability & Standards'],desc:'Assesses the interconnectivity of the system landscape and the ability to rapidly onboard new AI services.',findings:{low:'Fragmented system landscape with manual interfaces. AI integration is barely possible without foundational investment.',mid:'Initial API structures in place, but middleware is missing and integration of new services takes too long.',high:'Well-connected systems with API management. New AI services can be integrated quickly.'},measures:['Introduce an API management platform','Evaluate integration middleware (iPaaS)','Adopt an API-first strategy for new systems','Enforce standardized data formats (JSON/REST)']},
+{code:'D4',name:'Security, Compliance & Governance',color:'#00A19F',subs:['Data Protection & Encryption','Access Management & Identity','Audit Readiness & Regulations'],desc:'Examines the security infrastructure and regulatory readiness for AI deployment.',findings:{low:'Fundamental security gaps and missing AI governance. Compliance risk for AI projects.',mid:'Basic security in place, but AI-specific governance (EU AI Act, GDPR for AI) is still missing.',high:'Strong security foundation with AI governance. Focus on fine-tuning and automated compliance.'},measures:['Create an AI governance framework','Standardize data protection impact assessments for AI','Modernize identity & access management','Create an EU AI Act compliance roadmap']},
+{code:'D5',name:'AI/ML Platform & Tooling',color:'#005E65',subs:['ML Ops & Model Management','AI Frameworks & Development Environment','Data Labeling & Feature Stores'],desc:'Assesses the availability of dedicated AI/ML infrastructure and tooling for productive AI operations.',findings:{low:'No dedicated AI platform. Teams work ad hoc. The largest investment field for AI enablement.',mid:'First AI tools in use, but no end-to-end ML ops process. Scaling is difficult.',high:'ML ops pipeline established with model versioning. Optimization needed for feature stores and monitoring.'},measures:['Evaluate and introduce an ML ops platform','Provide a central AI development environment','Implement model registry and versioning','Build a feature store for reusable ML features']},
+{code:'D6',name:'IT Organization & Competence',color:'#ADAFB1',subs:['IT Skills & Training','Change Capability & Agility','Support Structures & ITSM'],desc:'Measures the organizational maturity of the IT department for AI transformation — skills, agility and support.',findings:{low:'Missing AI competencies and rigid structures. Organizational transformation is needed before technical transformation.',mid:'Individual AI-affine staff present, but no systematic upskilling. Change readiness has room to grow.',high:'Agile IT organization with AI competence. Focus on knowledge transfer and cross-functional teams.'},measures:['Launch AI/ML training program for the IT team','Establish a cross-functional AI squad','AI change management process for AI initiatives','Strengthen knowledge management and documentation culture']}
+];
+let state={client:'Example Corp',date:'2026-04-29',n:8,scores:[2.8,2.3,2.5,3.1,1.9,2.6],targets:[4.0,4.0,3.5,4.0,3.5,3.5],budgets:['80,000–150,000','100,000–200,000','50,000–100,000','30,000–60,000','120,000–250,000','40,000–80,000'],paybacks:[12,18,9,6,24,12],subScores:[[2.9,2.5,3.0],[2.1,2.4,2.4],[2.7,2.2,2.6],[3.3,2.9,3.1],[1.7,2.0,2.0],[2.8,2.3,2.7]]};
+let radarChart=null;
+function buildNav(){const nav=document.getElementById('nav');nav.innerHTML=TABS.map(t=>`<div class="nav-tab" data-tab="${t.id}">${t.label}</div>`).join('');nav.querySelectorAll('.nav-tab').forEach(tab=>tab.addEventListener('click',()=>switchTab(tab.dataset.tab)));}
+function switchTab(id){document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===id));document.querySelectorAll('.content').forEach(c=>c.classList.toggle('active',c.id==='tab-'+id));if(id==='overview'&&radarChart)radarChart.update();}
+function avg(arr){return arr.reduce((a,b)=>a+b,0)/arr.length;}
+function gap(i){return Math.max(0,state.targets[i]-state.scores[i]);}
+function totalGap(){return avg(DIMS.map((_,i)=>gap(i)));}
+function priority(g){return g>=2?'High':g>=1?'Medium':'Low';}
+function priClass(g){return g>=2?'priority-high':g>=1?'priority-mid':'priority-low';}
+function gapColor(g){return g>=2?'#c0392b':g>=1?'#e67e22':'#00A19F';}
+function scoreColor(s){return s<2?'#c0392b':s<3?'#e67e22':s<4?'#00B1EB':'#00A19F';}
+function finding(dim,score){return score<2.5?dim.findings.low:score<3.5?dim.findings.mid:dim.findings.high;}
+function updateMeta(){document.getElementById('metaClient').textContent=state.client;document.getElementById('metaDate').textContent=state.date;document.getElementById('metaN').textContent=state.n;document.getElementById('metaAvg').textContent=avg(state.scores).toFixed(2);document.getElementById('metaGap').textContent=totalGap().toFixed(2);}
+function renderOverview(){const el=document.getElementById('tab-overview');const avgScore=avg(state.scores);const tGap=totalGap();const weakest=DIMS.reduce((a,d,i)=>state.scores[i]<state.scores[a]?i:a,0);const strongest=DIMS.reduce((a,d,i)=>state.scores[i]>state.scores[a]?i:a,0);const highPri=DIMS.filter((_,i)=>gap(i)>=2).length;
+el.innerHTML=`<div class="card"><h3>Executive Summary</h3><p>The infrastructure analysis for <strong>${state.client}</strong> shows an average maturity score of <strong>${avgScore.toFixed(1)}/5.0</strong> with an investment gap of <strong>${tGap.toFixed(1)} points</strong> to the target state. ${highPri>0?`<strong>${highPri} of 6 dimensions</strong> have high investment priority.`:'No dimension has a critically high priority.'} The strongest dimension is <strong>${DIMS[strongest].name}</strong> (${state.scores[strongest].toFixed(1)}), the highest need for action lies with <strong>${DIMS[weakest].name}</strong> (${state.scores[weakest].toFixed(1)}).</p></div>
+<div class="card" style="margin-bottom:16px;"><div class="chart-container"><canvas id="radarCanvas"></canvas></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;"><div class="card" style="grid-column:1/-1;"><h3>Maturity Profile</h3>${DIMS.map((d,i)=>`<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--apex-charcoal);"><span>${d.code}: ${d.name}</span><span style="font-weight:700;color:${scoreColor(state.scores[i])}">${state.scores[i].toFixed(1)}</span></div><div class="score-bar"><div class="score-fill" style="width:${state.scores[i]/5*100}%;background:${d.color}"></div></div><div style="display:flex;justify-content:space-between;font-size:10px;color:var(--apex-mid-gray);"><span>Gap: ${gap(i).toFixed(1)}</span><span class="${priClass(gap(i))}">${priority(gap(i))}</span></div></div>`).join('')}</div></div>
+<div class="card"><h3>Top 3 Investment Priorities</h3>${DIMS.map((d,i)=>({d,i,g:gap(i)})).sort((a,b)=>b.g-a.g).slice(0,3).map((x,rank)=>`<div style="display:flex;gap:12px;align-items:center;padding:8px 0;${rank<2?'border-bottom:1px solid var(--apex-light-gray);':''}"><div style="width:28px;height:28px;background:${gapColor(x.g)};color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;">${rank+1}</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--apex-navy);">${x.d.name}</div><div style="font-size:11px;color:var(--apex-charcoal);">Gap: ${x.g.toFixed(1)} | Budget: ${state.budgets[x.i]} € | Payback: ~${state.paybacks[x.i]} months</div></div><div class="${priClass(x.g)}" style="font-size:12px;">${priority(x.g)}</div></div>`).join('')}</div>`;buildRadar();}
+function buildRadar(){const ctx=document.getElementById('radarCanvas');if(!ctx)return;if(radarChart)radarChart.destroy();radarChart=new Chart(ctx,{type:'radar',data:{labels:DIMS.map(d=>d.code+': '+d.name),datasets:[{label:'Current Score',data:state.scores,borderColor:'#1D4477',backgroundColor:'rgba(29,68,119,.15)',pointBackgroundColor:'#1D4477',borderWidth:2},{label:'Target Score',data:state.targets,borderColor:'#00B1EB',backgroundColor:'rgba(0,177,235,.08)',pointBackgroundColor:'#00B1EB',borderWidth:2,borderDash:[5,5]}]},options:{responsive:true,maintainAspectRatio:true,scales:{r:{min:0,max:5,ticks:{stepSize:1,font:{size:13}},pointLabels:{font:{size:14,weight:'600'}}}},plugins:{legend:{position:'bottom',labels:{font:{size:13},padding:20}}}}});}
+function renderDimensions(){const el=document.getElementById('tab-dimensions');el.innerHTML=`<div class="dim-grid">${DIMS.map((d,i)=>`<div class="card dim-card" style="border-left-color:${d.color}"><div class="dim-header"><div><div style="font-size:11px;color:var(--apex-mid-gray);">${d.code}</div><h3 style="margin:0">${d.name}</h3></div><div style="text-align:right"><div class="dim-score" style="color:${scoreColor(state.scores[i])}">${state.scores[i].toFixed(1)}</div><div class="dim-label">Target: ${state.targets[i].toFixed(1)}</div></div></div><div class="score-bar"><div class="score-fill" style="width:${state.scores[i]/5*100}%;background:${d.color}"></div></div><p style="margin:8px 0;font-size:12px;">${d.desc}</p><ul class="sub-list">${d.subs.map((s,si)=>`<li><span>${s}</span><span style="font-weight:600;color:${scoreColor(state.subScores[i][si])}">${state.subScores[i][si].toFixed(1)}</span></li>`).join('')}</ul><div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--apex-light-gray);font-size:12px;"><strong style="color:var(--apex-navy);">Finding:</strong> <span style="color:var(--apex-charcoal);">${finding(d,state.scores[i])}</span></div></div>`).join('')}</div>`;}
+function renderROI(){const el=document.getElementById('tab-roi');const avgPayback=avg(state.paybacks.filter(p=>p>0));el.innerHTML=`<div class="card"><h3>ROI Overview</h3><p style="margin-bottom:12px;">Gap analysis based on current maturity score (survey) vs. target maturity score. Budget ranges and payback periods are configurable.</p><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;"><div style="background:var(--apex-navy);color:#fff;padding:14px;border-radius:8px;text-align:center;"><div style="font-size:24px;font-weight:700;">${totalGap().toFixed(1)}</div><div style="font-size:11px;opacity:.8;">Avg. Investment Gap</div></div><div style="background:var(--apex-sky);color:#fff;padding:14px;border-radius:8px;text-align:center;"><div style="font-size:24px;font-weight:700;">${DIMS.filter((_,i)=>gap(i)>=2).length}/6</div><div style="font-size:11px;opacity:.8;">High Priority</div></div><div style="background:var(--apex-deep-teal);color:#fff;padding:14px;border-radius:8px;text-align:center;"><div style="font-size:24px;font-weight:700;">~${Math.round(avgPayback)} mo.</div><div style="font-size:11px;opacity:.8;">Avg. Payback</div></div></div><table class="roi-table"><thead><tr><th>Dimension</th><th>Current</th><th>Target</th><th>Gap</th><th>Priority</th><th>Budget Range (€)</th><th>Payback</th></tr></thead><tbody>${DIMS.map((d,i)=>`<tr><td style="font-weight:600;color:var(--apex-navy);">${d.code}: ${d.name}</td><td style="font-weight:700;color:${scoreColor(state.scores[i])}">${state.scores[i].toFixed(1)}</td><td>${state.targets[i].toFixed(1)}</td><td>${gap(i).toFixed(1)}<div class="gap-bar-container"><div class="gap-bar-fill" style="width:${Math.min(gap(i)/3*100,100)}%;background:${gapColor(gap(i))}"></div></div></td><td class="${priClass(gap(i))}">${priority(gap(i))}</td><td>${state.budgets[i]}</td><td>~${state.paybacks[i]} mo.</td></tr>`).join('')}</tbody></table></div><div class="card"><h3>Investment Prioritization</h3><canvas id="roiBarCanvas" height="200"></canvas></div>`;buildROIChart();}
+function buildROIChart(){const ctx=document.getElementById('roiBarCanvas');if(!ctx)return;const sorted=DIMS.map((d,i)=>({d,i,g:gap(i)})).sort((a,b)=>b.g-a.g);new Chart(ctx,{type:'bar',data:{labels:sorted.map(x=>x.d.code),datasets:[{label:'Current Score',data:sorted.map(x=>state.scores[x.i]),backgroundColor:'#1D4477'},{label:'Gap to Target',data:sorted.map(x=>x.g),backgroundColor:sorted.map(x=>gapColor(x.g))}]},options:{responsive:true,scales:{x:{stacked:true},y:{stacked:true,max:5,ticks:{stepSize:1}}},plugins:{legend:{position:'bottom'}}}});}
+function renderAction(){const el=document.getElementById('tab-action');const sorted=DIMS.map((d,i)=>({d,i,g:gap(i)})).sort((a,b)=>b.g-a.g);el.innerHTML=`<div class="card"><h3>Recommendations by Priority</h3><p style="margin-bottom:16px;">Measures ordered by investment gap — highest priority first.</p></div>${sorted.map((x,rank)=>`<div class="card" style="border-left:4px solid ${gapColor(x.g)}"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><h3 style="margin:0">${x.d.code}: ${x.d.name}</h3><span class="${priClass(x.g)}" style="font-size:12px;">Priority: ${priority(x.g)} (Gap: ${x.g.toFixed(1)})</span></div><p style="margin-bottom:10px;font-size:12px;color:var(--apex-charcoal);">${finding(x.d,state.scores[x.i])}</p><div style="font-size:12px;color:var(--apex-charcoal);"><strong>Recommended Measures:</strong><ul style="margin-top:4px;padding-left:16px;">${x.d.measures.map(m=>`<li style="padding:2px 0;">${m}</li>`).join('')}</ul></div><div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--apex-light-gray);font-size:11px;color:var(--apex-mid-gray);">Budget: ${state.budgets[x.i]} € | Payback: ~${state.paybacks[x.i]} months</div></div>`).join('')}`;}
+function renderJourney(){const el=document.getElementById('tab-journey');const steps=[{title:'Assessment & Baseline',desc:'Conduct infrastructure diagnostic: 42 items, 6 dimensions. Quantify the current state per dimension and compare against the target maturity level.'},{title:'Gap Analysis & Prioritization',desc:'Identify investment gaps and prioritize by urgency. Supplement qualitative assessment with quantitative budget ranges and payback estimates.'},{title:'Realize Quick Wins',desc:'Address dimensions with low budget requirements and high impact first. Typical examples: API standardization, governance frameworks, baseline security.'},{title:'Plan Strategic Investments',desc:'Create a medium-term infrastructure roadmap: cloud migration, data platform, ML ops. Business cases with ROI calculations for decision-makers.'},{title:'Build AI Platform',desc:'Provide dedicated AI/ML infrastructure: ML ops pipeline, feature stores, development environments. A prerequisite for scalable AI deployment.'},{title:'Continuous Improvement',desc:'Re-assessment after 6–12 months. Measure maturity progress, validate ROI and plan the next investment wave.'}];
+el.innerHTML=`<div class="card"><h3>Infrastructure Transformation Journey</h3><p style="margin-bottom:20px;">The path from current state to AI-ready infrastructure level — in 6 steps.</p>${steps.map((s,i)=>`<div class="journey-step"><div class="step-num">${i+1}</div><div class="step-content"><h4>${s.title}</h4><p>${s.desc}</p></div></div>`).join('')}</div><div class="card"><h3>Maturity Target Matrix</h3><table class="roi-table"><thead><tr><th>Dimension</th><th>Today</th><th>6 months</th><th>12 months</th><th>Target</th></tr></thead><tbody>${DIMS.map((d,i)=>{const s=state.scores[i],t=state.targets[i];const m6=Math.min(s+(t-s)*0.4,5);const m12=Math.min(s+(t-s)*0.75,5);return`<tr><td style="font-weight:600;color:var(--apex-navy);">${d.code}: ${d.name}</td><td style="color:${scoreColor(s)};font-weight:700;">${s.toFixed(1)}</td><td style="color:${scoreColor(m6)}">${m6.toFixed(1)}</td><td style="color:${scoreColor(m12)}">${m12.toFixed(1)}</td><td style="color:var(--apex-sky);font-weight:700;">${t.toFixed(1)}</td></tr>`;}).join('')}</tbody></table></div>`;}
+function renderConfig(){const el=document.getElementById('tab-config');el.innerHTML=`<div class="card"><h3>Client &amp; General</h3><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;"><div class="config-group"><label>Client</label><input class="config-input" id="cfgClient" value="${state.client}"></div><div class="config-group"><label>Date</label><input class="config-input" id="cfgDate" type="date" value="${state.date}"></div><div class="config-group"><label>Participants (n)</label><input class="config-input" id="cfgN" type="number" value="${state.n}" min="1"></div></div></div><div class="card"><h3>Dimension Scores &amp; ROI Parameters</h3><table class="roi-table"><thead><tr><th>Dimension</th><th>Current Score</th><th>Target Score</th><th>Budget Range (€)</th><th>Payback (mo.)</th></tr></thead><tbody>${DIMS.map((d,i)=>`<tr><td style="font-weight:600;color:var(--apex-navy);">${d.code}: ${d.name}</td><td><input class="config-score" id="cfgScore${i}" type="number" value="${state.scores[i]}" min="1" max="5" step="0.1"></td><td><input class="config-target" id="cfgTarget${i}" type="number" value="${state.targets[i]}" min="1" max="5" step="0.1"></td><td><input class="budget-input" id="cfgBudget${i}" value="${state.budgets[i]}"></td><td><input class="payback-input" id="cfgPayback${i}" type="number" value="${state.paybacks[i]}" min="1"></td></tr>`).join('')}</tbody></table></div><div class="card"><h3>Sub-Dimension Scores</h3><table class="roi-table"><thead><tr><th>Dimension</th><th>Sub 1</th><th>Sub 2</th><th>Sub 3</th></tr></thead><tbody>${DIMS.map((d,i)=>`<tr><td style="font-weight:600;color:var(--apex-navy);">${d.code}</td>${d.subs.map((s,si)=>`<td><span style="font-size:10px;color:var(--apex-mid-gray);">${s.substring(0,25)}</span><br><input class="config-score" id="cfgSub${i}_${si}" type="number" value="${state.subScores[i][si]}" min="1" max="5" step="0.1"></td>`).join('')}</tr>`).join('')}</tbody></table></div><div style="margin-top:16px;"><button onclick="applyConfig()" style="background:var(--apex-navy);color:#fff;border:none;padding:10px 28px;border-radius:6px;cursor:pointer;font-weight:600;">Update</button></div>`;}
+function applyConfig(){state.client=document.getElementById('cfgClient').value;state.date=document.getElementById('cfgDate').value;state.n=parseInt(document.getElementById('cfgN').value)||1;DIMS.forEach((_,i)=>{state.scores[i]=parseFloat(document.getElementById('cfgScore'+i).value)||1;state.targets[i]=parseFloat(document.getElementById('cfgTarget'+i).value)||4;state.budgets[i]=document.getElementById('cfgBudget'+i).value;state.paybacks[i]=parseInt(document.getElementById('cfgPayback'+i).value)||12;for(let si=0;si<3;si++){state.subScores[i][si]=parseFloat(document.getElementById(`cfgSub${i}_${si}`).value)||1;}});updateMeta();renderOverview();renderDimensions();renderROI();renderAction();renderJourney();switchTab('overview');}
+buildNav();updateMeta();renderOverview();renderDimensions();renderROI();renderAction();renderJourney();renderConfig();switchTab('overview');
+</script>
+</body>
+</html>
