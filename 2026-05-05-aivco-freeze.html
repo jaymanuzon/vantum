@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Value Capture — Operations Potential</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root { color-scheme: light; --n:#1D4477; --sk:#00B1EB; --tl:#3ED8C3; --dt:#00A19F; --dk:#005E65; --ch:#52555C; --w:#FFFFFF; --lg:#E8E8E4; --mg:#ADAFB1; }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--w);color:#000;line-height:1.5;}
+  .hdr{background:var(--n);color:var(--w);padding:28px 24px 22px;}
+  .hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;}
+  .hdr h1{font-size:22px;font-weight:700;letter-spacing:-0.3px;}
+  .hdr .sub{font-size:13px;opacity:.75;margin-top:4px;}
+  .hdr .badge{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+  .hdr-meta{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+  .chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:11px;}
+  .tabs{display:flex;background:var(--lg);border-bottom:2px solid var(--mg);overflow-x:auto;}
+  .tab{padding:11px 18px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:none;color:var(--ch);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:.15s;}
+  .tab:hover{color:var(--n);} .tab.active{color:var(--n);border-bottom-color:var(--sk);background:var(--w);}
+  .cnt{padding:20px;} .pnl{display:none;} .pnl.active{display:block;}
+  .alert{border-left:4px solid;padding:14px 16px;border-radius:0 8px 8px 0;margin-bottom:20px;font-size:13px;}
+  .al-g{background:#E8F5E9;border-color:#2E7D32;color:#1B5E20;} .al-a{background:#FFF8E1;border-color:#F9A825;color:#4E342E;} .al-r{background:#FFF3E0;border-color:#E65100;color:#4E342E;}
+  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px;}
+  .kpi{background:var(--lg);border-radius:10px;padding:14px;text-align:center;}
+  .kpi .sc{font-size:28px;font-weight:800;} .kpi .lb{font-size:11px;color:var(--ch);margin-top:2px;font-weight:600;}
+  .sc-r{color:#C62828;} .sc-a{color:#E65100;} .sc-g{color:#2E7D32;} .sc-b{color:#1565C0;}
+  .rw{max-width:400px;margin:0 auto 20px;border:1px solid var(--lg);border-radius:12px;padding:16px;}
+  .cc{border:1px solid var(--lg);border-radius:12px;margin-bottom:16px;overflow:hidden;}
+  .cch{padding:14px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--lg);transition:.15s;}
+  .cch:hover{background:#DCDCD8;} .cct{font-size:14px;font-weight:700;color:var(--n);}
+  .csb{font-size:13px;font-weight:700;padding:3px 10px;border-radius:20px;color:var(--w);}
+  .bg-r{background:#C62828;} .bg-a{background:#E65100;} .bg-g{background:#2E7D32;} .bg-b{background:#1565C0;}
+  .ccb{padding:16px;display:none;} .ccb.open{display:block;}
+  .ssc{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+  .ss{background:var(--lg);border-radius:6px;padding:6px 10px;font-size:12px;} .ss strong{color:var(--n);}
+  .cst{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--dt);margin:12px 0 6px;}
+  .cf{font-size:13px;color:var(--ch);margin-bottom:6px;padding-left:12px;border-left:3px solid var(--mg);}
+  .cm{font-size:13px;color:#000;margin-bottom:6px;padding-left:12px;border-left:3px solid var(--tl);}
+  .al{margin-bottom:20px;} .lt{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:8px 14px;border-radius:8px 8px 0 0;color:var(--w);}
+  .al.imm .lt{background:#C62828;} .al.sht .lt{background:#E65100;} .al.ong .lt{background:var(--dt);}
+  .ais{border:1px solid var(--lg);border-top:none;border-radius:0 0 8px 8px;}
+  .ai{padding:10px 14px;font-size:13px;border-bottom:1px solid var(--lg);display:flex;gap:10px;align-items:flex-start;}
+  .ai:last-child{border-bottom:none;}
+  .aid{font-size:11px;font-weight:700;background:var(--lg);border-radius:4px;padding:2px 6px;white-space:nowrap;color:var(--n);}
+  .jt{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-top:12px;}
+  .js{background:var(--lg);border-radius:10px;padding:14px;border-top:4px solid var(--n);}
+  .js .st{font-size:13px;font-weight:700;color:var(--n);margin-bottom:6px;}
+  .js .sw{font-size:11px;color:var(--ch);margin-bottom:8px;}
+  .js ul{font-size:12px;padding-left:16px;color:var(--ch);} .js li{margin-bottom:3px;}
+  .fn{margin-top:24px;padding:12px 16px;background:var(--lg);border-radius:8px;font-size:11px;color:var(--ch);text-align:center;}
+  .chv{transition:transform .2s;font-size:14px;color:var(--ch);} .chv.open{transform:rotate(90deg);}
+  .ir{display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap;}
+  .ir label{font-size:13px;font-weight:600;color:var(--n);min-width:100px;}
+  .ir input,.ir select{border:1px solid var(--mg);border-radius:6px;padding:6px 10px;font-size:13px;}
+  .htbl{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;}
+  .htbl th{background:var(--n);color:var(--w);padding:8px;font-size:11px;text-align:center;}
+  .htbl th:first-child{text-align:left;}
+  .htbl td{padding:6px 8px;border-bottom:1px solid var(--lg);text-align:center;font-weight:500;}
+  .htbl td:first-child{text-align:left;font-weight:600;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div><h1>AI Value Capture — Operations Potential</h1><div class="sub" id="hSub">Diagnostic Results &amp; Way Forward</div></div>
+    <div class="badge">Confidential</div>
+  </div>
+  <div class="hdr-meta">
+    <div class="chip" id="cCli">Client: [Company]</div>
+    <div class="chip" id="cDat">Date: April 2026</div>
+    <div class="chip" id="cN">n = 18</div>
+    <div class="chip">Framework: AIVCO 6 Dimensions</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="st('ov')">Overview</button>
+  <button class="tab" onclick="st('dim')">6 Dimensions</button>
+  <button class="tab" onclick="st('dept')">Department Comparison</button>
+  <button class="tab" onclick="st('act')">Action Plan</button>
+  <button class="tab" onclick="st('jrn')">Operations Journey</button>
+  <button class="tab" onclick="st('cfg')">Configuration</button>
+</div>
+
+<div class="cnt">
+
+<div id="ov" class="pnl active">
+  <div id="alrt" class="alert al-a"><strong>Operations AI Potential: Significant.</strong> Several departments show high automation potential, particularly in structured, rule-based functions. Augmentation opportunities identified in people-facing roles.</div>
+  <div class="kpi-row" id="kpis"></div>
+  <div class="rw"><canvas id="radar"></canvas></div>
+  <div id="heatDiv"></div>
+  <div class="fn"><strong>Data basis:</strong> <span id="db">18 respondents across 6 departments. Framework: AIVCO — 6 Dimensions, 18 Sub-Dimensions, 54 Items.</span></div>
+</div>
+
+<div id="dim" class="pnl"><div id="dimCards"></div></div>
+
+<div id="dept" class="pnl">
+  <p style="font-size:13px;color:var(--ch);margin-bottom:16px;">Department-by-department analysis with automation potential score (D1-D4 average) and augmentation profile (D6).</p>
+  <div id="deptDetail"></div>
+  <div style="margin-top:20px;position:relative;height:280px;"><canvas id="barC" role="img" aria-label="Department ranking by automation potential">Ranking</canvas></div>
+</div>
+
+<div id="act" class="pnl">
+  <p style="font-size:13px;color:var(--ch);margin-bottom:16px;">Prioritized improvement measures derived from dimension analysis — organized by urgency.</p>
+  <div id="actLanes"></div>
+</div>
+
+<div id="jrn" class="pnl">
+  <p style="font-size:13px;color:var(--ch);margin-bottom:16px;">A structured Operations Value Capture Journey transforms diagnostic findings into measurable efficiency gains.</p>
+  <div class="jt">
+    <div class="js" style="border-top-color:var(--n);"><div class="st">1. Diagnostic</div><div class="sw">Week 0</div><ul><li>AIVCO survey across departments</li><li>6 dimension scores per person</li><li>Department profiles mapped</li><li>Automation vs. augmentation classified</li></ul></div>
+    <div class="js" style="border-top-color:var(--sk);"><div class="st">2. Opportunity mapping</div><div class="sw">Week 1-2</div><ul><li>Top-10 automation candidates</li><li>Quick-win identification</li><li>Process-AI matching workshop</li><li>Department priority ranking</li></ul></div>
+    <div class="js" style="border-top-color:var(--tl);"><div class="st">3. Pilot sprints</div><div class="sw">Week 3-6</div><ul><li>3 AI workflow pilots launched</li><li>Tool selection and setup</li><li>Change accompaniment active</li><li>First efficiency metrics captured</li></ul></div>
+    <div class="js" style="border-top-color:var(--dt);"><div class="st">4. Scale & standardize</div><div class="sw">Week 7-10</div><ul><li>Successful pilots scaled across teams</li><li>Standard operating procedures updated</li><li>AI governance applied</li><li>Cross-department knowledge transfer</li></ul></div>
+    <div class="js" style="border-top-color:var(--dk);"><div class="st">5. Measure & iterate</div><div class="sw">Week 11-12</div><ul><li>Re-assessment with AIVCO</li><li>Time savings quantified</li><li>ROI calculated per department</li><li>Next wave priorities defined</li></ul></div>
+  </div>
+</div>
+
+<div id="cfg" class="pnl">
+  <div style="font-size:16px;font-weight:700;color:var(--n);margin-bottom:16px;">Configure Diagnostic</div>
+  <div class="ir"><label>Company:</label><input id="cfC" placeholder="e.g. Acme Corp" oninput="uCfg()"></div>
+  <div class="ir"><label>Date:</label><input id="cfD" placeholder="e.g. April 2026" oninput="uCfg()"></div>
+  <div class="ir"><label>Respondents (n):</label><input type="number" id="cfN" value="18" min="1" oninput="uCfg()"></div>
+  <div style="margin-top:20px;font-size:16px;font-weight:700;color:var(--n);margin-bottom:12px;">Enter Department Scores</div>
+  <div id="deptInputs"></div>
+  <div style="margin-top:16px;">
+    <button onclick="applyS()" style="background:var(--n);color:white;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;">Apply Scores</button>
+    <button onclick="loadEx()" style="background:var(--lg);color:var(--n);border:1px solid var(--mg);border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;margin-left:8px;">Example Data</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const DIMS=[
+  {k:'D1',n:'Task Profile & Repetitiveness',cat:'Potential Indicator',
+   subs:['Repetitiveness','Rule-Based Nature','Volume & Frequency'],
+   findings:['High proportion of repetitive, rule-based tasks identified in structured departments.','Manual data entry and reconciliation consume significant operational hours.','Task volumes are quantifiable and follow predictable patterns.'],
+   measures:['Map top-20 repetitive tasks per department — classify by AI suitability.','Implement RPA or AI-assisted data entry for highest-volume transactions.','Create task automation scoring matrix for prioritization.']},
+  {k:'D2',n:'Data & Information Quality',cat:'Potential Indicator',
+   subs:['Data Structure','Accessibility','Digitization Level'],
+   findings:['Data quality varies significantly across departments — structured functions score highest.','Information silos create friction — multiple systems, no single source of truth.','Paper-based processes still present in some operational areas.'],
+   measures:['Conduct data quality audit per department — identify gaps blocking AI.','Establish cross-department data accessibility standards.','Digitize remaining paper-based workflows as AI prerequisite.']},
+  {k:'D3',n:'Process Standardization',cat:'Potential Indicator',
+   subs:['Documentation','Consistency','Handover Clarity'],
+   findings:['Core processes documented but not consistently followed across teams.','Handover points between departments are the most common source of delays.','Tribal knowledge dominates — process documentation is outdated or missing.'],
+   measures:['Update process documentation for AI-candidate workflows.','Define clear input/output/quality criteria for inter-department handovers.','Establish process review cadence — quarterly minimum.']},
+  {k:'D4',n:'Decision Complexity',cat:'Potential Indicator',
+   subs:['Routine Decisions','Judgment Requirements','Exception Handling'],
+   findings:['Accounting and Manufacturing show highest proportion of routine decisions.','Exception handling is the main barrier to full automation in most areas.','Strategic judgment requirements concentrate in Finance and HR.'],
+   measures:['Classify decisions by type: routine (automate), guided (augment), strategic (human).','Build exception handling rules for AI systems in high-routine areas.','Design AI-assisted decision support for judgment-heavy roles.']},
+  {k:'D5',n:'Digital Maturity & Tool Readiness',cat:'Readiness Factor',
+   subs:['Current Tool Usage','Comfort with Technology','Openness to AI'],
+   findings:['Digital tool usage varies — Controlling leads, Manufacturing lags.','Overall openness to AI is moderate-to-high but confidence in practical application is low.','Existing automation tools are underutilized in most departments.'],
+   measures:['Launch department-specific AI tool demos — show practical value immediately.','Create AI champion network — one per department for peer learning.','Provide hands-on training before any AI deployment.']},
+  {k:'D6',n:'Human Interaction Intensity',cat:'Augmentation Profile',
+   subs:['Interpersonal Contact','Empathy & Creativity','Negotiation & Persuasion'],
+   findings:['Sales and HR score highest — deep human interaction is core to their value.','Manufacturing and Accounting are least interaction-dependent.','Augmentation opportunity: AI handles data/routine, humans handle relationships.'],
+   measures:['For high-D6 departments: design AI as augmentation, not replacement.','Implement AI note-taking and follow-up automation for client-facing roles.','Develop department-specific AI value narratives aligned with role identity.']}
+];
+const COL=['#1D4477','#00B1EB','#3ED8C3','#00A19F','#005E65','#52555C'];
+
+let deptData={
+  'Accounting':[4.2,3.8,4.0,4.3,3.5,2.1],
+  'Controlling':[3.8,3.5,3.6,3.4,3.8,2.5],
+  'Finance':[3.5,3.2,3.3,3.0,3.6,3.0],
+  'HR / People':[2.8,2.5,2.9,2.4,3.2,4.2],
+  'Sales':[2.3,2.8,2.5,2.2,3.4,4.5],
+  'Manufacturing':[3.9,3.0,3.7,3.8,2.8,2.3]
+};
+
+function dimAvg(){return DIMS.map((_,i)=>{const ds=Object.values(deptData);return ds.length?ds.reduce((a,d)=>a+d[i],0)/ds.length:0;});}
+function potL(v,dk){if(['D1','D2','D3','D4'].includes(dk))return v>=4?'Very high':v>=3?'High':v>=2?'Moderate':'Low';if(dk==='D5')return v>=4?'Very ready':v>=3?'Ready':v>=2?'Moderate':'Low';return v>=4?'Strongly human':v>=3?'Mixed':v>=2?'Process-oriented':'Highly processual';}
+function bCls(v){return v>=4?'bg-g':v>=3?'bg-a':v>=2.5?'bg-a':'bg-r';}
+function sCls(v){return v>=4?'sc-g':v>=3?'sc-a':v>=2.5?'sc-a':'sc-r';}
+function hc(v,dk){if(['D1','D2','D3','D4','D5'].includes(dk))return v>=4?'#E1F5EE':v>=3?'#FAEEDA':v>=2?'#FCEBEB':'#F1EFE8';return v>=4?'#E6F1FB':v>=3?'#EEEDFE':v>=2?'#FAEEDA':'#E1F5EE';}
+function htc(v,dk){if(['D1','D2','D3','D4','D5'].includes(dk))return v>=4?'#04342C':v>=3?'#412402':v>=2?'#501313':'#2C2C2A';return v>=4?'#042C53':v>=3?'#26215C':v>=2?'#412402':'#04342C';}
+
+function st(id){document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById(id).classList.add('active');event.target.classList.add('active');}
+function tc(el){const b=el.nextElementSibling,c=el.querySelector('.chv');b.classList.toggle('open');c.classList.toggle('open');}
+
+let rc,bc;
+function render(){
+  const dS=dimAvg(),depts=Object.keys(deptData),tot=dS.reduce((a,b)=>a+b,0)/6;
+  const al=document.getElementById('alrt');
+  if(tot>=3.5){al.className='alert al-g';al.innerHTML='<strong>Operations AI Potential: Very High.</strong> Multiple departments show strong automation readiness. Prioritize structured functions for immediate AI deployment.';}
+  else if(tot>=2.5){al.className='alert al-a';al.innerHTML='<strong>Operations AI Potential: Significant.</strong> Several departments show high automation potential. Augmentation opportunities identified in people-facing roles.';}
+  else{al.className='alert al-r';al.innerHTML='<strong>Operations AI Potential: Limited.</strong> Foundational work needed on data quality, process standardization, and digital maturity before AI can deliver value.';}
+
+  let kh='';
+  DIMS.forEach((d,i)=>kh+=`<div class="kpi"><div class="sc ${sCls(dS[i])}">${dS[i].toFixed(2)}</div><div class="lb">${d.k} ${d.n}</div></div>`);
+  document.getElementById('kpis').innerHTML=kh;
+
+  if(rc)rc.destroy();
+  rc=new Chart(document.getElementById('radar'),{type:'radar',data:{labels:DIMS.map(d=>d.k+' '+d.n),datasets:[{label:'Score',data:dS,backgroundColor:'rgba(29,68,119,0.15)',borderColor:'#1D4477',borderWidth:2,pointBackgroundColor:COL,pointRadius:5}]},options:{responsive:true,scales:{r:{min:0,max:5,ticks:{stepSize:1,font:{size:10}},pointLabels:{font:{size:10}}}},plugins:{legend:{display:false}}}});
+
+  let ht='<table class="htbl"><thead><tr><th style="text-align:left;">Department</th>';
+  DIMS.forEach(d=>ht+=`<th>${d.k}</th>`);
+  ht+='<th style="background:var(--dk);">Auto-Pot.</th></tr></thead><tbody>';
+  depts.forEach(dept=>{const s=deptData[dept],ap=(s[0]+s[1]+s[2]+s[3])/4;
+    ht+=`<tr><td>${dept}</td>`;
+    s.forEach((v,i)=>ht+=`<td style="background:${hc(v,DIMS[i].k)};color:${htc(v,DIMS[i].k)};">${v.toFixed(1)}</td>`);
+    ht+=`<td style="background:${hc(ap,'D1')};color:${htc(ap,'D1')};font-weight:700;">${ap.toFixed(2)}</td></tr>`;
+  });
+  ht+='</tbody></table>';
+  document.getElementById('heatDiv').innerHTML=ht;
+
+  // Dimension cards
+  let dc='';
+  DIMS.forEach((d,i)=>{
+    let sh=d.subs.map(s=>`<span class="ss"><strong>${s}</strong></span>`).join('');
+    dc+=`<div class="cc"><div class="cch" onclick="tc(this)"><span class="cct">${d.k} — ${d.n} <span style="font-weight:400;font-size:12px;color:var(--ch);">(${d.cat})</span></span><div style="display:flex;align-items:center;gap:8px;"><span class="csb ${bCls(dS[i])}">${dS[i].toFixed(2)}</span><span class="chv">&#9654;</span></div></div><div class="ccb"><div class="ssc">${sh}</div><div class="cst">Findings</div>${d.findings.map(f=>`<div class="cf">${f}</div>`).join('')}<div class="cst">Improvement measures</div>${d.measures.map(m=>`<div class="cm">${m}</div>`).join('')}</div></div>`;
+  });
+  document.getElementById('dimCards').innerHTML=dc;
+
+  // Department detail
+  const ranked=depts.map(d=>{const s=deptData[d];return{d,ap:(s[0]+s[1]+s[2]+s[3])/4,aug:s[5],ready:s[4]};}).sort((a,b)=>b.ap-a.ap);
+  let dd='';
+  ranked.forEach((r,i)=>{
+    const s=deptData[r.d];
+    dd+=`<div style="border:1px solid var(--lg);border-radius:12px;padding:16px;margin-bottom:12px;border-left:4px solid ${COL[i%COL.length]};">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <div><span style="font-size:15px;font-weight:700;color:var(--n);">${r.d}</span><span style="font-size:12px;color:var(--ch);margin-left:8px;">${r.ap>=3.5?'High automation potential':r.ap>=2.5?'Moderate automation potential':'Low automation potential'} | ${r.aug>=3.5?'Strong augmentation focus':'Mixed profile'}</span></div>
+        <span style="font-size:18px;font-weight:800;color:var(--n);">${r.ap.toFixed(2)}</span>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">`;
+    DIMS.forEach((d,j)=>dd+=`<span style="font-size:11px;padding:3px 8px;border-radius:6px;background:${hc(s[j],d.k)};color:${htc(s[j],d.k)};">${d.k}: ${s[j].toFixed(1)}</span>`);
+    dd+='</div></div>';
+  });
+  document.getElementById('deptDetail').innerHTML=dd;
+
+  if(bc)bc.destroy();
+  bc=new Chart(document.getElementById('barC'),{type:'bar',data:{labels:ranked.map(r=>r.d),datasets:[{label:'Automation Potential (D1-D4)',data:ranked.map(r=>Math.round(r.ap*100)/100),backgroundColor:ranked.map((_,i)=>COL[i%COL.length]),borderRadius:4}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,scales:{x:{min:0,max:5,ticks:{stepSize:1}}},plugins:{legend:{display:false}}}});
+
+  // Action lanes
+  const imm=[],sht=[],ong=[];
+  DIMS.forEach((d,i)=>{if(dS[i]<2.5)d.measures.forEach(m=>imm.push({id:`I-${imm.length+1}`,t:m,d:d.k}));else if(dS[i]<3.5)d.measures.forEach(m=>sht.push({id:`S-${sht.length+1}`,t:m,d:d.k}));else d.measures.forEach(m=>ong.push({id:`O-${ong.length+1}`,t:m,d:d.k}));});
+  let ah='';
+  if(imm.length){ah+=`<div class="al imm"><div class="lt">Immediate — Critical gaps</div><div class="ais">${imm.map(a=>`<div class="ai"><span class="aid">${a.id}</span><span style="font-size:11px;color:var(--ch);">[${a.d}]</span> ${a.t}</div>`).join('')}</div></div>`;}
+  if(sht.length){ah+=`<div class="al sht"><div class="lt">Short-term — Weeks 1-4</div><div class="ais">${sht.map(a=>`<div class="ai"><span class="aid">${a.id}</span><span style="font-size:11px;color:var(--ch);">[${a.d}]</span> ${a.t}</div>`).join('')}</div></div>`;}
+  if(ong.length){ah+=`<div class="al ong"><div class="lt">Ongoing — Sustained optimization</div><div class="ais">${ong.map(a=>`<div class="ai"><span class="aid">${a.id}</span><span style="font-size:11px;color:var(--ch);">[${a.d}]</span> ${a.t}</div>`).join('')}</div></div>`;}
+  document.getElementById('actLanes').innerHTML=ah;
+}
+
+function uCfg(){
+  document.getElementById('cCli').textContent='Client: '+(document.getElementById('cfC').value||'[Company]');
+  document.getElementById('cDat').textContent='Date: '+(document.getElementById('cfD').value||'April 2026');
+  document.getElementById('cN').textContent='n = '+(document.getElementById('cfN').value||'18');
+  document.getElementById('hSub').textContent='Diagnostic Results & Way Forward — '+(document.getElementById('cfC').value||'[Company]')+', '+(document.getElementById('cfD').value||'April 2026');
+}
+
+function buildDI(){
+  const depts=Object.keys(deptData);
+  let h='<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:12px;"><thead><tr><th style="background:var(--n);color:white;padding:8px;text-align:left;">Department</th>';
+  DIMS.forEach(d=>h+=`<th style="background:var(--n);color:white;padding:6px;text-align:center;font-size:11px;">${d.k}</th>`);
+  h+='<th style="background:var(--n);color:white;padding:6px;text-align:center;font-size:11px;">Remove</th></tr></thead><tbody>';
+  depts.forEach(dept=>{
+    h+=`<tr><td style="padding:4px 6px;border-bottom:1px solid var(--lg);font-weight:600;">${dept}</td>`;
+    deptData[dept].forEach((v,i)=>h+=`<td style="padding:4px;border-bottom:1px solid var(--lg);text-align:center;"><input type="number" step="0.1" min="1" max="5" value="${v.toFixed(1)}" style="width:50px;border:1px solid var(--mg);border-radius:4px;padding:3px;font-size:11px;text-align:center;" data-dept="${dept}" data-dim="${i}"></td>`);
+    h+=`<td style="padding:4px;border-bottom:1px solid var(--lg);text-align:center;"><button onclick="remD('${dept}')" style="background:#FCEBEB;color:#C62828;border:none;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer;">x</button></td></tr>`;
+  });
+  h+='</tbody></table></div>';
+  h+=`<div style="margin-top:12px;display:flex;gap:8px;align-items:center;">
+    <input id="newDept" placeholder="New Department" style="border:1px solid var(--mg);border-radius:6px;padding:6px 10px;font-size:12px;width:160px;">
+    <button onclick="addD()" style="background:var(--lg);color:var(--n);border:1px solid var(--mg);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;">Add</button>
+  </div>`;
+  document.getElementById('deptInputs').innerHTML=h;
+}
+
+function applyS(){
+  document.querySelectorAll('#deptInputs input[data-dept]').forEach(inp=>{
+    const dept=inp.dataset.dept,dim=parseInt(inp.dataset.dim);
+    deptData[dept][dim]=parseFloat(inp.value)||0;
+  });
+  render();buildDI();
+  st('ov');document.querySelectorAll('.tab')[0].classList.add('active');
+}
+function remD(d){delete deptData[d];render();buildDI();}
+function addD(){const n=document.getElementById('newDept').value.trim();if(n&&!deptData[n]){deptData[n]=[3,3,3,3,3,3];render();buildDI();}}
+function loadEx(){deptData={'Accounting':[4.2,3.8,4.0,4.3,3.5,2.1],'Controlling':[3.8,3.5,3.6,3.4,3.8,2.5],'Finance':[3.5,3.2,3.3,3.0,3.6,3.0],'HR / People':[2.8,2.5,2.9,2.4,3.2,4.2],'Sales':[2.3,2.8,2.5,2.2,3.4,4.5],'Manufacturing':[3.9,3.0,3.7,3.8,2.8,2.3]};render();buildDI();}
+render();buildDI();
+</script>
+</body>
+</html>
