@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Value Capture Health Check</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root {
+    color-scheme: light;
+    --apex-navy: #1D4477;
+    --apex-sky: #00B1EB;
+    --apex-teal: #3ED8C3;
+    --apex-deep-teal: #00A19F;
+    --apex-dark-teal: #005E65;
+    --apex-charcoal: #52555C;
+    --apex-black: #000000;
+    --apex-white: #FFFFFF;
+    --apex-light-gray: #E8E8E4;
+    --apex-mid-gray: #ADAFB1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--apex-white); color: var(--apex-black); line-height: 1.5; }
+
+  .header { background: var(--apex-navy); color: var(--apex-white); padding: 28px 24px 22px; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .header .subtitle { font-size: 13px; opacity: 0.75; margin-top: 4px; }
+  .header .badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+  .header-meta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+  .meta-chip { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 12px; font-size: 11px; }
+
+  .tabs { display: flex; gap: 0; background: var(--apex-light-gray); border-bottom: 2px solid var(--apex-mid-gray); overflow-x: auto; }
+  .tab { padding: 11px 18px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: none; color: var(--apex-charcoal); border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; transition: all 0.15s; }
+  .tab:hover { color: var(--apex-navy); }
+  .tab.active { color: var(--apex-navy); border-bottom-color: var(--apex-sky); background: var(--apex-white); }
+
+  .content { padding: 20px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .summary-alert { border-left: 4px solid; padding: 14px 16px; border-radius: 0 8px 8px 0; margin-bottom: 20px; font-size: 13px; }
+  .alert-red { background: #FFF3E0; border-color: #E65100; color: #4E342E; }
+  .alert-amber { background: #FFF8E1; border-color: #F9A825; color: #4E342E; }
+  .alert-green { background: #E8F5E9; border-color: #2E7D32; color: #1B5E20; }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .kpi-card { background: var(--apex-light-gray); border-radius: 10px; padding: 14px; text-align: center; }
+  .kpi-card .score { font-size: 28px; font-weight: 800; }
+  .kpi-card .label { font-size: 11px; color: var(--apex-charcoal); margin-top: 2px; font-weight: 600; }
+  .score-red { color: #C62828; }
+  .score-amber { color: #E65100; }
+  .score-green { color: #2E7D32; }
+
+  .radar-wrap { max-width: 400px; margin: 0 auto 20px; background: var(--apex-white); border: 1px solid var(--apex-light-gray); border-radius: 12px; padding: 16px; }
+
+  .condition-card { border: 1px solid var(--apex-light-gray); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+  .cc-header { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: var(--apex-light-gray); transition: background 0.15s; }
+  .cc-header:hover { background: #DCDCD8; }
+  .cc-title { font-size: 14px; font-weight: 700; color: var(--apex-navy); }
+  .cc-score-badge { font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 20px; color: var(--apex-white); }
+  .bg-red { background: #C62828; }
+  .bg-amber { background: #E65100; }
+  .bg-green { background: #2E7D32; }
+  .cc-body { padding: 16px; display: none; }
+  .cc-body.open { display: block; }
+
+  .sub-scores { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+  .sub-score { background: var(--apex-light-gray); border-radius: 6px; padding: 6px 10px; font-size: 12px; }
+  .sub-score strong { color: var(--apex-navy); }
+
+  .cc-section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--apex-deep-teal); margin: 12px 0 6px; }
+  .cc-finding { font-size: 13px; color: var(--apex-charcoal); margin-bottom: 6px; padding-left: 12px; border-left: 3px solid var(--apex-mid-gray); }
+  .cc-measure { font-size: 13px; color: var(--apex-black); margin-bottom: 6px; padding-left: 12px; border-left: 3px solid var(--apex-teal); }
+
+  .action-lane { margin-bottom: 20px; }
+  .lane-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; padding: 8px 14px; border-radius: 8px 8px 0 0; color: var(--apex-white); }
+  .lane-immediate .lane-title { background: #C62828; }
+  .lane-short .lane-title { background: #E65100; }
+  .lane-ongoing .lane-title { background: var(--apex-deep-teal); }
+  .action-items { border: 1px solid var(--apex-light-gray); border-top: none; border-radius: 0 0 8px 8px; }
+  .action-item { padding: 10px 14px; font-size: 13px; border-bottom: 1px solid var(--apex-light-gray); display: flex; gap: 10px; align-items: flex-start; }
+  .action-item:last-child { border-bottom: none; }
+  .action-id { font-size: 11px; font-weight: 700; background: var(--apex-light-gray); border-radius: 4px; padding: 2px 6px; white-space: nowrap; color: var(--apex-navy); }
+
+  .journey-timeline { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-top: 12px; }
+  .journey-step { background: var(--apex-light-gray); border-radius: 10px; padding: 14px; border-top: 4px solid var(--apex-navy); }
+  .journey-step .step-title { font-size: 13px; font-weight: 700; color: var(--apex-navy); margin-bottom: 6px; }
+  .journey-step .step-when { font-size: 11px; color: var(--apex-charcoal); margin-bottom: 8px; }
+  .journey-step ul { font-size: 12px; padding-left: 16px; color: var(--apex-charcoal); }
+  .journey-step ul li { margin-bottom: 3px; }
+
+  .footer-note { margin-top: 24px; padding: 12px 16px; background: var(--apex-light-gray); border-radius: 8px; font-size: 11px; color: var(--apex-charcoal); text-align: center; }
+  .chevron { transition: transform 0.2s; font-size: 14px; color: var(--apex-charcoal); }
+  .chevron.open { transform: rotate(90deg); }
+
+  .input-row { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+  .input-row label { font-size: 13px; font-weight: 600; color: var(--apex-navy); }
+  .input-row input { border: 1px solid var(--apex-mid-gray); border-radius: 6px; padding: 6px 10px; font-size: 13px; width: 200px; }
+  .input-row select { border: 1px solid var(--apex-mid-gray); border-radius: 6px; padding: 6px 10px; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>AI Value Capture Health Check</h1>
+      <div class="subtitle" id="headerSub">Diagnostic Results &amp; Way Forward</div>
+    </div>
+    <div class="badge">Confidential</div>
+  </div>
+  <div class="header-meta">
+    <div class="meta-chip" id="chipClient">Client: [Company]</div>
+    <div class="meta-chip" id="chipDate">Date: April 2026</div>
+    <div class="meta-chip" id="chipN">n = 10</div>
+    <div class="meta-chip">Framework: AIVCH 6 Dimensions</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('overview')">Overview</button>
+  <button class="tab" onclick="showTab('dimensions')">6 Dimensions</button>
+  <button class="tab" onclick="showTab('actions')">Action Plan</button>
+  <button class="tab" onclick="showTab('journey')">Value Capture Journey</button>
+  <button class="tab" onclick="showTab('config')">Configuration</button>
+</div>
+
+<div class="content">
+
+  <div id="overview" class="panel active">
+    <div id="summaryAlert" class="summary-alert alert-amber">
+      <strong>AI Value Capture Readiness: Moderate.</strong> The organization shows potential but needs targeted improvements in several dimensions to unlock full AI value.
+    </div>
+
+    <div class="kpi-row" id="kpiRow"></div>
+    <div class="radar-wrap"><canvas id="radarChart"></canvas></div>
+    <div style="font-size:13px; color: var(--apex-charcoal); margin-top:8px;">
+      <strong style="color:var(--apex-navy);">Data basis:</strong> <span id="dataBasis">10 respondents, Likert scale 1-5. Framework: AI Value Capture Health Check (AIVCH) — 6 Dimensions, 18 Sub-Dimensions, 60 Items.</span>
+    </div>
+  </div>
+
+  <div id="dimensions" class="panel">
+    <div id="dimCards"></div>
+  </div>
+
+  <div id="actions" class="panel">
+    <p style="font-size:13px; color:var(--apex-charcoal); margin-bottom:16px;">
+      A prioritized backlog of improvement measures provides orientation to enhance AI Value Capture readiness and maximize return on AI investment.
+    </p>
+    <div id="actionLanes"></div>
+  </div>
+
+  <div id="journey" class="panel">
+    <p style="font-size:13px; color:var(--apex-charcoal); margin-bottom:16px;">
+      A structured Value Capture Journey translates diagnostic insights into measurable outcomes. The journey is tailored to the organization's specific dimension profile.
+    </p>
+    <div class="journey-timeline">
+      <div class="journey-step" style="border-top-color:var(--apex-navy);">
+        <div class="step-title">1. Diagnostic</div>
+        <div class="step-when">Week 0</div>
+        <ul>
+          <li>AIVCH survey conducted</li>
+          <li>6 dimension scores calculated</li>
+          <li>Sub-dimension profile mapped</li>
+          <li>Strengths &amp; gaps identified</li>
+        </ul>
+      </div>
+      <div class="journey-step" style="border-top-color:var(--apex-sky);">
+        <div class="step-title">2. Strategy Sprint</div>
+        <div class="step-when">Week 1-2</div>
+        <ul>
+          <li>Leadership alignment session</li>
+          <li>AI vision co-creation</li>
+          <li>Quick wins identified</li>
+          <li>Roadmap drafted</li>
+        </ul>
+      </div>
+      <div class="journey-step" style="border-top-color:var(--apex-teal);">
+        <div class="step-title">3. Activation</div>
+        <div class="step-when">Week 3-6</div>
+        <ul>
+          <li>Team AI literacy workshops</li>
+          <li>Process-AI mapping sessions</li>
+          <li>First AI workflow pilots</li>
+          <li>Change accompaniment setup</li>
+        </ul>
+      </div>
+      <div class="journey-step" style="border-top-color:var(--apex-deep-teal);">
+        <div class="step-title">4. Integration</div>
+        <div class="step-when">Week 7-10</div>
+        <ul>
+          <li>AI governance established</li>
+          <li>Scaling successful pilots</li>
+          <li>Cross-team knowledge sharing</li>
+          <li>Feedback loops implemented</li>
+        </ul>
+      </div>
+      <div class="journey-step" style="border-top-color:var(--apex-dark-teal);">
+        <div class="step-title">5. Review &amp; Scale</div>
+        <div class="step-when">Week 11-12</div>
+        <ul>
+          <li>Re-assessment with AIVCH</li>
+          <li>Impact measurement</li>
+          <li>Next phase planning</li>
+          <li>Community of Practice launch</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="config" class="panel">
+    <div style="font-size:16px; font-weight:700; color:var(--apex-navy); margin-bottom:16px;">Configure Diagnostic</div>
+    <div class="input-row">
+      <label>Company:</label>
+      <input type="text" id="cfgClient" placeholder="e.g. Acme Corp" oninput="updateConfig()">
+    </div>
+    <div class="input-row">
+      <label>Date:</label>
+      <input type="text" id="cfgDate" placeholder="e.g. April 2026" oninput="updateConfig()">
+    </div>
+    <div class="input-row">
+      <label>Respondents (n):</label>
+      <input type="number" id="cfgN" value="10" min="1" max="999" oninput="updateConfig()">
+    </div>
+    <div style="margin-top:20px; font-size:16px; font-weight:700; color:var(--apex-navy); margin-bottom:12px;">Enter Dimension Scores Manually</div>
+    <div id="scoreInputs"></div>
+    <div style="margin-top:16px;">
+      <button onclick="applyScores()" style="background:var(--apex-navy); color:white; border:none; border-radius:8px; padding:10px 20px; font-size:13px; font-weight:700; cursor:pointer;">Apply Scores</button>
+      <button onclick="loadExample()" style="background:var(--apex-light-gray); color:var(--apex-navy); border:1px solid var(--apex-mid-gray); border-radius:8px; padding:10px 20px; font-size:13px; font-weight:700; cursor:pointer; margin-left:8px;">Load Example Data</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const DIMS = [
+  {key:'D1', name:'AI Strategy & Vision', cat:'Foundation',
+   subs:['Clarity','Alignment','Ambition'],
+   findings:[
+     'AI strategy exists but is not widely communicated or understood across the organization.',
+     'Departments pursue AI initiatives independently — coordination gaps visible.',
+     'KPIs for AI value creation are not yet defined at strategic level.'
+   ],
+   measures:[
+     'Conduct AI Vision Workshop with senior leadership — co-create a shared North Star.',
+     'Establish cross-functional AI steering committee for initiative coordination.',
+     'Define measurable AI value KPIs tied to business outcomes.'
+   ]},
+  {key:'D2', name:'AI Literacy & Skills', cat:'Foundation',
+   subs:['Awareness','Competence','Learning Culture'],
+   findings:[
+     'Leadership understands AI potential but operational teams lack hands-on experience.',
+     'Bridging roles between business and AI are critically understaffed.',
+     'No structured AI learning program — upskilling depends on individual initiative.'
+   ],
+   measures:[
+     'Launch tiered AI literacy program: awareness (all), competence (key roles), mastery (AI champions).',
+     'Create AI Value Capturer role — bridge between business units and AI capabilities.',
+     'Establish AI best practice sharing sessions across teams (monthly cadence).'
+   ]},
+  {key:'D3', name:'Process & Workflow Readiness', cat:'Foundation',
+   subs:['Process Mapping','Automation Potential','Data Quality'],
+   findings:[
+     'Core processes are underdocumented — AI opportunity identification is ad hoc.',
+     'Data quality and accessibility are significant barriers to AI deployment.',
+     'Some repetitive tasks identified but not yet prioritized for AI augmentation.'
+   ],
+   measures:[
+     'Conduct process-AI mapping workshops per department — identify top-5 automation candidates.',
+     'Establish data quality standards and governance framework as AI prerequisite.',
+     'Run quick-win AI pilots on 2-3 clearly defined workflows within 30 days.'
+   ]},
+  {key:'D4', name:'Leadership & Culture', cat:'Enabler',
+   subs:['Sponsorship','Openness to Change','Experimentation'],
+   findings:[
+     'Executive sponsorship is present but inconsistent across business units.',
+     'Cultural openness to change varies significantly between departments.',
+     'Fear of failure inhibits experimentation — psychological safety for AI pilots is low.'
+   ],
+   measures:[
+     'Assign visible executive AI sponsors per business unit with clear accountability.',
+     'Create safe-to-fail AI experimentation zones with explicit permission to learn.',
+     'Celebrate and communicate AI success stories across the organization.'
+   ]},
+  {key:'D5', name:'Organizational Support', cat:'Enabler',
+   subs:['Budget & Resources','Tools & Infrastructure','Governance'],
+   findings:[
+     'AI budget is not ring-fenced — initiatives compete with operational priorities.',
+     'Legacy systems and restrictive IT policies create friction for AI tool adoption.',
+     'AI governance framework is incomplete — data privacy and compliance gaps exist.'
+   ],
+   measures:[
+     'Establish dedicated AI transformation budget with quarterly review cycles.',
+     'Conduct IT infrastructure audit — identify and resolve critical AI integration blockers.',
+     'Complete AI governance framework addressing EU AI Act compliance requirements.'
+   ]},
+  {key:'D6', name:'Human-Centric Integration', cat:'Enabler',
+   subs:['Employee Involvement','Ethical Considerations','Change Accompaniment'],
+   findings:[
+     'AI implementation decisions are made top-down — end users rarely consulted.',
+     'Concerns about job displacement remain unaddressed, creating resistance.',
+     'Change management is absent from most AI deployment projects.'
+   ],
+   measures:[
+     'Involve employees in AI use case identification — bottom-up innovation pipeline.',
+     'Develop clear organizational position: AI augments human capability, does not replace.',
+     'Mandate structured change accompaniment for every AI implementation project.'
+   ]}
+];
+
+const COLORS = ['#1D4477','#00B1EB','#3ED8C3','#00A19F','#005E65','#52555C'];
+
+let dimScores = [3.35, 2.60, 2.67, 3.57, 2.44, 3.18];
+let subScores = {
+  'D1_Clarity':3.35,'D1_Alignment':3.33,'D1_Ambition':3.33,
+  'D2_Awareness':3.13,'D2_Competence':2.73,'D2_Learning Culture':2.10,
+  'D3_Process Mapping':2.83,'D3_Automation Potential':2.57,'D3_Data Quality':2.65,
+  'D4_Sponsorship':3.40,'D4_Openness to Change':3.60,'D4_Experimentation':3.68,
+  'D5_Budget & Resources':2.50,'D5_Tools & Infrastructure':2.37,'D5_Governance':2.45,
+  'D6_Employee Involvement':2.93,'D6_Ethical Considerations':3.47,'D6_Change Accompaniment':3.18
+};
+
+function scoreClass(v){ return v<2.5?'score-red':v<3.5?'score-amber':'score-green'; }
+function badgeClass(v){ return v<2.5?'bg-red':v<3.5?'bg-amber':'bg-green'; }
+function statusText(v){ return v<2.5?'Critical':v<3.5?'Needs attention':'Good'; }
+
+function showTab(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function toggleCard(el){
+  const body=el.nextElementSibling;
+  const chev=el.querySelector('.chevron');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+let radarChart;
+function render(){
+  const total=dimScores.reduce((a,b)=>a+b,0)/dimScores.length;
+
+  const alert=document.getElementById('summaryAlert');
+  if(total<2.5){alert.className='summary-alert alert-red'; alert.innerHTML='<strong>AI Value Capture Readiness: Critical.</strong> Significant gaps across multiple dimensions require immediate attention before AI investments can generate returns.';}
+  else if(total<3.5){alert.className='summary-alert alert-amber'; alert.innerHTML='<strong>AI Value Capture Readiness: Moderate.</strong> The organization shows potential but needs targeted improvements in several dimensions to unlock full AI value.';}
+  else{alert.className='summary-alert alert-green'; alert.innerHTML='<strong>AI Value Capture Readiness: Strong.</strong> The organization has a solid foundation for AI value creation. Focus on sustaining strengths and closing remaining gaps.';}
+
+  let kpiHtml='';
+  DIMS.forEach((d,i)=>{
+    kpiHtml+=`<div class="kpi-card"><div class="score ${scoreClass(dimScores[i])}">${dimScores[i].toFixed(2)}</div><div class="label">${d.key} ${d.name}</div></div>`;
+  });
+  document.getElementById('kpiRow').innerHTML=kpiHtml;
+
+  if(radarChart)radarChart.destroy();
+  radarChart=new Chart(document.getElementById('radarChart'),{
+    type:'radar',
+    data:{
+      labels:DIMS.map(d=>d.key+' '+d.name),
+      datasets:[{label:'Score',data:dimScores,backgroundColor:'rgba(29,68,119,0.15)',borderColor:'#1D4477',borderWidth:2,pointBackgroundColor:COLORS,pointRadius:5}]
+    },
+    options:{responsive:true,scales:{r:{min:0,max:5,ticks:{stepSize:1,font:{size:11}},pointLabels:{font:{size:11}}}},plugins:{legend:{display:false}}}
+  });
+
+  let dimHtml='';
+  DIMS.forEach((d,i)=>{
+    let subHtml='';
+    d.subs.forEach(s=>{
+      const key=d.key+'_'+s;
+      const sv=subScores[key]||0;
+      subHtml+=`<span class="sub-score"><strong>${s}</strong> ${sv.toFixed(2)}</span>`;
+    });
+    let findHtml=d.findings.map(f=>`<div class="cc-finding">${f}</div>`).join('');
+    let measHtml=d.measures.map(m=>`<div class="cc-measure">${m}</div>`).join('');
+
+    dimHtml+=`<div class="condition-card">
+      <div class="cc-header" onclick="toggleCard(this)">
+        <span class="cc-title">${d.key} — ${d.name} <span style="font-weight:400;font-size:12px;color:var(--apex-charcoal);">(${d.cat})</span></span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="cc-score-badge ${badgeClass(dimScores[i])}">${dimScores[i].toFixed(2)}</span>
+          <span class="chevron">&#9654;</span>
+        </div>
+      </div>
+      <div class="cc-body">
+        <div class="sub-scores">${subHtml}</div>
+        <div class="cc-section-title">Findings</div>${findHtml}
+        <div class="cc-section-title">Improvement Measures</div>${measHtml}
+      </div>
+    </div>`;
+  });
+  document.getElementById('dimCards').innerHTML=dimHtml;
+
+  const immediate=[], shortTerm=[], ongoing=[];
+  DIMS.forEach((d,i)=>{
+    if(dimScores[i]<2.5) d.measures.forEach((m,j)=>immediate.push({id:`I-${immediate.length+1}`,text:m,dim:d.key}));
+    else if(dimScores[i]<3.5) d.measures.forEach((m,j)=>shortTerm.push({id:`S-${shortTerm.length+1}`,text:m,dim:d.key}));
+    else d.measures.forEach((m,j)=>ongoing.push({id:`O-${ongoing.length+1}`,text:m,dim:d.key}));
+  });
+
+  let actHtml='';
+  if(immediate.length){
+    actHtml+=`<div class="action-lane lane-immediate"><div class="lane-title">Immediate — Prerequisites (critical dimensions)</div><div class="action-items">`;
+    immediate.forEach(a=>actHtml+=`<div class="action-item"><span class="action-id">${a.id}</span><span style="font-size:11px;color:var(--apex-charcoal);">[${a.dim}]</span> ${a.text}</div>`);
+    actHtml+='</div></div>';
+  }
+  if(shortTerm.length){
+    actHtml+=`<div class="action-lane lane-short"><div class="lane-title">Short-Term — Weeks 1-4: Targeted improvements</div><div class="action-items">`;
+    shortTerm.forEach(a=>actHtml+=`<div class="action-item"><span class="action-id">${a.id}</span><span style="font-size:11px;color:var(--apex-charcoal);">[${a.dim}]</span> ${a.text}</div>`);
+    actHtml+='</div></div>';
+  }
+  if(ongoing.length){
+    actHtml+=`<div class="action-lane lane-ongoing"><div class="lane-title">Ongoing — Sustained habits over the transformation lifecycle</div><div class="action-items">`;
+    ongoing.forEach(a=>actHtml+=`<div class="action-item"><span class="action-id">${a.id}</span><span style="font-size:11px;color:var(--apex-charcoal);">[${a.dim}]</span> ${a.text}</div>`);
+    actHtml+='</div></div>';
+  }
+  document.getElementById('actionLanes').innerHTML=actHtml;
+}
+
+function updateConfig(){
+  const client=document.getElementById('cfgClient').value||'[Company]';
+  const date=document.getElementById('cfgDate').value||'April 2026';
+  const n=document.getElementById('cfgN').value||'10';
+  document.getElementById('chipClient').textContent='Client: '+client;
+  document.getElementById('chipDate').textContent='Date: '+date;
+  document.getElementById('chipN').textContent='n = '+n;
+  document.getElementById('headerSub').textContent='Diagnostic Results & Way Forward — '+client+', '+date;
+}
+
+function buildScoreInputs(){
+  let html='';
+  DIMS.forEach((d,i)=>{
+    html+=`<div style="margin-bottom:12px;">
+      <div style="font-size:13px;font-weight:600;color:var(--apex-navy);margin-bottom:6px;">${d.key}: ${d.name}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div><label style="font-size:11px;color:var(--apex-charcoal);">Total</label><br><input type="number" step="0.01" min="1" max="5" value="${dimScores[i].toFixed(2)}" id="dim_${i}" style="width:70px;border:1px solid var(--apex-mid-gray);border-radius:4px;padding:4px 6px;font-size:12px;"></div>`;
+    d.subs.forEach(s=>{
+      const key=d.key+'_'+s;
+      html+=`<div><label style="font-size:11px;color:var(--apex-charcoal);">${s}</label><br><input type="number" step="0.01" min="1" max="5" value="${(subScores[key]||0).toFixed(2)}" id="sub_${key.replace(/[^a-zA-Z0-9]/g,'_')}" style="width:70px;border:1px solid var(--apex-mid-gray);border-radius:4px;padding:4px 6px;font-size:12px;"></div>`;
+    });
+    html+=`</div></div>`;
+  });
+  document.getElementById('scoreInputs').innerHTML=html;
+}
+
+function applyScores(){
+  DIMS.forEach((d,i)=>{
+    dimScores[i]=parseFloat(document.getElementById('dim_'+i).value)||0;
+    d.subs.forEach(s=>{
+      const key=d.key+'_'+s;
+      const elId='sub_'+key.replace(/[^a-zA-Z0-9]/g,'_');
+      subScores[key]=parseFloat(document.getElementById(elId).value)||0;
+    });
+  });
+  render();
+  showTabDirect('overview');
+}
+
+function showTabDirect(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>{if(t.textContent.trim().toLowerCase().includes(id.substring(0,4)))t.classList.add('active');});
+}
+
+function loadExample(){
+  dimScores=[3.35,2.60,2.67,3.57,2.44,3.18];
+  subScores={'D1_Clarity':3.35,'D1_Alignment':3.33,'D1_Ambition':3.33,'D2_Awareness':3.13,'D2_Competence':2.73,'D2_Learning Culture':2.10,'D3_Process Mapping':2.83,'D3_Automation Potential':2.57,'D3_Data Quality':2.65,'D4_Sponsorship':3.40,'D4_Openness to Change':3.60,'D4_Experimentation':3.68,'D5_Budget & Resources':2.50,'D5_Tools & Infrastructure':2.37,'D5_Governance':2.45,'D6_Employee Involvement':2.93,'D6_Ethical Considerations':3.47,'D6_Change Accompaniment':3.18};
+  buildScoreInputs();
+  render();
+}
+
+buildScoreInputs();
+render();
+</script>
+</body>
+</html>
