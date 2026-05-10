@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<title>Facette · AIVC Spectrum</title>
+<meta name="viewport" content="width=1440" />
+<link rel="stylesheet" href="colors_and_type.css" />
+<link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="subpage.css" />
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="data.jsx"></script>
+<script type="text/babel" src="charts.jsx"></script>
+<script type="text/babel" src="components.jsx"></script>
+<script type="text/babel" src="subpage-chrome.jsx"></script>
+
+<script type="text/babel">
+const FREEZE_URLS = {
+  aivch:  "https://raw.githubusercontent.com/jaymanuzon/vantum/main/2026-05-05-aivch-freeze.html",
+  aivco:  "https://raw.githubusercontent.com/jaymanuzon/vantum/main/2026-05-05-aivco-freeze.html",
+  aivcir: "https://raw.githubusercontent.com/jaymanuzon/vantum/main/2026-05-05-aivcir-freeze.html",
+  aivchw: "https://raw.githubusercontent.com/jaymanuzon/vantum/main/2026-05-05-aivchw-freeze.html",
+  aivcio: "https://raw.githubusercontent.com/jaymanuzon/vantum/main/2026-05-11-aivcio-freeze.html",
+};
+const SOURCE_URLS = {
+  aivch:  "https://github.com/jaymanuzon/vantum/blob/main/2026-05-05-aivch-freeze.html",
+  aivco:  "https://github.com/jaymanuzon/vantum/blob/main/2026-05-05-aivco-freeze.html",
+  aivcir: "https://github.com/jaymanuzon/vantum/blob/main/2026-05-05-aivcir-freeze.html",
+  aivchw: "https://github.com/jaymanuzon/vantum/blob/main/2026-05-05-aivchw-freeze.html",
+  aivcio: "https://github.com/jaymanuzon/vantum/blob/main/2026-05-11-aivcio-freeze.html",
+};
+
+function FacettePage() {
+  const { AIVC_DATA, SubpageShell } = window;
+  const { Glieder } = AIVC_DATA;
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id") || "aivch";
+  const g = Glieder.find(x => x.id === id) || Glieder[0];
+  return (
+    <SubpageShell active="compass" title={`${g.code} · ${g.title}`} sub={g.description} breadcrumb={`Facette · ${g.code}`}>
+      <div className="facette-hero">
+        <div className="facette-hero__left">
+          <div className="facette-hero__code" style={{ color: g.color.fg }}>{g.code}</div>
+          <div className="facette-hero__title">{g.title}</div>
+          <div className="facette-hero__purpose">{g.purpose}</div>
+          <div className="facette-hero__desc">{g.description}</div>
+          <div className="facette-hero__meta">
+            <div className="facette-hero__meta-item"><span>Owner</span><strong>{g.owner}</strong></div>
+            <div className="facette-hero__meta-item"><span>Letzte Erhebung</span><strong>{g.lastUpdate}</strong></div>
+            <div className="facette-hero__meta-item"><span>Reifegrad-Band</span><strong>{g.band}</strong></div>
+            <div className="facette-hero__meta-item"><span>Delta vs. Vormonat</span><strong>{g.delta >= 0 ? "+" : ""}{g.delta}</strong></div>
+          </div>
+        </div>
+        <div className="facette-hero__right" style={{ background: g.color.bg }}>
+          <div style={{ fontSize: 11, letterSpacing: "0.12em", textTransform: "uppercase", color: g.color.fg, fontWeight: 700, marginBottom: 8 }}>
+            Reifegrad
+          </div>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
+            <div className="facette-hero__score" style={{ color: g.color.fg }}>{g.score}</div>
+            <div style={{ fontSize: 16, color: g.color.fg, opacity: 0.7 }}>/ 100</div>
+          </div>
+          <div className="facette-hero__band" style={{ color: g.color.fg }}>
+            {g.delta >= 0 ? "↑" : "↓"} {Math.abs(g.delta)} vs. Vormonat
+          </div>
+        </div>
+      </div>
+
+      <h2 className="subpage-section-title">D1–D6 · Reifedimensionen</h2>
+      <div className="dim-grid">
+        {g.dimensions.map(d => (
+          <div className="dim-card" key={d.id} style={{ borderTopColor: g.color.fg }}>
+            <div className="dim-card__id" style={{ color: g.color.fg }}>{d.id}</div>
+            <div className="dim-card__label">{d.label}</div>
+            <div className="dim-card__score-row">
+              <div className="dim-card__score" style={{ color: g.color.fg }}>{d.score}</div>
+              <div className="dim-card__denom">/ 100</div>
+            </div>
+            <div className="dim-card__bar">
+              <div className="dim-card__bar-fill" style={{ width: d.score + "%", background: g.color.fg }} />
+            </div>
+            {d.cat && <div className="dim-card__cat">{d.cat}</div>}
+            {d.target && <div className="dim-card__cat">Target: {d.target}/100 · Gap {d.target - d.score}</div>}
+          </div>
+        ))}
+      </div>
+
+      <h2 className="subpage-section-title">Live-Artifact · Source-Freeze</h2>
+      <div className="iframe-wrap">
+        <div className="iframe-wrap__bar">
+          <span>Quelle: jaymanuzon/vantum · {g.code}</span>
+          <a href={SOURCE_URLS[g.id]} target="_blank" rel="noopener">Auf GitHub öffnen →</a>
+        </div>
+        <iframe src={FREEZE_URLS[g.id]} title={g.code + " Freeze"}></iframe>
+      </div>
+
+      <div style={{ marginTop: 24 }}>
+        <a href="AIVC Family Dashboard.html" style={{ fontSize: 12, color: "var(--color-navy)", fontWeight: 600 }}>
+          ← Zurück zum Cockpit
+        </a>
+      </div>
+    </SubpageShell>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<FacettePage />);
+</script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+/*
+ * Vantum Design System — Colors & Typography
+ * Source: AI Value Capture Multiplier pitch deck (2026-04-17)
+ * Font substitution: Calibri → Carlito (Google Fonts metric-compatible clone)
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap');
+/* Brand fonts: Cormorant Garamond (display/headings) + DM Sans (body/UI)
+   Note: Source deck used Calibri — these are the approved brand fonts going forward. */
+
+/* ─── BASE COLOR TOKENS ─────────────────────────────────────────────────── */
+:root {
+  /* Brand primaries */
+  --color-navy:         #1D4477;
+  --color-navy-deep:    #162f57;   /* hover/pressed state */
+  --color-navy-light:   #2a5a9e;   /* lighter variant */
+
+  /* Teal family */
+  --color-teal-bright:  #3ED8C3;   /* primary accent — numbers, highlights */
+  --color-teal-mid:     #00A19F;   /* supporting teal */
+  --color-teal-dark:    #005E65;   /* section headers, depth */
+  --color-sky:          #00B1EB;   /* callout highlight, links */
+
+  /* Neutrals */
+  --color-white:        #FFFFFF;
+  --color-off-white:    #E8E8E4;   /* warm secondary surface */
+  --color-gray-light:   #D0D1D2;   /* borders on white */
+  --color-gray:         #ADAFB1;   /* disabled, secondary info */
+  --color-charcoal:     #52555C;   /* body text, footer */
+  --color-near-black:   #1A1C1E;
+  --color-black:        #000000;
+
+  /* ─── SEMANTIC COLOR TOKENS ─────────────────────────────────────────── */
+
+  /* Backgrounds */
+  --bg-primary:         var(--color-navy);       /* dark slides, hero sections */
+  --bg-surface:         var(--color-white);       /* content slides, cards */
+  --bg-muted:           var(--color-off-white);   /* secondary surfaces */
+  --bg-accent:          var(--color-teal-bright); /* accent blocks */
+
+  /* Foreground / Text */
+  --fg-primary:         var(--color-black);        /* main body on light bg */
+  --fg-secondary:       var(--color-charcoal);     /* secondary text, captions */
+  --fg-muted:           var(--color-gray);         /* placeholder, disabled */
+  --fg-inverse:         var(--color-white);        /* text on dark bg */
+  --fg-accent:          var(--color-teal-bright);  /* accent text on dark bg */
+  --fg-accent-dark:     var(--color-teal-dark);    /* accent text on light bg */
+
+  /* Borders */
+  --border-light:       var(--color-off-white);
+  --border-default:     var(--color-gray-light);
+  --border-strong:      var(--color-charcoal);
+
+  /* Interactive states */
+  --color-hover-dark:   var(--color-navy-deep);
+  --color-hover-teal:   #2fc4b0;                   /* teal bright darkened ~10% */
+
+  /* ─── TYPOGRAPHY TOKENS ─────────────────────────────────────────────── */
+
+  /* Font families */
+  --font-display:       'Cormorant Garamond', 'Georgia', serif;
+  --font-body:          'DM Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:          'Courier New', Courier, monospace;
+
+  /* Font sizes — slide scale (pt → px at 96dpi) */
+  --text-display:       clamp(2.5rem, 5vw, 4rem);    /* 52pt slide title */
+  --text-hero:          clamp(2rem, 4vw, 3.25rem);   /* 40pt closing title */
+  --text-h1:            clamp(1.5rem, 2.5vw, 2.25rem); /* 28pt section heading */
+  --text-h2:            1.25rem;                     /* 17pt subhead */
+  --text-h3:            1rem;                        /* 13–14pt label */
+  --text-body:          0.875rem;                    /* 11pt body */
+  --text-small:         0.75rem;                     /* 10pt */
+  --text-xs:            0.625rem;                    /* 8–9pt fine print */
+
+  /* Font weights */
+  --weight-regular:     400;
+  --weight-bold:        700;
+
+  /* Letter spacing */
+  --tracking-tight:     -0.02em;
+  --tracking-normal:    0;
+  --tracking-wide:      0.08em;
+  --tracking-caps:      0.12em;    /* ALL CAPS labels */
+
+  /* Line heights */
+  --leading-tight:      1.15;
+  --leading-normal:     1.45;
+  --leading-loose:      1.7;
+
+  /* ─── SPACING TOKENS ─────────────────────────────────────────────────── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  24px;
+  --space-6:  32px;
+  --space-7:  48px;
+  --space-8:  64px;
+  --space-9:  96px;
+  --space-10: 128px;
+
+  /* ─── RADII ──────────────────────────────────────────────────────────── */
+  --radius-none:  0px;
+  --radius-sm:    2px;   /* near-square — brand default */
+  --radius-md:    4px;   /* subtle rounding for web UI only */
+  --radius-pill:  999px; /* badge/chip use only */
+
+  /* ─── SHADOWS ─────────────────────────────────────────────────────────── */
+  --shadow-none:  none;
+  --shadow-sm:    0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md:    0 4px 16px rgba(0,0,0,0.10);
+  --shadow-card:  0 1px 0 rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.06);
+
+  /* ─── TRANSITIONS ─────────────────────────────────────────────────────── */
+  --transition-fast:   150ms ease-out;
+  --transition-base:   300ms ease-out;
+  --transition-slow:   500ms ease-out;
+}
+
+/* ─── SEMANTIC ELEMENT STYLES ─────────────────────────────────────────────── */
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+  color: var(--fg-primary);
+  background: var(--bg-surface);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-primary);
+}
+
+h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--fg-primary);
+}
+
+h3 {
+  font-family: var(--font-body);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+p {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+  color: var(--fg-primary);
+}
+
+small, .text-small {
+  font-size: var(--text-small);
+  color: var(--fg-secondary);
+}
+
+.text-xs {
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* Display / hero text */
+.text-display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* ALL CAPS label style */
+.label-caps {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+/* Teal accent number (01, 02, 03) */
+.step-number {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: var(--weight-bold);
+  color: var(--color-teal-bright);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* Brand accent mark */
+.accent-star::before {
+  content: '✦';
+  color: var(--color-teal-bright);
+  margin-right: 0.4em;
+}
+
+/* Footer text pattern */
+.slide-footer {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* Dark surface overrides */
+.surface-dark {
+  background: var(--bg-primary);
+  color: var(--fg-inverse);
+}
+
+.surface-dark h1,
+.surface-dark h2,
+.surface-dark h3,
+.surface-dark p {
+  color: var(--fg-inverse);
+}
+
+.surface-dark .label-caps {
+  color: var(--fg-accent);
+}

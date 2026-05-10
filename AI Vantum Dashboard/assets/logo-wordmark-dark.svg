@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">
+  <rect width="320" height="80" fill="#FFFFFF"></rect>
+  
+  <text x="20" y="52" font-family="&#39;Carlito&#39;, &#39;Calibri&#39;, Arial, sans-serif" font-size="38" font-weight="400" fill="#1D4477" letter-spacing="-0.5">Vantum</text>
+  
+  <circle cx="208" cy="46" r="4" fill="#3ED8C3"></circle>
+</svg>
