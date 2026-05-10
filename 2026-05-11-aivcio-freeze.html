@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIVCIO — Self-Pilot Report</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+  :root {
+    color-scheme: light;
+    --apex-navy: #1D4477;
+    --apex-sky: #00B1EB;
+    --apex-teal: #3ED8C3;
+    --apex-deep-teal: #00A19F;
+    --apex-dark-teal: #005E65;
+    --apex-charcoal: #52555C;
+    --apex-black: #000000;
+    --apex-white: #FFFFFF;
+    --apex-light-gray: #E8E8E4;
+    --apex-mid-gray: #ADAFB1;
+    --hot: #C62828;
+    --worth: #E65100;
+    --notyet: #1565C0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--apex-white); color: var(--apex-black); line-height: 1.5; }
+
+  .hdr { background: var(--apex-navy); color: var(--apex-white); padding: 28px 24px 22px; }
+  .hdr-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; }
+  .hdr h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .hdr .sub { font-size: 13px; opacity: 0.78; margin-top: 4px; }
+  .hdr .badge { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+  .hdr-meta { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .chip { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 12px; font-size: 11px; }
+
+  .tabs { display: flex; background: var(--apex-light-gray); border-bottom: 2px solid var(--apex-mid-gray); overflow-x: auto; }
+  .tab { padding: 11px 18px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; background: none; color: var(--apex-charcoal); border-bottom: 3px solid transparent; margin-bottom: -2px; white-space: nowrap; transition: all 0.15s; }
+  .tab:hover { color: var(--apex-navy); }
+  .tab.active { color: var(--apex-navy); border-bottom-color: var(--apex-sky); background: var(--apex-white); }
+
+  .cnt { padding: 22px; max-width: 1100px; margin: 0 auto; }
+  .pnl { display: none; }
+  .pnl.active { display: block; }
+
+  .alert { border-left: 4px solid; padding: 14px 16px; border-radius: 0 8px 8px 0; margin-bottom: 20px; font-size: 13px; }
+  .al-info { background: #E3F2FD; border-color: #1565C0; color: #0D3B66; }
+  .al-warn { background: #FFF8E1; border-color: #F9A825; color: #4E342E; }
+  .al-pilot { background: #E0F7FA; border-color: var(--apex-deep-teal); color: var(--apex-dark-teal); }
+
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 22px; }
+  .kpi { background: var(--apex-light-gray); border-radius: 10px; padding: 16px; text-align: center; }
+  .kpi .sc { font-size: 30px; font-weight: 800; line-height: 1; }
+  .kpi .lb { font-size: 11px; color: var(--apex-charcoal); margin-top: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+  .kpi .un { font-size: 11px; color: var(--apex-charcoal); margin-top: 2px; }
+  .sc-hot { color: var(--hot); }
+  .sc-worth { color: var(--worth); }
+  .sc-notyet { color: var(--notyet); }
+  .sc-navy { color: var(--apex-navy); }
+
+  .section-h { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--apex-deep-teal); margin: 26px 0 10px; }
+  .section-lead { font-size: 13px; color: var(--apex-charcoal); margin-bottom: 14px; max-width: 760px; }
+
+  .task-card { border: 1px solid var(--apex-light-gray); border-radius: 12px; margin-bottom: 14px; overflow: hidden; }
+  .tc-head { padding: 14px 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px; background: var(--apex-light-gray); transition: background 0.15s; }
+  .tc-head:hover { background: #DCDCD8; }
+  .tc-id { font-size: 11px; font-weight: 700; color: var(--apex-charcoal); background: var(--apex-white); padding: 2px 8px; border-radius: 4px; margin-right: 8px; }
+  .tc-title { font-size: 14px; font-weight: 700; color: var(--apex-navy); flex: 1; }
+  .tc-readiness { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 20px; color: var(--apex-white); white-space: nowrap; }
+  .bg-hot { background: var(--hot); }
+  .bg-worth { background: var(--worth); }
+  .bg-notyet { background: var(--notyet); }
+  .chv { transition: transform 0.2s; font-size: 14px; color: var(--apex-charcoal); margin-left: 4px; }
+  .chv.open { transform: rotate(90deg); }
+  .tc-body { padding: 16px; display: none; background: var(--apex-white); }
+  .tc-body.open { display: block; }
+
+  .tc-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .tc-meta .m { font-size: 11px; background: var(--apex-light-gray); padding: 3px 10px; border-radius: 12px; color: var(--apex-charcoal); }
+  .tc-meta .m strong { color: var(--apex-navy); }
+
+  .dim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-bottom: 14px; }
+  .dim { background: var(--apex-light-gray); border-radius: 8px; padding: 8px 10px; }
+  .dim .dn { font-size: 10px; font-weight: 700; color: var(--apex-charcoal); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 4px; }
+  .dim .dv { font-size: 18px; font-weight: 800; color: var(--apex-navy); }
+  .dim .dv .max { font-size: 11px; color: var(--apex-mid-gray); font-weight: 500; }
+
+  .pattern-h { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--apex-deep-teal); margin: 12px 0 6px; }
+  .pattern { font-size: 13px; color: var(--apex-charcoal); padding: 10px 12px; border-left: 3px solid var(--apex-mid-gray); background: #FAFAF8; border-radius: 0 6px 6px 0; margin-bottom: 4px; }
+  .recommend-h { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--apex-deep-teal); margin: 12px 0 6px; }
+  .recommend { font-size: 13px; color: var(--apex-black); padding: 10px 12px; border-left: 3px solid var(--apex-teal); background: #F5FFFD; border-radius: 0 6px 6px 0; }
+
+  .heatmap { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; margin-bottom: 18px; border: 1px solid var(--apex-light-gray); border-radius: 8px; overflow: hidden; }
+  .heatmap th { background: var(--apex-navy); color: var(--apex-white); padding: 10px 8px; font-size: 11px; font-weight: 700; text-align: center; }
+  .heatmap th:first-child { text-align: left; padding-left: 12px; }
+  .heatmap td { padding: 8px; border-bottom: 1px solid var(--apex-light-gray); text-align: center; font-weight: 600; }
+  .heatmap tr:last-child td { border-bottom: none; }
+  .heatmap td:first-child { text-align: left; padding-left: 12px; font-weight: 700; color: var(--apex-navy); }
+  .heatmap td.tlabel { font-weight: 600; color: var(--apex-charcoal); font-size: 12px; }
+  .h5 { background: #2E7D32; color: var(--apex-white); }
+  .h4 { background: #66BB6A; color: var(--apex-black); }
+  .h3 { background: #FFEB3B; color: var(--apex-black); }
+  .h2 { background: #FFA726; color: var(--apex-black); }
+  .h1 { background: #E53935; color: var(--apex-white); }
+  .h0 { background: var(--apex-light-gray); color: var(--apex-charcoal); }
+  .legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; color: var(--apex-charcoal); margin-bottom: 18px; align-items: center; }
+  .legend .lc { width: 16px; height: 16px; border-radius: 3px; display: inline-block; vertical-align: middle; margin-right: 4px; }
+
+  .lane { margin-bottom: 18px; }
+  .lane-t { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; padding: 8px 14px; border-radius: 8px 8px 0 0; color: var(--apex-white); display: flex; justify-content: space-between; align-items: center; }
+  .lane-pilot .lane-t { background: var(--hot); }
+  .lane-scope .lane-t { background: var(--worth); }
+  .lane-watch .lane-t { background: var(--notyet); }
+  .lane-items { border: 1px solid var(--apex-light-gray); border-top: none; border-radius: 0 0 8px 8px; }
+  .lane-item { padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--apex-light-gray); }
+  .lane-item:last-child { border-bottom: none; }
+  .lane-item .li-title { font-weight: 700; color: var(--apex-navy); margin-bottom: 4px; }
+  .lane-item .li-task { font-size: 11px; color: var(--apex-charcoal); margin-bottom: 4px; font-weight: 600; }
+  .lane-item .li-action { color: var(--apex-charcoal); }
+
+  .method-block { background: var(--apex-light-gray); border-radius: 10px; padding: 16px 18px; margin-bottom: 14px; }
+  .method-block h3 { font-size: 13px; color: var(--apex-navy); margin-bottom: 8px; font-weight: 700; }
+  .method-block p, .method-block li { font-size: 12.5px; color: var(--apex-charcoal); margin-bottom: 4px; }
+  .method-block ul { padding-left: 20px; }
+  .method-block code { background: var(--apex-white); padding: 2px 6px; border-radius: 4px; font-size: 12px; color: var(--apex-navy); font-family: ui-monospace, SFMono-Regular, monospace; }
+  .method-block .formula { display: block; background: var(--apex-white); padding: 10px 14px; border-radius: 6px; font-family: ui-monospace, SFMono-Regular, monospace; font-size: 13px; color: var(--apex-navy); margin: 8px 0; border-left: 3px solid var(--apex-teal); }
+
+  .footer-cal { margin-top: 26px; padding: 12px 16px; background: var(--apex-light-gray); border-radius: 8px; font-size: 11px; color: var(--apex-charcoal); text-align: center; line-height: 1.6; }
+  .footer-cal strong { color: var(--apex-deep-teal); }
+
+  .radar-wrap { max-width: 420px; margin: 0 auto 22px; border: 1px solid var(--apex-light-gray); border-radius: 12px; padding: 16px; background: var(--apex-white); }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-top">
+    <div>
+      <h1>AIVCIO — Self-Pilot Report</h1>
+      <div class="sub">Individual Operations Diagnostic · Hot Cases · Worth Exploring · Not Yet</div>
+    </div>
+    <div class="badge">Static Snapshot · 2026-05-11</div>
+  </div>
+  <div class="hdr-meta">
+    <div class="chip">Coachee: P1 (Selbst-Pilot)</div>
+    <div class="chip">Stand: 11. Mai 2026</div>
+    <div class="chip">Re-Assessment: 10. Aug 2026</div>
+    <div class="chip">Spec: aivcio.yaml v2026-05-10</div>
+    <div class="chip">8 Tasks</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('ov')">Overview</button>
+  <button class="tab" onclick="showTab('hot')">Hot Cases</button>
+  <button class="tab" onclick="showTab('worth')">Worth Exploring</button>
+  <button class="tab" onclick="showTab('notyet')">Not Yet</button>
+  <button class="tab" onclick="showTab('heat')">Heatmap</button>
+  <button class="tab" onclick="showTab('act')">Action Plan</button>
+  <button class="tab" onclick="showTab('meth')">Methode</button>
+</div>
+
+<div class="cnt">
+
+<!-- OVERVIEW -->
+<div id="ov" class="pnl active">
+  <div class="alert al-pilot">
+    <strong>Selbst-Pilot, N = 1.</strong> Dies ist eine Kalibrierungs-Administration des AIVCIO-Instruments durch den Autor an sich selbst. Die Bandzuordnungen sind valide für die Person; jede Verallgemeinerung wartet auf mindestens drei unabhängige Administrationen. Schwellen 6.0 / 3.0 sind <em>provisorisch</em>.
+  </div>
+
+  <div class="kpi-row">
+    <div class="kpi"><div class="sc sc-hot" id="kHot">2</div><div class="lb">Hot Cases</div><div class="un">Readiness ≥ 6.0</div></div>
+    <div class="kpi"><div class="sc sc-worth" id="kWorth">3</div><div class="lb">Worth Exploring</div><div class="un">3.0 ≤ R &lt; 6.0</div></div>
+    <div class="kpi"><div class="sc sc-notyet" id="kNotYet">3</div><div class="lb">Not Yet</div><div class="un">R &lt; 3.0</div></div>
+    <div class="kpi"><div class="sc sc-navy" id="kHrs">13.5</div><div class="lb">Hot-Stunden / Woche</div><div class="un">potenzielle Wochenersparnis bei Realisierung</div></div>
+  </div>
+
+  <div class="radar-wrap">
+    <canvas id="radar" role="img" aria-label="Durchschnittsprofil über 6 Dimensionen"></canvas>
+  </div>
+
+  <div class="section-h">Lesart</div>
+  <p class="section-lead">
+    Zwei Kandidaten sind reif für einen Augmentation-Pilot in den kommenden zwei Wochen — beide aus dem Coaching-Operations-Bereich. Drei weitere Tasks rechtfertigen ein 30-Min-Scoping-Gespräch, bevor sie pilotiert werden. Drei Tasks sind heute nicht reif: zweimal aus Klarheits-Gründen (Domänenwissen, Kontext-Abhängigkeit), einmal aus Volumen-Gründen (Zeitlast amortisiert kein Setup).
+  </p>
+
+  <div class="footer-cal" id="calFooter1"></div>
+</div>
+
+<!-- HOT -->
+<div id="hot" class="pnl">
+  <div class="alert al-info">
+    <strong>Hot Cases.</strong> Tasks mit hoher Klarheit (Input + Output) und spürbarer Zeitlast. Diese rechtfertigen einen Augmentation-Pilot in den kommenden 1–2 Wochen — mit klarem Setup-Aufwand, klarem Erfolgsmaß und Re-Assessment in 4 Wochen.
+  </div>
+  <div id="hotList"></div>
+  <div class="footer-cal" id="calFooter2"></div>
+</div>
+
+<!-- WORTH -->
+<div id="worth" class="pnl">
+  <div class="alert al-warn">
+    <strong>Worth Exploring.</strong> Klarheits- oder Zeitlast-Profil mittel. Vor dem Pilot empfehlenswert: 30-Minuten-Scoping. Ziel: was fehlt, um diese Tasks in den Hot-Bereich zu schärfen — ein klareres Eingangsformat, eine engere Akzeptanz-Definition, oder schlicht das Sammeln von mehr Instanzen?
+  </div>
+  <div id="worthList"></div>
+  <div class="footer-cal" id="calFooter3"></div>
+</div>
+
+<!-- NOT YET -->
+<div id="notyet" class="pnl">
+  <div class="alert al-info">
+    <strong>Not Yet.</strong> Heute kein klarer Augmentation-Kandidat. Drei typische Gründe: Klarheits-Lücken (Input oder Output zu kontextabhängig), zu geringes Volumen (Setup amortisiert sich nicht), oder Drift Richtung <em>strategic</em> (Aufgabe braucht menschliches Urteilsvermögen). <strong>Not Yet ist eine Diagnose, kein Urteil.</strong>
+  </div>
+  <div id="notyetList"></div>
+  <div class="footer-cal" id="calFooter4"></div>
+</div>
+
+<!-- HEATMAP -->
+<div id="heat" class="pnl">
+  <p class="section-lead">
+    Pro Task die durchschnittliche Bewertung über die sechs Dimensionen, jeweils auf einer 1–5-Skala. Höher = klarer / höhere Zeitlast. Negativ-keyed Items wurden vor der Aggregation invertiert.
+  </p>
+  <div class="legend">
+    Bewertung:
+    <span><span class="lc h5"></span> 5 (sehr klar / hoch)</span>
+    <span><span class="lc h4"></span> 4</span>
+    <span><span class="lc h3"></span> 3</span>
+    <span><span class="lc h2"></span> 2</span>
+    <span><span class="lc h1"></span> 1 (sehr unklar / niedrig)</span>
+  </div>
+  <div style="overflow-x:auto;">
+    <table class="heatmap" id="heatTable"></table>
+  </div>
+  <div class="footer-cal" id="calFooter5"></div>
+</div>
+
+<!-- ACTION PLAN -->
+<div id="act" class="pnl">
+  <p class="section-lead">
+    Die diagnostische Arbeit ist abgeschlossen, sobald der Bericht steht. Ab hier beginnt die Coaching-Arbeit. Übergabe an Coach HQ in drei Spuren — sortiert nach Reife, nicht nach Wichtigkeit.
+  </p>
+
+  <div class="lane lane-pilot">
+    <div class="lane-t">Pilot diese Woche <span style="font-weight:600;font-size:11px;">2 Tasks</span></div>
+    <div class="lane-items" id="lanePilot"></div>
+  </div>
+
+  <div class="lane lane-scope">
+    <div class="lane-t">30-Minuten-Scoping <span style="font-weight:600;font-size:11px;">3 Tasks</span></div>
+    <div class="lane-items" id="laneScope"></div>
+  </div>
+
+  <div class="lane lane-watch">
+    <div class="lane-t">Beobachten · Re-Assessment in 3 Monaten <span style="font-weight:600;font-size:11px;">3 Tasks</span></div>
+    <div class="lane-items" id="laneWatch"></div>
+  </div>
+
+  <div class="footer-cal" id="calFooter6"></div>
+</div>
+
+<!-- METHODE -->
+<div id="meth" class="pnl">
+  <div class="method-block">
+    <h3>Instrument</h3>
+    <p>AIVCIO erfasst pro Task acht Likert-Items (1–5), eine Frequenz (Instanzen/Woche) und eine Dauer (Minuten/Instanz). Vier Items sind <strong>negativ-keyed</strong> (Format-Schwankungen, Sonderfälle, Output-Schwankungen, Akzeptanz-Unsicherheit) und werden vor der Aggregation invertiert.</p>
+  </div>
+
+  <div class="method-block">
+    <h3>Sechs Dimensionen</h3>
+    <ul>
+      <li><strong>D1 — Format & Quelle:</strong> wie stabil ist der Eingangs-Input?</li>
+      <li><strong>D2 — Regeln & Ausnahmen:</strong> sind die Verarbeitungs-Regeln nennbar?</li>
+      <li><strong>D3 — Format & Ergebnis:</strong> ist das Zielformat präzise definiert?</li>
+      <li><strong>D4 — Qualität & Akzeptanz:</strong> ist Erfolg messbar / akzeptierbar?</li>
+      <li><strong>D5 — Frequenz:</strong> Instanzen pro Arbeitswoche.</li>
+      <li><strong>D6 — Dauer pro Instanz:</strong> Minuten pro Instanz im Schnitt.</li>
+    </ul>
+    <p style="margin-top:8px;">D1+D2 ergeben die Input-Klarheit <code>I</code>, D3+D4 die Output-Klarheit <code>O</code>, D5×D6 die Zeitlast <code>T</code> in Stunden/Woche.</p>
+  </div>
+
+  <div class="method-block">
+    <h3>Readiness-Formel</h3>
+    <span class="formula">Readiness = (I × O / 25) × T<sub>h/Woche</sub></span>
+    <p>Multiplikator 0–1 aus Klarheit, skaliert mit Wochen-Stunden. Ein hochklarer Task mit ≥ 6 h/Woche reicht für Hot. Ein mittelklarer Task braucht spürbar mehr Zeitlast, um über die Schwelle zu kommen.</p>
+  </div>
+
+  <div class="method-block">
+    <h3>Bandzuordnung (provisorisch)</h3>
+    <ul>
+      <li><strong>Hot Case:</strong> Readiness ≥ 6.0 — Pilot-Setup in 1–2 Wochen.</li>
+      <li><strong>Worth Exploring:</strong> 3.0 ≤ Readiness &lt; 6.0 — 30-Min-Scoping vor Pilot.</li>
+      <li><strong>Not Yet:</strong> Readiness &lt; 6.0 mit Klarheits- oder Volumen-Lücke.</li>
+    </ul>
+    <p>Schwellen 6.0 / 3.0 sind nach drei unabhängigen Administrationen zu validieren. Bis dahin: <code>thresholds_provisional: true</code>.</p>
+  </div>
+
+  <div class="method-block">
+    <h3>Was dieser Self-Pilot NICHT ist</h3>
+    <ul>
+      <li>Keine echte Coaching-Diagnostik — der Autor coacht sich nicht selbst, er kalibriert ein Instrument.</li>
+      <li>Kein Marktforschungs-Test — N=1 hat keine externe Aussagekraft.</li>
+      <li>Kein Bericht für Dritte — methodische Übung; nicht teilen.</li>
+      <li>Keine endgültige Schwellen-Validierung — Schwellen bleiben provisorisch.</li>
+    </ul>
+  </div>
+
+  <div class="footer-cal" id="calFooter7"></div>
+</div>
+
+</div>
+
+<script>
+// ============ DATA ============
+const TASKS = [
+  {
+    id: "T-001",
+    label: "Session-Notizen → Follow-up-Email",
+    desc: "Aus rohen Coaching-Session-Notizen strukturierte Follow-up-Mails an Coachees mit Maßnahmen, Übungen und nächstem Termin erstellen.",
+    classification: "guided",
+    band: "hot",
+    dims: { d1: 4.6, d2: 4.4, d3: 5.0, d4: 4.6, d5: 5.0, d6: 4.0 },
+    iAvg: 4.5, oAvg: 4.8,
+    freq: 8, minPerInst: 45,
+    hoursWk: 6.0,
+    readiness: 6.62,
+    pattern: [
+      "Eingangs-Notizen-Format hat sich über die letzten Monate stabilisiert.",
+      "Output-Vorlage existiert bereits in Coach HQ — Akzeptanz hoch.",
+      "Hohe Frequenz × kurze Dauer ergibt spürbare Wochen-Stunden."
+    ],
+    recommend: "Augmentation-Pilot diese Woche: Claude-Skill mit Coach-Voice-Profil + Maßnahmen-Bibliothek. Setup ~30 Min. Erfolgsmaß: Time-to-First-Draft < 5 Min. Re-Assessment in 4 Wochen."
+  },
+  {
+    id: "T-002",
+    label: "Spec-Refinement Diagnostics-Engine",
+    desc: "Test-Daten anpassen, Spec-Files präzisieren, Edge-Cases nach Self-Pilot-Lehren in die Engine einarbeiten.",
+    classification: "guided",
+    band: "hot",
+    dims: { d1: 4.4, d2: 4.6, d3: 4.6, d4: 4.4, d5: 5.0, d6: 4.5 },
+    iAvg: 4.5, oAvg: 4.5,
+    freq: 5, minPerInst: 90,
+    hoursWk: 7.5,
+    readiness: 6.08,
+    pattern: [
+      "YAML-Spec + Test-Suite definieren das Eingangs- und Zielformat scharf.",
+      "Code-Repo gibt strenge Akzeptanz (Tests grün / rot).",
+      "Hohe Wochen-Stunden, weil parallel an mehreren Instrumenten gearbeitet wird."
+    ],
+    recommend: "Claude Code Agent + spec-changes Memory. Setup ~45 Min (Repo-Access, Test-Lauf-Skript). Erfolgsmaß: PR-Round-Trip-Time halbiert sich. Re-Assessment in 4 Wochen."
+  },
+  {
+    id: "T-003",
+    label: "Coaching-Briefing aus Stakeholder-Doku",
+    desc: "Vor jeder Coaching-Session: aus Org-Charts, vorherigen Notizen und LinkedIn-Profilen ein 1-Pager-Briefing zum Coachee + Stakeholder-Umfeld erstellen.",
+    classification: "guided",
+    band: "worth",
+    dims: { d1: 4.0, d2: 3.8, d3: 4.4, d4: 4.0, d5: 4.0, d6: 4.0 },
+    iAvg: 4.0, oAvg: 4.2,
+    freq: 4, minPerInst: 90,
+    hoursWk: 6.0,
+    readiness: 4.03,
+    pattern: [
+      "Quellen-Format wechselt (PDF, Doc, Web) — Input-Klarheit nur mittel.",
+      "Output-Struktur ist konsistent (1-Pager-Template).",
+      "Zeitlast hoch genug für Pilot, aber Input-Vielfalt erhöht Setup-Komplexität."
+    ],
+    recommend: "30-Min-Scoping: welcher Quellen-Mix lohnt sich für ein Auto-Briefing-Skill, welcher bleibt manuell? Danach Pilot mit den 2–3 häufigsten Quellen-Typen."
+  },
+  {
+    id: "T-004",
+    label: "Akquise-Outreach-Personalisierung",
+    desc: "Aus Vorlagen + LinkedIn-Profil + Anlass-Kontext personalisierte Erst-Touches an potenzielle AI-Value-Capture-Kunden formulieren.",
+    classification: "guided",
+    band: "worth",
+    dims: { d1: 3.6, d2: 3.6, d3: 4.0, d4: 3.6, d5: 4.5, d6: 3.0 },
+    iAvg: 3.6, oAvg: 3.8,
+    freq: 7, minPerInst: 60,
+    hoursWk: 7.0,
+    readiness: 3.83,
+    pattern: [
+      "Vorlagen existieren, aber die Personalisierung lebt vom Anlass — variable Input-Tiefe.",
+      "Akzeptanz schwer messbar — Antwort-Quote als Proxy, mit Lag.",
+      "Zeitlast hoch — Akquise-Phase ist gerade ramped up."
+    ],
+    recommend: "30-Min-Scoping: was unterscheidet einen guten von einem schlechten Erst-Touch in Antwort-Quote? Danach Pilot mit Anlass-Klassifikator + 3 personalisierten Templates."
+  },
+  {
+    id: "T-005",
+    label: "Newsletter-Trend-Triage",
+    desc: "Aus AI-Newslettern (TLDR, Inspo, GfA, Förder-Radar) wöchentliche Marktimpulse-Einträge klassifizieren und in Marktimpulse HQ kuratieren.",
+    classification: "guided",
+    band: "worth",
+    dims: { d1: 3.6, d2: 3.4, d3: 4.0, d4: 3.6, d5: 5.0, d6: 2.5 },
+    iAvg: 3.5, oAvg: 3.8,
+    freq: 15, minPerInst: 24,
+    hoursWk: 6.0,
+    readiness: 3.19,
+    pattern: [
+      "Quellen sind stabil, aber Item-Format pro Newsletter unterschiedlich.",
+      "Klassifikations-Schema steht, Akzeptanz schwankt mit Tagesform.",
+      "Hohe Frequenz × kurze Dauer — Pilot lohnt sich, wenn Klassifikator robust wird."
+    ],
+    recommend: "30-Min-Scoping: ist das Klassifikations-Schema scharf genug für einen Auto-Filter, oder braucht es zuerst eine Schema-Iteration auf Basis der letzten 4 Wochen?"
+  },
+  {
+    id: "T-006",
+    label: "Beleg-Klassifikation Buchhaltung",
+    desc: "Eingehende Belege (PDF, Bild) den Konten-Kategorien zuordnen und in das Buchhaltungs-System einsortieren.",
+    classification: "guided",
+    band: "notyet",
+    dims: { d1: 4.4, d2: 4.6, d3: 4.6, d4: 4.4, d5: 4.0, d6: 1.5 },
+    iAvg: 4.5, oAvg: 4.5,
+    freq: 4, minPerInst: 8,
+    hoursWk: 0.53,
+    readiness: 0.43,
+    pattern: [
+      "Sehr klare Klarheits-Profile — auf dem Papier idealer Augmentation-Kandidat.",
+      "Volumen ist aber zu niedrig: ~30 Min/Woche reichen nicht, um Setup-Aufwand zu amortisieren.",
+      "Drift-Risiko: könnte Hot werden, sobald Buchhaltungs-Volumen wächst."
+    ],
+    recommend: "Beobachten. Wenn das Volumen über 2 h/Woche steigt (z.B. nach Selbständigkeits-Vollzeit), wird dies automatisch Hot."
+  },
+  {
+    id: "T-007",
+    label: "Stakeholder-Map konstruieren",
+    desc: "Für komplexe Coaching-Engagements eine Stakeholder-Map mit Beziehungen, Einfluss und Spannungslinien zeichnen.",
+    classification: "guided",
+    band: "notyet",
+    dims: { d1: 2.6, d2: 2.4, d3: 3.0, d4: 3.0, d5: 2.0, d6: 4.0 },
+    iAvg: 2.5, oAvg: 3.0,
+    freq: 1, minPerInst: 90,
+    hoursWk: 1.5,
+    readiness: 0.45,
+    pattern: [
+      "Eingangs-Quellen sind extrem kontext-abhängig — kein wiederverwendbares Schema.",
+      "Output-Format variiert je nach Engagement (Folie, Whiteboard, Prosa).",
+      "Klarheits-Lücke ist primär — nicht Volumen oder Zeitlast."
+    ],
+    recommend: "Beobachten. Vor jedem Pilot-Versuch zuerst ein Stakeholder-Map-Schema standardisieren — das wäre eine eigene Diagnostics-HQ-Iteration."
+  },
+  {
+    id: "T-008",
+    label: "Vertragstext laienverständlich übersetzen",
+    desc: "Verträge, Bescheide, Policen aus Anwalts-/Steuer-/Versicherungs-Kontext in eigene Briefings für die Vorbereitung mit dem LTI-Advisor übersetzen.",
+    classification: "strategic",
+    band: "notyet",
+    dims: { d1: 2.4, d2: 2.0, d3: 2.6, d4: 2.6, d5: 1.0, d6: 2.0 },
+    iAvg: 2.2, oAvg: 2.6,
+    freq: 0.5, minPerInst: 45,
+    hoursWk: 0.38,
+    readiness: 0.09,
+    pattern: [
+      "Domänenwissen + juristische Nuance — Drift Richtung strategic.",
+      "Akzeptanz hängt von realer Vertragslage ab, schwer modellierbar.",
+      "Volumen ohnehin niedrig — kein Pilot-Kandidat."
+    ],
+    recommend: "Beobachten. Eher Fall für ein domänenspezifisches Tool (LTI-Advisor HQ Skill mit Vertragstyp-Bibliothek), nicht für ein generisches Augmentation-Setup."
+  }
+];
+
+// ============ HELPERS ============
+function bandClass(b) { return { hot: 'bg-hot', worth: 'bg-worth', notyet: 'bg-notyet' }[b]; }
+function bandLabel(b) { return { hot: 'Hot', worth: 'Worth', notyet: 'Not Yet' }[b]; }
+function heatClass(v) {
+  const r = Math.round(v);
+  return ['h0','h1','h2','h3','h4','h5'][Math.max(0, Math.min(5, r))];
+}
+
+function renderTaskCard(t) {
+  return `
+    <div class="task-card">
+      <div class="tc-head" onclick="toggleCard(this)">
+        <div style="display:flex;align-items:center;flex:1;min-width:0;">
+          <span class="tc-id">${t.id}</span>
+          <span class="tc-title">${t.label}</span>
+        </div>
+        <span class="tc-readiness ${bandClass(t.band)}">${bandLabel(t.band)} · R = ${t.readiness.toFixed(2)}</span>
+        <span class="chv">▶</span>
+      </div>
+      <div class="tc-body">
+        <p style="font-size:13px;color:var(--apex-charcoal);margin-bottom:14px;">${t.desc}</p>
+        <div class="tc-meta">
+          <span class="m"><strong>Klassifikation:</strong> ${t.classification}</span>
+          <span class="m"><strong>Frequenz:</strong> ${t.freq} / Woche</span>
+          <span class="m"><strong>Dauer:</strong> ${t.minPerInst} Min / Instanz</span>
+          <span class="m"><strong>Zeitlast:</strong> ${t.hoursWk.toFixed(1)} h / Woche</span>
+        </div>
+        <div class="dim-grid">
+          <div class="dim"><div class="dn">D1 Format & Quelle</div><div class="dv">${t.dims.d1.toFixed(1)} <span class="max">/ 5</span></div></div>
+          <div class="dim"><div class="dn">D2 Regeln & Ausn.</div><div class="dv">${t.dims.d2.toFixed(1)} <span class="max">/ 5</span></div></div>
+          <div class="dim"><div class="dn">D3 Format & Ergeb.</div><div class="dv">${t.dims.d3.toFixed(1)} <span class="max">/ 5</span></div></div>
+          <div class="dim"><div class="dn">D4 Qualität & Akz.</div><div class="dv">${t.dims.d4.toFixed(1)} <span class="max">/ 5</span></div></div>
+          <div class="dim"><div class="dn">D5 Frequenz</div><div class="dv">${t.dims.d5.toFixed(1)} <span class="max">/ 5</span></div></div>
+          <div class="dim"><div class="dn">D6 Dauer/Inst.</div><div class="dv">${t.dims.d6.toFixed(1)} <span class="max">/ 5</span></div></div>
+        </div>
+        <div class="pattern-h">Pattern-Profil</div>
+        ${t.pattern.map(p => `<div class="pattern">${p}</div>`).join('')}
+        <div class="recommend-h">Empfehlung</div>
+        <div class="recommend">${t.recommend}</div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleCard(headEl) {
+  const body = headEl.nextElementSibling;
+  const chv = headEl.querySelector('.chv');
+  body.classList.toggle('open');
+  chv.classList.toggle('open');
+}
+
+function showTab(id) {
+  document.querySelectorAll('.pnl').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ============ RENDER ============
+function renderHot() {
+  document.getElementById('hotList').innerHTML = TASKS.filter(t => t.band === 'hot').map(renderTaskCard).join('');
+}
+function renderWorth() {
+  document.getElementById('worthList').innerHTML = TASKS.filter(t => t.band === 'worth').map(renderTaskCard).join('');
+}
+function renderNotYet() {
+  document.getElementById('notyetList').innerHTML = TASKS.filter(t => t.band === 'notyet').map(renderTaskCard).join('');
+}
+
+function renderHeatmap() {
+  const headers = ['Task', 'D1 Format & Quelle', 'D2 Regeln & Ausn.', 'D3 Format & Ergeb.', 'D4 Qualität & Akz.', 'D5 Frequenz', 'D6 Dauer/Inst.', 'Readiness', 'Band'];
+  const rows = TASKS.map(t => `
+    <tr>
+      <td>${t.id}<br><span style="font-weight:500;color:var(--apex-charcoal);font-size:11px;">${t.label}</span></td>
+      <td class="${heatClass(t.dims.d1)}">${t.dims.d1.toFixed(1)}</td>
+      <td class="${heatClass(t.dims.d2)}">${t.dims.d2.toFixed(1)}</td>
+      <td class="${heatClass(t.dims.d3)}">${t.dims.d3.toFixed(1)}</td>
+      <td class="${heatClass(t.dims.d4)}">${t.dims.d4.toFixed(1)}</td>
+      <td class="${heatClass(t.dims.d5)}">${t.dims.d5.toFixed(1)}</td>
+      <td class="${heatClass(t.dims.d6)}">${t.dims.d6.toFixed(1)}</td>
+      <td style="font-weight:800;color:var(--apex-navy);">${t.readiness.toFixed(2)}</td>
+      <td><span class="tc-readiness ${bandClass(t.band)}" style="font-size:11px;padding:2px 8px;">${bandLabel(t.band)}</span></td>
+    </tr>
+  `).join('');
+  document.getElementById('heatTable').innerHTML = `
+    <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+    <tbody>${rows}</tbody>
+  `;
+}
+
+function renderActionPlan() {
+  const lane = (band, container) => {
+    document.getElementById(container).innerHTML = TASKS.filter(t => t.band === band).map(t => `
+      <div class="lane-item">
+        <div class="li-task">${t.id} · ${t.classification}</div>
+        <div class="li-title">${t.label}</div>
+        <div class="li-action">${t.recommend}</div>
+      </div>
+    `).join('');
+  };
+  lane('hot', 'lanePilot');
+  lane('worth', 'laneScope');
+  lane('notyet', 'laneWatch');
+}
+
+function renderRadar() {
+  const ctx = document.getElementById('radar').getContext('2d');
+  const dims = ['D1 Format & Quelle', 'D2 Regeln & Ausn.', 'D3 Format & Ergeb.', 'D4 Qualität & Akz.', 'D5 Frequenz', 'D6 Dauer/Inst.'];
+  const avg = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6'].map(k => {
+    return TASKS.reduce((sum, t) => sum + t.dims[k], 0) / TASKS.length;
+  });
+  const hotAvg = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6'].map(k => {
+    const hot = TASKS.filter(t => t.band === 'hot');
+    return hot.reduce((sum, t) => sum + t.dims[k], 0) / hot.length;
+  });
+  new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: dims,
+      datasets: [
+        { label: 'Alle 8 Tasks (Ø)', data: avg, backgroundColor: 'rgba(29,68,119,0.18)', borderColor: '#1D4477', borderWidth: 2, pointBackgroundColor: '#1D4477' },
+        { label: 'Hot Cases (Ø)', data: hotAvg, backgroundColor: 'rgba(0,177,235,0.20)', borderColor: '#00B1EB', borderWidth: 2, pointBackgroundColor: '#00B1EB' }
+      ]
+    },
+    options: {
+      scales: { r: { min: 0, max: 5, ticks: { stepSize: 1, font: { size: 10 } }, pointLabels: { font: { size: 10 } } } },
+      plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }
+    }
+  });
+}
+
+function renderCalFooter() {
+  const txt = `<strong>Calibration-Footer.</strong> AIVCIO Self-Pilot · Spec aivcio.yaml v2026-05-10 · Schwellen 6.0 / 3.0 (provisional: true) · N = 1 · Re-Assessment 10. Aug 2026 · Bericht: methodische Übung, nicht für Dritte.`;
+  ['calFooter1', 'calFooter2', 'calFooter3', 'calFooter4', 'calFooter5', 'calFooter6', 'calFooter7'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = txt;
+  });
+}
+
+// INIT
+renderHot();
+renderWorth();
+renderNotYet();
+renderHeatmap();
+renderActionPlan();
+renderRadar();
+renderCalFooter();
+</script>
+
+</body>
+</html>
