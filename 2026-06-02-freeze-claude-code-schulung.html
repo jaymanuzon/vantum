@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Claude Code Schulung",
+  "schemaVersion": 1,
+  "description": "Interaktive Claude Code Schulung in 6 Kapiteln: Was ist Claude Code, der Agentic Loop, Gedächtnis-System, Skills & Extensions, Mapping auf Jays Cowork OS, und 8 ungenutzte Potenziale mit verbatim Prompts. — FREEZE-VERSION vom 02.06.2026"
+}
+</script>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code Schulung (Freeze 2026-06-02)</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8f9fb;
+      --card: #ffffff;
+      --navy: #0f172a;
+      --teal: #0d9488;
+      --teal-light: #ccfbf1;
+      --coral: #f97316;
+      --coral-light: #ffedd5;
+      --amber: #d97706;
+      --amber-light: #fef3c7;
+      --violet: #7c3aed;
+      --violet-light: #ede9fe;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --blue: #1d4ed8;
+      --blue-light: #dbeafe;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--navy);
+      color: white;
+      padding: 24px 32px;
+    }
+    .header-inner { max-width: 960px; margin: 0 auto; }
+    .header-tag {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #94a3b8; margin-bottom: 8px;
+    }
+    .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    .header p { font-size: 14px; color: #94a3b8; max-width: 600px; line-height: 1.5; }
+    .nav-bar {
+      background: white; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-inner {
+      max-width: 960px; margin: 0 auto;
+      display: flex; overflow-x: auto; padding: 0 16px; scrollbar-width: none;
+    }
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nav-btn {
+      padding: 14px 16px; font-size: 13px; font-weight: 500;
+      color: var(--text-muted); border: none; background: none; cursor: pointer;
+      white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.2s;
+    }
+    .nav-btn:hover { color: var(--teal); }
+    .nav-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+    .main { max-width: 960px; margin: 0 auto; padding: 32px 16px; }
+    .chapter { display: none; }
+    .chapter.active { display: block; }
+    .chapter-header { margin-bottom: 28px; }
+    .chapter-tag {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--teal); margin-bottom: 8px;
+    }
+    .chapter-header h2 { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .chapter-header p { font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 700px; }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }
+    .card-grid.two-col { grid-template-columns: repeat(2, 1fr); }
+    .card-grid.three-col { grid-template-columns: repeat(3, 1fr); }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+    }
+    .card .card-icon { font-size: 22px; margin-bottom: 10px; }
+    .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--navy); }
+    .card p { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+    .card.teal { border-left: 3px solid var(--teal); }
+    .card.coral { border-left: 3px solid var(--coral); }
+    .card.amber { border-left: 3px solid var(--amber); }
+    .card.violet { border-left: 3px solid var(--violet); }
+    .card.green { border-left: 3px solid var(--green); }
+    .card.blue { border-left: 3px solid var(--blue); }
+    .highlight-block {
+      background: var(--teal-light); border: 1px solid #99f6e4;
+      border-radius: var(--radius); padding: 20px 24px; margin-bottom: 24px;
+    }
+    .highlight-block.coral { background: var(--coral-light); border-color: #fdba74; }
+    .highlight-block.amber { background: var(--amber-light); border-color: #fcd34d; }
+    .highlight-block.violet { background: var(--violet-light); border-color: #c4b5fd; }
+    .highlight-block.blue { background: var(--blue-light); border-color: #93c5fd; }
+    .highlight-block.green { background: var(--green-light); border-color: #86efac; }
+    .highlight-block h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--navy); }
+    .highlight-block p { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .code-block {
+      background: #0f172a; border-radius: 8px; padding: 16px 20px;
+      margin: 12px 0; overflow-x: auto;
+    }
+    .code-block code {
+      font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 12.5px; color: #7dd3fc; white-space: pre; display: block;
+    }
+    .code-block .comment { color: #475569; }
+    .code-block .string { color: #86efac; }
+    .styled-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+    .styled-table th {
+      background: var(--navy); color: white; padding: 10px 14px;
+      text-align: left; font-weight: 600; font-size: 12px;
+    }
+    .styled-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+    .styled-table tr:nth-child(even) td { background: #f8fafc; }
+    .styled-table tr:hover td { background: var(--teal-light); }
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-muted); margin: 28px 0 12px;
+    }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .tag {
+      font-size: 11px; font-weight: 600; padding: 3px 10px;
+      border-radius: 20px; background: #e2e8f0; color: var(--text-muted);
+    }
+    .tag.teal { background: var(--teal-light); color: #0f766e; }
+    .tag.coral { background: var(--coral-light); color: #9a3412; }
+    .tag.amber { background: var(--amber-light); color: #92400e; }
+    .tag.violet { background: var(--violet-light); color: #5b21b6; }
+    .tag.navy { background: #dbeafe; color: #1e3a8a; }
+    .tag.green { background: var(--green-light); color: #14532d; }
+    .loop-diagram {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0; margin: 24px 0; flex-wrap: wrap;
+    }
+    .loop-step {
+      background: var(--navy); color: white; border-radius: 10px;
+      padding: 14px 20px; text-align: center; min-width: 150px;
+    }
+    .loop-step .step-num {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: #94a3b8; margin-bottom: 4px;
+    }
+    .loop-step .step-title { font-size: 14px; font-weight: 700; }
+    .loop-step .step-desc { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+    .loop-arrow { font-size: 20px; color: var(--teal); padding: 0 10px; }
+    .potential-item {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px;
+      border-left: 4px solid var(--teal);
+    }
+    .potential-item.coral { border-left-color: var(--coral); }
+    .potential-item.amber { border-left-color: var(--amber); }
+    .potential-item.violet { border-left-color: var(--violet); }
+    .potential-item.green { border-left-color: var(--green); }
+    .potential-item.blue { border-left-color: var(--blue); }
+    .potential-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .potential-num {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--teal);
+      color: white; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+    }
+    .potential-num.coral { background: var(--coral); }
+    .potential-num.amber { background: var(--amber); }
+    .potential-num.violet { background: var(--violet); }
+    .potential-num.green { background: var(--green); }
+    .potential-num.blue { background: var(--blue); }
+    .potential-item h3 { font-size: 15px; font-weight: 700; color: var(--navy); }
+    .potential-item p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px; }
+    .prompt-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--teal); margin-bottom: 4px;
+    }
+    .divider { height: 1px; background: var(--border); margin: 28px 0; }
+    .kbd {
+      display: inline-block; padding: 2px 7px; background: #f1f5f9;
+      border: 1px solid #cbd5e1; border-radius: 4px;
+      font-family: monospace; font-size: 11px; color: var(--navy);
+    }
+    .mapping-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px; margin-bottom: 10px; align-items: start;
+    }
+    .mapping-cell {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 14px; font-size: 12.5px;
+    }
+    .mapping-cell .label {
+      font-size: 10px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 4px;
+    }
+    .mapping-cell .value { font-weight: 600; color: var(--navy); }
+    .mapping-cell .note { color: var(--text-muted); margin-top: 3px; font-size: 12px; }
+    .mapping-cell.highlight { border-color: var(--teal); background: var(--teal-light); }
+    .status-green { color: #16a34a; font-weight: 700; }
+    .status-amber { color: #d97706; font-weight: 700; }
+    .footer {
+      text-align: center; padding: 32px; color: var(--text-muted);
+      font-size: 12px; border-top: 1px solid var(--border); margin-top: 40px;
+    }
+    .footer a { color: var(--teal); text-decoration: none; }
+    @media (max-width: 640px) {
+      .card-grid.two-col, .card-grid.three-col { grid-template-columns: 1fr; }
+      .loop-diagram { flex-direction: column; }
+      .loop-arrow { transform: rotate(90deg); }
+      .mapping-row { grid-template-columns: 1fr; }
+      .header { padding: 20px 16px; }
+      .header h1 { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+<!-- FREEZE-RIBBON · Auto-generated by freeze-artifact skill -->
+<div style="background:linear-gradient(90deg,#78350f 0%,#b45309 100%);color:#fde68a;padding:8px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.5px;text-align:center;border-bottom:1px solid rgba(0,0,0,0.15);">
+  📌 FREEZE-VERSION · Snapshot vom 02.06.2026 · Statischer Stand · Original-Artifact wird in Cowork weiterentwickelt
+</div>
+
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-tag">Claude Tools · Schulung</div>
+    <h1>Claude Code — Von oben bis unten</h1>
+    <p>Was ist Claude Code, wie funktioniert es intern, wo bist du schon dabei, und welche Potenziale liegen noch brach. Zugeschnitten auf dein Cowork OS und deine Coaching-Praxis.</p>
+  </div>
+</div>
+
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="showChapter(0)">① Was ist es?</button>
+    <button class="nav-btn" onclick="showChapter(1)">② Agentic Loop</button>
+    <button class="nav-btn" onclick="showChapter(2)">③ Gedächtnis</button>
+    <button class="nav-btn" onclick="showChapter(3)">④ Skills &amp; Extensions</button>
+    <button class="nav-btn" onclick="showChapter(4)">⑤ Dein Cowork OS</button>
+    <button class="nav-btn" onclick="showChapter(5)">⑥ Potenziale</button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- KAPITEL 1 -->
+  <div class="chapter active" id="ch0">
+    <div class="chapter-header">
+      <div class="chapter-tag">Kapitel 1 · Überblick</div>
+      <h2>Was ist Claude Code?</h2>
+      <p>Claude Code ist ein <strong>agentisches Werkzeug</strong> — kein Chatbot, der auf Prompts wartet, sondern ein Assistent, der Dateien liest, Befehle ausführt, Änderungen vornimmt und Aufgaben eigenständig durcharbeitet. Entwickelt für Code, aber vielseitig für alles einsetzbar, das über die Kommandozeile läuft.</p>
+    </div>
+
+    <div class="highlight-block">
+      <h3>Der entscheidende Unterschied zu Cowork</h3>
+      <p>Cowork (diese Desktop-App hier) ist eine Oberfläche mit visuellen Elementen, Konnektoren und Skills. Claude Code ist die <strong>tiefere Schicht darunter</strong>: ein Terminal-nativer Agent mit direktem Zugriff auf dein Dateisystem, deine Shell und Git. Cowork ist eine von mehreren Oberflächen, auf denen Claude Code läuft. Du nutzt Claude Code also bereits, nur über eine GUI statt dem Terminal.</p>
+    </div>
+
+    <div class="section-label">Verfügbare Oberflächen</div>
+    <div class="card-grid">
+      <div class="card teal">
+        <div class="card-icon">⌨️</div>
+        <h3>Terminal CLI</h3>
+        <p>Vollständiger Funktionsumfang. Im Projektordner starten mit <code>claude</code>. Unterstützt Scripting, Piping, CI/CD. Installation: <code>curl -fsSL https://claude.ai/install.sh | bash</code></p>
+      </div>
+      <div class="card coral">
+        <div class="card-icon">🖥️</div>
+        <h3>Desktop App (Cowork)</h3>
+        <p>Visuelle Diff-Ansicht, parallele Sessions, geplante Aufgaben, Skills, MCP-Konnektoren. Das ist deine aktuelle Umgebung.</p>
+      </div>
+      <div class="card amber">
+        <div class="card-icon">🔌</div>
+        <h3>VS Code / JetBrains</h3>
+        <p>IDE-Extension mit Inline-Diffs, @-Erwähnungen und Plan-Überprüfung direkt im Editor. Für Eigenmarke HQ Code-Arbeit relevant.</p>
+      </div>
+      <div class="card violet">
+        <div class="card-icon">🌐</div>
+        <h3>claude.ai/code (Web)</h3>
+        <p>Im Browser, ohne lokale Installation. Async-Tasks auf Anthropic Cloud-Infrastruktur. Läuft auch wenn Mac ausgeschaltet.</p>
+      </div>
+      <div class="card green">
+        <div class="card-icon">📱</div>
+        <h3>iOS / Remote Control</h3>
+        <p>Lokale Session vom iPhone fortsetzen. Oder via Remote Control aus Browser steuern. Unterwegs eingreifen, ohne am Mac zu sitzen.</p>
+      </div>
+      <div class="card blue">
+        <div class="card-icon">⚙️</div>
+        <h3>CI/CD &amp; Slack</h3>
+        <p>GitHub Actions, GitLab CI, Slack: Fehlerberichte weiterleiten, PR-Reviews automatisieren. Für Eigenmarke HQ Repo direkt anwendbar.</p>
+      </div>
+    </div>
+
+    <div class="section-label">Kernfähigkeiten</div>
+    <div class="card-grid three-col">
+      <div class="card">
+        <div class="card-icon">📁</div>
+        <h3>Datei-Operationen</h3>
+        <p>Lesen, bearbeiten, erstellen, umbenennen — codebase-übergreifend, nicht nur aktuelle Datei.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <h3>Suche &amp; Navigation</h3>
+        <p>Dateien per Pattern finden, Inhalte per Regex durchsuchen, ganze Codebasen erkunden.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <h3>Shell-Ausführung</h3>
+        <p>Jeden Terminal-Befehl ausführen: Build-Tools, Git, Tests, Scripts, Paketmanager.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h3>Web-Recherche</h3>
+        <p>Suchen, Dokumentation fetchen, Fehlermeldungen nachschlagen — ohne dein Zutun.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔀</div>
+        <h3>Git &amp; Versionierung</h3>
+        <p>Branches, Commits, Pull Requests — direkt von Claude ausgeführt, nicht nur beschrieben.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤝</div>
+        <h3>MCP-Konnektoren</h3>
+        <p>Notion, Gmail, externe APIs, eigene DBs via Model Context Protocol einbindbar.</p>
+      </div>
+    </div>
+
+    <div class="highlight-block amber">
+      <h3>Einordnung: Autonomes Werkzeug, kein Chatbot</h3>
+      <p>Claude Code plant, führt aus, prüft Ergebnisse und korrigiert sich selbst. Du kannst jederzeit eingreifen, musst es aber nicht. Das Modell entscheidet, welche Tools es einsetzt und in welcher Reihenfolge. Das ist der qualitative Sprung gegenüber einem einfachen Prompt-Response-Austausch.</p>
+    </div>
+    <div class="tags">
+      <span class="tag teal">Agentic AI</span>
+      <span class="tag navy">CLI-native</span>
+      <span class="tag">Multi-Surface</span>
+      <span class="tag coral">Kein Chatbot</span>
+      <span class="tag amber">Für Code &amp; mehr</span>
+    </div>
+  </div>
+
+  <!-- KAPITEL 2 -->
+  <div class="chapter" id="ch1">
+    <div class="chapter-header">
+      <div class="chapter-tag">Kapitel 2 · Mechanik</div>
+      <h2>Der Agentic Loop</h2>
+      <p>Jede Aufgabe durchläuft denselben Kreislauf: Kontext sammeln, handeln, verifizieren. Kein einmaliger Prompt-Response-Tausch, sondern ein iterativer Prozess mit Dutzenden Werkzeugnutzungen pro Aufgabe.</p>
+    </div>
+
+    <div class="loop-diagram">
+      <div class="loop-step">
+        <div class="step-num">Schritt 1</div>
+        <div class="step-title">🔎 Kontext sammeln</div>
+        <div class="step-desc">Dateien lesen, suchen, verstehen</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-step">
+        <div class="step-num">Schritt 2</div>
+        <div class="step-title">⚡ Handeln</div>
+        <div class="step-desc">Bearbeiten, ausführen, schreiben</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-step">
+        <div class="step-num">Schritt 3</div>
+        <div class="step-title">✅ Verifizieren</div>
+        <div class="step-desc">Tests, Ausgaben, Ergebnisse prüfen</div>
+      </div>
+      <div class="loop-arrow">↩</div>
+    </div>
+
+    <div class="highlight-block">
+      <h3>Du bist Teil des Loops</h3>
+      <p>Du kannst jederzeit eingreifen, korrigieren und neu ausrichten. <kbd class="kbd">Esc</kbd> stoppt sofort mit erhaltenem Kontext. <kbd class="kbd">Esc Esc</kbd> oder <code>/rewind</code> öffnet das Rewind-Menü für einen Rollback. <code>/clear</code> setzt den Kontext zurück zwischen nicht zusammenhängenden Aufgaben.</p>
+    </div>
+
+    <div class="section-label">Das Context Window — die Schlüsselressource</div>
+    <div class="card-grid two-col">
+      <div class="card coral">
+        <div class="card-icon">📦</div>
+        <h3>Was ins Context Window geht</h3>
+        <p>Gesamter Gesprächsverlauf · Gelesene Dateien · Befehlsausgaben · CLAUDE.md · Auto Memory (max 200 Zeilen) · Skills (nur bei Nutzung) · MCP-Tool-Definitionen</p>
+      </div>
+      <div class="card amber">
+        <div class="card-icon">⚠️</div>
+        <h3>Was passiert wenn's voll ist</h3>
+        <p>Claude komprimiert automatisch: ältere Tool-Outputs zuerst, dann Gesprächszusammenfassung. Frühe Anweisungen können verloren gehen. Deshalb: Persistentes in CLAUDE.md, nicht ins Gespräch.</p>
+      </div>
+    </div>
+
+    <div class="section-label">Permission-Modi (Shift+Tab zum Wechseln)</div>
+    <table class="styled-table">
+      <thead><tr><th>Modus</th><th>Verhalten</th><th>Wann einsetzen</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Default</strong></td><td>Fragt vor Datei-Edits und Shell-Befehlen</td><td>Unbekannte Systeme, kritische Aktionen</td></tr>
+        <tr><td><strong>Auto-Accept Edits</strong></td><td>Bearbeitet Dateien ohne Rückfrage, fragt bei Befehlen</td><td>Vertrauenswürdige, bekannte Projekte</td></tr>
+        <tr><td><strong>Plan Mode</strong></td><td>Nur Read-Only-Tools. Claude plant, du genehmigst</td><td>Komplexe Änderungen — erst verstehen, dann tun</td></tr>
+        <tr><td><strong>Auto Mode</strong></td><td>KI-Classifier entscheidet im Hintergrund</td><td>Batch-Verarbeitung, CI/CD, Automatisierung</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-label">Sessions &amp; Checkpoints</div>
+    <div class="card-grid three-col">
+      <div class="card teal">
+        <div class="card-icon">📸</div>
+        <h3>Automatische Checkpoints</h3>
+        <p>Vor jedem Datei-Edit snapshot. Doppel-Esc oder <code>/rewind</code> stellt vorherigen Zustand wieder her. Persistiert über Sessions hinaus.</p>
+      </div>
+      <div class="card green">
+        <div class="card-icon">▶️</div>
+        <h3>Session fortsetzen</h3>
+        <p><code>claude --continue</code> macht weiter wo aufgehört. <code>claude --resume</code> zeigt Auswahl recent sessions. Kontext vollständig erhalten.</p>
+      </div>
+      <div class="card violet">
+        <div class="card-icon">🔀</div>
+        <h3>Sessions forken</h3>
+        <p><code>claude --continue --fork-session</code> erstellt neue Session-ID mit demselben History. Original bleibt unberührt. Ideal für Alternativ-Ansätze.</p>
+      </div>
+    </div>
+
+    <div class="highlight-block violet">
+      <h3>Best Practice: Explore → Plan → Implement</h3>
+      <p>Trenne Analyse und Ausführung. <strong>Plan Mode</strong> nutzen um Kontext zu verstehen und einen Plan zu erstellen. Dann Normal Mode für Umsetzung. Dieser Zwei-Phasen-Ansatz verhindert, dass das falsche Problem gelöst wird. Dein <em>Senior Partner Briefing</em> Skill ist die Cowork-Variante dieses Musters.</p>
+    </div>
+  </div>
+
+  <!-- KAPITEL 3 -->
+  <div class="chapter" id="ch2">
+    <div class="chapter-header">
+      <div class="chapter-tag">Kapitel 3 · Kontinuität</div>
+      <h2>Gedächtnis &amp; Kontinuität</h2>
+      <p>Jede Claude Code Session startet mit leerem Kontext. Zwei Mechanismen tragen Wissen über Sessions hinaus: <strong>CLAUDE.md</strong> (du schreibst es) und <strong>Auto Memory</strong> (Claude schreibt es selbst).</p>
+    </div>
+
+    <div class="card-grid two-col">
+      <div class="card teal">
+        <div class="card-icon">📋</div>
+        <h3>CLAUDE.md — deine Anweisungen</h3>
+        <p>Markdown-Datei mit persistenten Instruktionen. Claude liest sie bei jedem Session-Start. Ideal für: Build-Befehle, Konventionen, Architektur-Entscheidungen, Workflow-Regeln, "Always do X"-Regeln.</p>
+        <div class="tags" style="margin-top:10px">
+          <span class="tag teal">Du schreibst es</span>
+          <span class="tag">Explizit</span>
+          <span class="tag navy">Jede Session</span>
+        </div>
+      </div>
+      <div class="card coral">
+        <div class="card-icon">🧠</div>
+        <h3>Auto Memory — Claudes Notizen</h3>
+        <p>Claude speichert selbst, was für zukünftige Sessions nützlich ist: Build-Befehle die funktioniert haben, Debugging-Erkenntnisse, Präferenzen die es bemerkt. Erste 200 Zeilen von MEMORY.md laden immer.</p>
+        <div class="tags" style="margin-top:10px">
+          <span class="tag coral">Claude schreibt es</span>
+          <span class="tag">Automatisch</span>
+          <span class="tag navy">Jede Session</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">CLAUDE.md Scoping — wo es liegt, was es gilt</div>
+    <table class="styled-table">
+      <thead><tr><th>Scope</th><th>Pfad</th><th>Gilt für</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Organisation (IT)</strong></td><td><code>/Library/Application Support/ClaudeCode/CLAUDE.md</code></td><td>Alle User auf der Maschine</td></tr>
+        <tr><td><strong>User (global)</strong></td><td><code>~/.claude/CLAUDE.md</code></td><td>Alle deine Projekte</td></tr>
+        <tr><td><strong>Projekt</strong></td><td><code>./CLAUDE.md</code> oder <code>./.claude/CLAUDE.md</code></td><td>Dieses Projekt, via Git geteilt</td></tr>
+        <tr><td><strong>Lokal (privat)</strong></td><td><code>./CLAUDE.local.md</code></td><td>Nur du, in .gitignore</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-label">Was rein — was raus</div>
+    <div class="card-grid two-col">
+      <div class="card green">
+        <div class="card-icon">✅</div>
+        <h3>Rein damit</h3>
+        <p>Shell-Befehle die Claude nicht erraten kann · Projektspezifische Konventionen · Testbefehle · Architektur-Entscheidungen · Eigenwillige Env-Variablen · Häufige Stolperstellen · "WICHTIG: Immer X prüfen"</p>
+      </div>
+      <div class="card coral">
+        <div class="card-icon">❌</div>
+        <h3>Raus damit</h3>
+        <p>Was Claude aus dem Code ableiten kann · Allgemeine Sprach-Konventionen · Detaillierte API-Doku (Link reicht) · Informationen die sich oft ändern · Trivialitäten wie "schreib sauberen Code"</p>
+      </div>
+    </div>
+
+    <div class="highlight-block amber">
+      <h3>Faustregel für CLAUDE.md-Länge</h3>
+      <p>Ziel: unter 200 Zeilen. Für jede Zeile fragen: <em>"Würde das Weglassen dazu führen, dass Claude Fehler macht?"</em> Wenn nein: streichen oder in einen Skill auslagern. Zu lange Dateien führen dazu, dass Claude wichtige Regeln ignoriert.</p>
+    </div>
+
+    <div class="section-label">Auto Memory — Struktur</div>
+    <div class="code-block"><code><span class="comment"># ~/.claude/projects/&lt;project&gt;/memory/</span>
+MEMORY.md          <span class="comment"># Index, wird jede Session geladen (max 200 Zeilen)</span>
+debugging.md       <span class="comment"># Details zu Debugging-Mustern (on demand)</span>
+api-conventions.md <span class="comment"># API Design-Entscheidungen (on demand)</span>
+...                <span class="comment"># Weitere Topic-Dateien die Claude selbst anlegt</span></code></div>
+
+    <div class="highlight-block green">
+      <h3>Dein Cowork OS nutzt dasselbe Prinzip — bewusst</h3>
+      <p>Deine <code>CLAUDE.md</code>-Dateien in jeder Workstation und deine <code>MEMORY.md</code>-Dateien sind exakt das Gedächtnis-System von Claude Code. Der Unterschied: Du befüllst MEMORY.md manuell (was präziser ist), Claude Code macht das automatisch. Die Auto-Memory in Cowork OS ergänzt das, wo du es lässt.</p>
+    </div>
+  </div>
+
+  <!-- KAPITEL 4 -->
+  <div class="chapter" id="ch3">
+    <div class="chapter-header">
+      <div class="chapter-tag">Kapitel 4 · Erweiterbarkeit</div>
+      <h2>Skills, MCP, Hooks &amp; Subagents</h2>
+      <p>Claude Code lässt sich in vier Dimensionen erweitern. Jede adressiert einen anderen Bedarf — von wiederkehrenden Workflows über externe Dienste bis hin zu deterministischer Automatisierung.</p>
+    </div>
+
+    <div class="card-grid two-col">
+      <div class="card teal">
+        <div class="card-icon">🛠️</div>
+        <h3>Skills — wiederholbare Workflows</h3>
+        <p>Eine <code>SKILL.md</code>-Datei in <code>.claude/skills/</code>. Claude lädt sie bei Bedarf oder wenn der Name passt. Eigene Slash-Commands: <code>/review-pr</code>, <code>/deploy</code>, <code>/prd-session</code>. Inhalt lädt nur bei Nutzung, nicht bei Session-Start — kein Kontext-Overhead.</p>
+      </div>
+      <div class="card coral">
+        <div class="card-icon">🔌</div>
+        <h3>MCP — externe Dienste</h3>
+        <p>Model Context Protocol verbindet Claude mit Notion, Gmail, Datenbanken, Figma, APIs. Einmal eingerichtet, liest und schreibt Claude direkt darin. Das sind deine aktiven Notion/Gmail-Konnektoren in Cowork.</p>
+      </div>
+      <div class="card amber">
+        <div class="card-icon">⚡</div>
+        <h3>Hooks — deterministische Trigger</h3>
+        <p>Shell-Befehle VOR oder NACH Claude-Aktionen. Im Gegensatz zu CLAUDE.md-Anweisungen: <strong>nicht verhandelbar</strong>, immer ausgeführt. Beispiel: nach jedem Datei-Edit automatisch lint, oder Derived State Check.</p>
+      </div>
+      <div class="card violet">
+        <div class="card-icon">🤖</div>
+        <h3>Subagents — isolierte Kontext-Fenster</h3>
+        <p>Claude delegiert Unteraufgaben an eigene Agent-Instanzen mit frischem Kontext. Kein Kontext-Overflow im Hauptgespräch. Ideal für Recherche, Review, oder spezialisierte Analyse.</p>
+      </div>
+    </div>
+
+    <div class="section-label">Skill-Anatomie (direkt auf dein OS übertragbar)</div>
+    <div class="code-block"><code><span class="comment"># .claude/skills/session-prep/SKILL.md</span>
+---
+name: session-prep
+description: Bereite eine Coaching-Session vor basierend auf der Mandat-Akte
+disable-model-invocation: true  <span class="comment"># manueller Trigger, nicht automatisch</span>
+---
+
+Analysiere die Mandat-Akte für $ARGUMENTS und erstelle:
+1. Session-Ziel basierend auf letztem Gesprächseintrag
+2. Drei vorbereitete Coaching-Fragen (hypothetisch, systemisch, skalierend)
+3. Methodenempfehlung aus der Bibliothek (Phase Fit + Mindset)
+4. Kurze Klienten-Haltungs-Einschätzung basierend auf letztem Reasoning</code></div>
+
+    <div class="section-label">Hook-Beispiel: Derived State nach Mandat-Akte-Edit</div>
+    <div class="code-block"><code><span class="comment"># .claude/settings.json</span>
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": <span class="string">"Write|Edit"</span>,
+      "hooks": [{
+        "type": <span class="string">"command"</span>,
+        "command": <span class="string">"bash ~/Documents/Claude/Cowork\\ OS/00_Resources/2026-05-30-derived-state-check.sh"</span>
+      }]
+    }]
+  }
+}</code></div>
+
+    <div class="section-label">Subagent-Anatomie</div>
+    <div class="code-block"><code><span class="comment"># .claude/agents/hostile-reviewer.md</span>
+---
+name: hostile-reviewer
+description: Prüft Inhalte als gegnerischer Reviewer
+tools: Read, Grep, Glob
+model: opus
+---
+Du bist unabhängiger, skeptischer Reviewer ohne Kontext zur Entstehung.
+Prüfe jeden Claim auf Belastbarkeit. Keine Konstruktivität.
+Nur Schwächen enumerieren, mit Risiko-Gradient (hoch / mittel / niedrig).</code></div>
+
+    <div class="highlight-block coral">
+      <h3>Wann welche Extension?</h3>
+      <p><strong>CLAUDE.md</strong> → "Immer gelten, jede Session" · <strong>Skill</strong> → "Nur wenn ich es brauche, wiederkehrend" · <strong>Hook</strong> → "Muss passieren, ohne Ausnahme, deterministisch" · <strong>Subagent</strong> → "Braucht eigenen Kontext, komplex, isoliert" · <strong>MCP</strong> → "Externes System anbinden"</p>
+    </div>
+  </div>
+
+  <!-- KAPITEL 5 -->
+  <div class="chapter" id="ch4">
+    <div class="chapter-header">
+      <div class="chapter-tag">Kapitel 5 · Dein System</div>
+      <h2>Dein Cowork OS — das ist Claude Code</h2>
+      <p>Du nutzt Claude Code bereits intensiv. Alles, was du in Cowork OS gebaut hast, bildet die Claude Code Architektur ab. Hier die direkte Übersetzung — mit ehrlicher Einschätzung wo du schon vorn bist und wo Luft liegt.</p>
+    </div>
+
+    <div class="highlight-block green">
+      <h3>Du bist schon ein fortgeschrittener Claude Code Nutzer</h3>
+      <p>Dein OS mit CLAUDE.md-Dateien, MEMORY.md, Skills (prd-session, senior-partner-briefing, hostile-review, os-prd, u.a.), MCP-Konnektoren (Notion, Gmail, Google Drive), Scheduled Tasks und Subagents ist exakt das Erweiterbarkeits-Framework von Claude Code, gebaut auf der Cowork Desktop App. Das ist kein Zufall, es ist dieselbe Architektur.</p>
+    </div>
+
+    <div class="section-label">Mapping-Tabelle</div>
+
+    <div class="mapping-row" style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#94a3b8;margin-bottom:4px">
+      <div style="padding:0 14px">Claude Code Konzept</div>
+      <div style="padding:0 14px">Dein Cowork OS</div>
+      <div style="padding:0 14px">Status</div>
+    </div>
+
+    <div class="mapping-row">
+      <div class="mapping-cell"><div class="label">Konzept</div><div class="value">CLAUDE.md (Projekt)</div></div>
+      <div class="mapping-cell highlight"><div class="label">Dein System</div><div class="value">CLAUDE.md in jeder Workstation</div><div class="note">Root + per-Workstation, mit Routing Map</div></div>
+      <div class="mapping-cell"><div class="label">Status</div><div class="value status-green">✅ Vollständig</div><div class="note">Über Standard hinaus</div></div>
+    </div>
+    <div class="mapping-row">
+      <div class="mapping-cell"><div class="label">Konzept</div><div class="value">Auto Memory (MEMORY.md)</div></div>
+      <div class="mapping-cell highlight"><div class="label">Dein System</div><div class="value">MEMORY.md in jeder Workstation</div><div class="note">Manuell befüllt + Cowork Auto-Memory</div></div>
+      <div class="mapping-cell"><div class="label">Status</div><div class="value status-amber">⚡ Hybrid</div><div class="note">Manuell ist präziser, Auto ergänzt</div></div>
+    </div>
+    <div class="mapping-row">
+      <div class="mapping-cell"><div class="label">Konzept</div><div class="value">Skills (.claude/skills/)</div></div>
+      <div class="mapping-cell highlight"><div class="label">Dein System</div><div class="value">Cowork Skills via Plugin-System</div><div class="note">prd-session, hostile-review, u.v.m.</div></div>
+      <div class="mapping-cell"><div class="label">Status</div><div class="value status-green">✅ Vollständig</div><div class="note">11+ aktive Skills</div></div>
+    </div>
+    <div class="mapping-row">
+      <div class="mapping-cell"><div class="label">Konzept</div><div class="value">MCP Konnektoren</div></div>
+      <div class="mapping-cell highlight"><div class="label">Dein System</div><div class="value">Notion, Gmail, Google Drive</div><div class="note">Via Cowork Plugin-System verbunden</div></div>
+      <div class="mapping-cell"><div class="label">Status</div><div class="value status-green">✅ Vollständig</div><div class="note">Aktiv in Nutzung</div></div>
+    </div>
+    <div class="mapping-row">
+      <div class="mapping-cell"><div class="label">Konzept</div><div class="value">Hooks (deterministisch)</div></div>
+      <div class="mapping-cell highlight"><div class="label">Dein System</div><div class="value">Derived State Check via Schedule</div><div class="note">derived-state-check.sh, wöchentlich</div></div>
+      <div class="mapping-cell"><div class="label">Status</div><div class="value status-amber">⚡ Teilweise</div><div class="note">Scheduled, nicht edit-triggered</div></div>
+    </div>
+    <div class="mapping-row">
+      <div class="mapping-cell"><div class="label">Konzept</div><div class="value">Subagents</div></div>
+      <div class="mapping-cell highlight"><div class="label">Dein System</div><div class="value">hostile-review, Engagement-Recherche</div><div class="note">Laufen in separatem Kontext</div></div>
+      <div class="mapping-cell"><div class="label">Status</div><div class="value status-green">✅ Aktiv</div><div class="note">Gutes Muster etabliert</div></div>
+    </div>
+    <div class="mapping-row">
+      <div class="mapping-cell"><div class="label">Konzept</div><div class="value">Scheduled Tasks</div></div>
+      <div class="mapping-cell highlight"><div class="label">Dein System</div><div class="value">10+ aktive Schedules</div><div class="note">Venture Radar, Derived State, u.a.</div></div>
+      <div class="mapping-cell"><div class="label">Status</div><div class="value status-green">✅ Vollständig</div><div class="note">Lokal, auf deinem Mac</div></div>
+    </div>
+    <div class="mapping-row">
+      <div class="mapping-cell"><div class="label">Konzept</div><div class="value">Plan Mode</div></div>
+      <div class="mapping-cell highlight"><div class="label">Dein System</div><div class="value">Senior Partner Briefing Skill</div><div class="note">Epistemic Stance vor Synthese</div></div>
+      <div class="mapping-cell"><div class="label">Status</div><div class="value status-green">✅ Proprietär</div><div class="note">Eigenes Format, eleganter als Standard</div></div>
+    </div>
+    <div class="mapping-row">
+      <div class="mapping-cell"><div class="label">Konzept</div><div class="value">Routing (keine CC-Funktion)</div></div>
+      <div class="mapping-cell highlight"><div class="label">Dein System</div><div class="value">Routing Map in Root-CLAUDE.md</div><div class="note">Alle Workstations mit Trigger-Logik</div></div>
+      <div class="mapping-cell"><div class="label">Status</div><div class="value status-green">✅ Proprietär</div><div class="note">Nicht in Standard CC</div></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="highlight-block violet">
+      <h3>Was dein OS über Standard-Claude Code hinausgeht</h3>
+      <p>Deine Routing Map, die Workstation-Architektur mit eigenem CLAUDE.md pro Domain, die Engagement-Mandat-Session-Taxonomie, die Capture-Familie (Session, Gespräch, Reasoning, Selbstcoaching, Kapazität, Lead) und das Methoden-Bibliothek-Pflichtsystem sind proprietäre Entwurfsmuster, die in keiner Claude Code Dokumentation stehen. Du hast ein Operating System gebaut, nicht nur ein Tool konfiguriert.</p>
+    </div>
+  </div>
+
+  <!-- KAPITEL 6 -->
+  <div class="chapter" id="ch5">
+    <div class="chapter-header">
+      <div class="chapter-tag">Kapitel 6 · Wachstum</div>
+      <h2>Ungenutzte Potenziale</h2>
+      <p>Acht konkrete Möglichkeiten, die du noch nicht oder noch nicht vollständig nutzt. Jede mit verbatim Befehl oder Prompt zum direkten Ausprobieren. Sortiert nach Aufwand-Wirkung-Verhältnis.</p>
+    </div>
+
+    <div class="potential-item">
+      <div class="potential-header">
+        <div class="potential-num">1</div>
+        <h3>Hook: Derived State automatisch nach Mandat-Akte-Edit auslösen</h3>
+      </div>
+      <p>Dein derived-state-check.sh läuft per wöchentlichem Schedule. Die Derived-State-Regel sagt aber: "Task erst fertig wenn Endpunkt nachgezogen und verifiziert." Ein PostToolUse-Hook stellt das unmittelbar nach jedem relevanten Edit sicher — nicht erst nächste Woche.</p>
+      <div class="prompt-label">Aufwand: 15 Min · Wirkung: Hoch · Direkt anwendbar</div>
+      <div class="code-block"><code><span class="comment"># In .claude/settings.json ergänzen</span>
+{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": <span class="string">"Write|Edit"</span>,
+      "hooks": [{
+        "type": <span class="string">"command"</span>,
+        "command": <span class="string">"bash ~/Documents/Claude/Cowork\\ OS/00_Resources/2026-05-30-derived-state-check.sh 2&gt;/dev/null &amp;"</span>
+      }]
+    }]
+  }
+}</code></div>
+    </div>
+
+    <div class="potential-item coral">
+      <div class="potential-header">
+        <div class="potential-num coral">2</div>
+        <h3>Subagent für vollständige Engagement-Tiefenrecherche</h3>
+      </div>
+      <p>Vor einem Briefing oder einer Session liest ein Subagent alle Engagement-Files (PPTX, PDFs, Mandat-Akte) und erstellt eine Lageeinschätzung, ohne deinen Hauptkontext zu füllen. Direkte Antwort auf die Feedback-Memory "Engagement-Material vollständig sichten vor Substrat-Bau".</p>
+      <div class="prompt-label">Prompt zum Ausprobieren (in Cowork)</div>
+      <div class="code-block"><code><span class="string">"Nutze einen Subagenten für folgende Aufgabe: Lies alle Files in
+Coach HQ/Coach HQ Resources/Engagements/RWE AG/CHS/ —
+inklusive alle PPTX und PDFs. Erstelle eine kompakte Lageeinschätzung:
+offene Themen, letzte Session, Muster über Personen. Max 1 Seite."</span></code></div>
+    </div>
+
+    <div class="potential-item amber">
+      <div class="potential-header">
+        <div class="potential-num amber">3</div>
+        <h3>Writer/Reviewer Pattern für Coaching-Materialien</h3>
+      </div>
+      <p>Parallele Sessions: Session A entwirft ein Deck oder eine Intervention, Session B reviewt es ohne Kenntnis des Erstellungskontexts. Unabhängiger als hostile-review in einer Session, weil der Erstellungskontext nicht im Kontext-Fenster sitzt.</p>
+      <div class="prompt-label">Workflow (zwei separate Cowork-Sessions)</div>
+      <div class="code-block"><code><span class="comment"># Session A (Writer)</span>
+<span class="string">"Entwirf eine 90-Min Workshop-Agenda für CHS Leadership zu Dual Excellence.
+Speichere unter Coach HQ/.../chs-workshop-agenda.md"</span>
+
+<span class="comment"># Session B (Reviewer) — neues Gespräch, kein History</span>
+<span class="string">"Lies @Coach HQ/.../chs-workshop-agenda.md und review es als
+skeptischer Teilnehmer: Was fehlt? Was überzeugt nicht?
+Keine Reparatur — nur Schwächen benennen."</span></code></div>
+    </div>
+
+    <div class="potential-item violet">
+      <div class="potential-header">
+        <div class="potential-num violet">4</div>
+        <h3>Remote Control: Von unterwegs in laufende Sessions eingreifen</h3>
+      </div>
+      <p>Wenn eine lange Recherche oder ein Engagement-Aufbau läuft, kannst du per iPhone/Browser über Remote Control eingreifen. Nicht von vorn beginnen, sondern die laufende lokale Session weiter steuern, ohne am Mac zu sitzen. Besonders nützlich bei langen Triage- oder Capture-Tasks.</p>
+      <div class="prompt-label">Einrichten (im Terminal oder Desktop App)</div>
+      <div class="code-block"><code>/remote   <span class="comment"># Öffnet Remote Control Link</span>
+          <span class="comment"># Link an iPhone schicken → im Browser öffnen</span>
+          <span class="comment"># Session live sehen und eingreifen</span></code></div>
+    </div>
+
+    <div class="potential-item green">
+      <div class="potential-header">
+        <div class="potential-num green">5</div>
+        <h3>Eigenmarke HQ: GitHub Actions für Auto PR-Review</h3>
+      </div>
+      <p>Für dein machs-fuer-mich-site Repo könntest du Claude Code GitHub Actions einrichten: jeder PR bekommt automatisch einen Code-Review, der auf Cloudflare Worker Korrektheit, KI-Ampel-Logik und Claude API-Nutzung prüft. Null Zusatzaufwand nach Setup.</p>
+      <div class="prompt-label">Workflow-Datei (in .github/workflows/)</div>
+      <div class="code-block"><code><span class="comment"># .github/workflows/claude-review.yml</span>
+on: [pull_request]
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: anthropics/claude-code-action@beta
+        with:
+          prompt: <span class="string">"Review this PR for machs-fuer-mich.
+                  Focus: Cloudflare Worker correctness, Claude API call,
+                  KI-Ampel business logic, intake flow integrity."</span>
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}</code></div>
+    </div>
+
+    <div class="potential-item blue">
+      <div class="potential-header">
+        <div class="potential-num blue">6</div>
+        <h3>Terminal CLI für Batch-Verarbeitung von Transkripten</h3>
+      </div>
+      <p>Du verarbeitest Wispr-Transkripte manuell über Cowork. Mit non-interaktivem CLI könntest du einen Ordner mit Transkripten automatisch klassifizieren und den passenden Capture-Befehl ausgeben lassen — als Vorschlag zur Bestätigung.</p>
+      <div class="prompt-label">Befehl (im Terminal)</div>
+      <div class="code-block"><code><span class="comment"># Installation Terminal CLI zuerst</span>
+curl -fsSL https://claude.ai/install.sh | bash
+
+<span class="comment"># Dann: Transkript klassifizieren</span>
+cat ~/Documents/Wispr/2026-06-02-session.txt | claude -p \
+  <span class="string">"Bestimme den Capture-Typ: Session / Gespräch / Reasoning / Selbstcoaching.
+   Gib den exakten Capture-Befehl aus, den ich in Cowork eingeben soll."</span></code></div>
+    </div>
+
+    <div class="potential-item">
+      <div class="potential-header">
+        <div class="potential-num">7</div>
+        <h3>Cloud Routinen: Venture Radar unabhängig vom Mac</h3>
+      </div>
+      <p>Dein Venture Radar läuft per Schedule auf deinem Mac. Mit Claude Code Cloud Routinen läuft der Task auf Anthropic-Infrastruktur — auch wenn dein Mac aus ist. Der Output kommt als Session zurück, die du asynchron reviewen kannst.</p>
+      <div class="prompt-label">Einrichten (claude.ai/code → Schedules)</div>
+      <div class="code-block"><code><span class="comment"># Im Terminal CLI: Schedule anlegen</span>
+/schedule
+<span class="comment"># → Trigger: Montag 07:00 Uhr</span>
+<span class="comment"># → Prompt: "Venture Radar Research: 7 neue Geschäftsmodell-Kandidaten</span>
+<span class="comment">#   DE/AT/CH, AI-Takeover-Potenzial, Matrix-Scoring. Update das Artifact."</span>
+<span class="comment"># → Läuft auf Anthropic Cloud, nicht auf deinem Mac</span></code></div>
+    </div>
+
+    <div class="potential-item coral">
+      <div class="potential-header">
+        <div class="potential-num coral">8</div>
+        <h3>Explore → Plan → Implement für komplexe Methoden-Entwicklung</h3>
+      </div>
+      <p>Bei Session-Design oder Interventions-Konzeption springst du oft direkt ins Tun. Plan Mode zuerst würde bedeuten: Claude liest Methoden-Bibliothek + Mandat-Akte, schlägt einen Plan vor, du genehmigst. Dann erst Umsetzung. Qualitativ besser, weil Claude den vollen Bibliotheks-Kontext hat bevor es gestaltet.</p>
+      <div class="prompt-label">Prompt (in Cowork, Plan Mode aktiv per Shift+Tab)</div>
+      <div class="code-block"><code><span class="comment"># Plan Mode einschalten, dann:</span>
+<span class="string">"Lies die Methoden-Bibliothek und die CHS Mandat-Akte.
+Ich will eine 3h Session für das CHS Leadership Team zu Priorisierung.
+Erstelle einen Interventions-Plan mit 3 Methoden-Optionen und
+begründe jede gegen Phase Fit + Mindset-Match."</span>
+<span class="comment"># → Plan reviewen → Normal Mode → Umsetzung</span></code></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="highlight-block">
+      <h3>Empfohlener Einstieg</h3>
+      <p>Starte mit <strong>Potential #2 (Engagement-Subagent)</strong> — direkte Antwort auf ein bekanntes Pain-Point, funktioniert heute in Cowork, kein Setup nötig. Danach <strong>#1 (Hook für Derived State)</strong> für die technische Absicherung der OS-Regeln. Beide bauen auf deiner bestehenden Architektur auf und erzeugen sofortigen Wert.</p>
+    </div>
+  </div>
+
+</main>
+
+<div class="footer">
+  Claude Code Schulung · Claude Tools Workstation · Stand Juni 2026
+  · Quelle: <a href="https://code.claude.com/docs/de/overview" target="_blank">code.claude.com/docs</a>
+</div>
+
+<script>
+  const chapters = document.querySelectorAll('.chapter');
+  const navBtns = document.querySelectorAll('.nav-btn');
+
+  function showChapter(idx) {
+    chapters.forEach((ch, i) => ch.classList.toggle('active', i === idx));
+    navBtns.forEach((btn, i) => btn.classList.toggle('active', i === idx));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>

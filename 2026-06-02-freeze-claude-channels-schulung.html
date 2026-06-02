@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Claude Channels Schulung",
+  "schemaVersion": 1,
+  "description": "Interaktive Claude Channels Schulung in 6 Kapiteln: Konzept, Architektur, unterstützte Kanäle (Telegram/Discord/iMessage/Fakechat), Quickstart, Sicherheit & Permission Relay, und 6 konkrete Use Cases für Jays Cowork OS. — FREEZE-VERSION vom 02.06.2026"
+}
+</script>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Channels Schulung (Freeze 2026-06-02)</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f8f9fb;
+      --card: #ffffff;
+      --navy: #0f172a;
+      --teal: #0d9488;
+      --teal-light: #ccfbf1;
+      --coral: #f97316;
+      --coral-light: #ffedd5;
+      --amber: #d97706;
+      --amber-light: #fef3c7;
+      --violet: #7c3aed;
+      --violet-light: #ede9fe;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --blue: #1d4ed8;
+      --blue-light: #dbeafe;
+      --rose: #e11d48;
+      --rose-light: #ffe4e6;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--navy);
+      color: white;
+      padding: 24px 32px;
+    }
+    .header-inner { max-width: 960px; margin: 0 auto; }
+    .header-tag {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: #94a3b8; margin-bottom: 8px;
+    }
+    .header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    .header p { font-size: 14px; color: #94a3b8; max-width: 620px; line-height: 1.55; }
+    .badge {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 20px;
+      background: rgba(251,146,60,0.25); color: #fb923c;
+      margin-left: 10px; vertical-align: middle;
+    }
+    .nav-bar {
+      background: white; border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-inner {
+      max-width: 960px; margin: 0 auto;
+      display: flex; overflow-x: auto; padding: 0 16px; scrollbar-width: none;
+    }
+    .nav-inner::-webkit-scrollbar { display: none; }
+    .nav-btn {
+      padding: 14px 16px; font-size: 13px; font-weight: 500;
+      color: var(--text-muted); border: none; background: none; cursor: pointer;
+      white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.2s;
+    }
+    .nav-btn:hover { color: var(--teal); }
+    .nav-btn.active { color: var(--teal); border-bottom-color: var(--teal); }
+    .main { max-width: 960px; margin: 0 auto; padding: 32px 16px; }
+    .chapter { display: none; }
+    .chapter.active { display: block; }
+    .chapter-header { margin-bottom: 28px; }
+    .chapter-tag {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--teal); margin-bottom: 8px;
+    }
+    .chapter-header h2 { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .chapter-header p { font-size: 14px; color: var(--text-muted); line-height: 1.6; max-width: 700px; }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px; margin-bottom: 28px;
+    }
+    .card-grid.two-col { grid-template-columns: repeat(2, 1fr); }
+    .card-grid.three-col { grid-template-columns: repeat(3, 1fr); }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+    }
+    .card .card-icon { font-size: 22px; margin-bottom: 10px; }
+    .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--navy); }
+    .card p { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+    .card.teal { border-left: 3px solid var(--teal); }
+    .card.coral { border-left: 3px solid var(--coral); }
+    .card.amber { border-left: 3px solid var(--amber); }
+    .card.violet { border-left: 3px solid var(--violet); }
+    .card.green { border-left: 3px solid var(--green); }
+    .card.blue { border-left: 3px solid var(--blue); }
+    .card.rose { border-left: 3px solid var(--rose); }
+    .highlight-block {
+      background: var(--teal-light); border: 1px solid #99f6e4;
+      border-radius: var(--radius); padding: 20px 24px; margin-bottom: 24px;
+    }
+    .highlight-block.coral { background: var(--coral-light); border-color: #fdba74; }
+    .highlight-block.amber { background: var(--amber-light); border-color: #fcd34d; }
+    .highlight-block.violet { background: var(--violet-light); border-color: #c4b5fd; }
+    .highlight-block.blue { background: var(--blue-light); border-color: #93c5fd; }
+    .highlight-block.green { background: var(--green-light); border-color: #86efac; }
+    .highlight-block.rose { background: var(--rose-light); border-color: #fda4af; }
+    .highlight-block h3 { font-size: 14px; font-weight: 700; margin-bottom: 8px; color: var(--navy); }
+    .highlight-block p { font-size: 13px; color: var(--text); line-height: 1.6; }
+    .highlight-block ul { font-size: 13px; color: var(--text); line-height: 1.8; padding-left: 18px; }
+    .code-block {
+      background: #0f172a; border-radius: 8px; padding: 16px 20px;
+      margin: 12px 0; overflow-x: auto;
+    }
+    .code-block code {
+      font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 12.5px; color: #7dd3fc; white-space: pre; display: block;
+    }
+    .code-block .comment { color: #475569; }
+    .code-block .string { color: #86efac; }
+    .code-block .keyword { color: #f9a8d4; }
+    .styled-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 24px; }
+    .styled-table th {
+      background: var(--navy); color: white; padding: 10px 14px;
+      text-align: left; font-weight: 600; font-size: 12px;
+    }
+    .styled-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; }
+    .styled-table tr:nth-child(even) td { background: #f8fafc; }
+    .styled-table tr:hover td { background: var(--teal-light); }
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-muted); margin: 28px 0 12px;
+    }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .tag {
+      font-size: 11px; font-weight: 600; padding: 3px 10px;
+      border-radius: 20px; background: #e2e8f0; color: var(--text-muted);
+    }
+    .tag.teal { background: var(--teal-light); color: #0f766e; }
+    .tag.coral { background: var(--coral-light); color: #9a3412; }
+    .tag.amber { background: var(--amber-light); color: #92400e; }
+    .tag.violet { background: var(--violet-light); color: #5b21b6; }
+    .tag.navy { background: #dbeafe; color: #1e3a8a; }
+    .tag.green { background: var(--green-light); color: #14532d; }
+    .tag.rose { background: var(--rose-light); color: #9f1239; }
+    /* Step stepper */
+    .steps { display: flex; flex-direction: column; gap: 0; margin-bottom: 24px; }
+    .step { display: flex; gap: 16px; }
+    .step-left { display: flex; flex-direction: column; align-items: center; }
+    .step-dot {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--teal);
+      color: white; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+    }
+    .step-line { width: 2px; flex: 1; background: var(--border); margin: 4px 0; min-height: 16px; }
+    .step:last-child .step-line { display: none; }
+    .step-content { padding-bottom: 20px; flex: 1; }
+    .step-content h4 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 6px; margin-top: 2px; }
+    .step-content p { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+    /* Architecture diagram text */
+    .arch-diagram {
+      background: var(--navy); border-radius: var(--radius);
+      padding: 24px; margin: 16px 0 24px; color: white;
+      font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px;
+      line-height: 1.8; overflow-x: auto;
+    }
+    .arch-node {
+      display: inline-block; padding: 4px 12px; border-radius: 6px;
+      font-weight: 700; font-size: 11px;
+    }
+    .arch-node.ext { background: #1e3a5f; color: #7dd3fc; }
+    .arch-node.channel { background: #1a3a2a; color: #86efac; }
+    .arch-node.claude { background: #2d1b69; color: #c4b5fd; }
+    /* Use case item */
+    .usecase-item {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px;
+      border-left: 4px solid var(--teal);
+    }
+    .usecase-item.coral { border-left-color: var(--coral); }
+    .usecase-item.amber { border-left-color: var(--amber); }
+    .usecase-item.violet { border-left-color: var(--violet); }
+    .usecase-item.green { border-left-color: var(--green); }
+    .usecase-item.blue { border-left-color: var(--blue); }
+    .usecase-item.rose { border-left-color: var(--rose); }
+    .usecase-header { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .usecase-num {
+      width: 28px; height: 28px; border-radius: 50%; background: var(--teal);
+      color: white; display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+    }
+    .usecase-num.coral { background: var(--coral); }
+    .usecase-num.amber { background: var(--amber); }
+    .usecase-num.violet { background: var(--violet); }
+    .usecase-num.green { background: var(--green); }
+    .usecase-num.blue { background: var(--blue); }
+    .usecase-num.rose { background: var(--rose); }
+    .usecase-item h3 { font-size: 15px; font-weight: 700; color: var(--navy); }
+    .usecase-item p { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 10px; }
+    .prompt-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--teal); margin-bottom: 4px;
+    }
+    .prompt-label.coral { color: var(--coral); }
+    .prompt-label.amber { color: var(--amber); }
+    .prompt-label.violet { color: var(--violet); }
+    .divider { height: 1px; background: var(--border); margin: 28px 0; }
+    .kbd {
+      display: inline-block; padding: 2px 7px; background: #f1f5f9;
+      border: 1px solid #cbd5e1; border-radius: 4px;
+      font-family: monospace; font-size: 11px; color: var(--navy);
+    }
+    .footer {
+      text-align: center; padding: 32px; color: var(--text-muted);
+      font-size: 12px; border-top: 1px solid var(--border); margin-top: 40px;
+    }
+    .footer a { color: var(--teal); text-decoration: none; }
+    /* Channel type pills */
+    .channel-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600;
+      border: 1.5px solid;
+    }
+    .channel-pill.telegram { background: #e8f4fd; border-color: #229ED9; color: #0d6ea8; }
+    .channel-pill.discord { background: #eef0fd; border-color: #5865F2; color: #3b47bf; }
+    .channel-pill.imessage { background: var(--green-light); border-color: #16a34a; color: #14532d; }
+    .channel-pill.fakechat { background: var(--amber-light); border-color: var(--amber); color: #92400e; }
+    .channel-pill.webhook { background: var(--violet-light); border-color: var(--violet); color: #5b21b6; }
+    .channel-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    /* Comparison table highlight */
+    .compare-winner { background: var(--teal-light) !important; font-weight: 600; }
+    @media (max-width: 640px) {
+      .card-grid.two-col, .card-grid.three-col { grid-template-columns: 1fr; }
+      .header { padding: 20px 16px; }
+      .header h1 { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+<!-- FREEZE-RIBBON · Auto-generated by freeze-artifact skill -->
+<div style="background:linear-gradient(90deg,#78350f 0%,#b45309 100%);color:#fde68a;padding:8px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:11px;font-weight:600;letter-spacing:0.5px;text-align:center;border-bottom:1px solid rgba(0,0,0,0.15);">
+  📌 FREEZE-VERSION · Snapshot vom 02.06.2026 · Statischer Stand · Original-Artifact wird in Cowork weiterentwickelt
+</div>
+
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-tag">Claude Tools · Schulung</div>
+    <h1>Claude Channels <span class="badge">Research Preview</span></h1>
+    <p>Externe Ereignisse live in deine laufende Claude-Session pushen — von Telegram, Discord, iMessage oder eigenen Webhooks. Ein Kanal ist die Brücke zwischen der Welt da draußen und Claude auf deinem Mac.</p>
+  </div>
+</div>
+
+<nav class="nav-bar">
+  <div class="nav-inner">
+    <button class="nav-btn active" onclick="showChapter(0)">① Was ist ein Channel?</button>
+    <button class="nav-btn" onclick="showChapter(1)">② Wie funktioniert es?</button>
+    <button class="nav-btn" onclick="showChapter(2)">③ Unterstützte Kanäle</button>
+    <button class="nav-btn" onclick="showChapter(3)">④ Quickstart</button>
+    <button class="nav-btn" onclick="showChapter(4)">⑤ Bidirektional &amp; Sicherheit</button>
+    <button class="nav-btn" onclick="showChapter(5)">⑥ Deine Use Cases</button>
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- KAPITEL 1: Was ist ein Channel? -->
+  <div class="chapter active" id="ch0">
+    <div class="chapter-header">
+      <div class="chapter-tag">Kapitel 1 · Konzept</div>
+      <h2>Was ist ein Claude Channel?</h2>
+      <p>Ein Channel ist ein MCP-Server, der externe Ereignisse in deine laufende Claude Code Session überträgt — damit Claude auf Dinge reagieren kann, die passieren, während du nicht am Terminal bist.</p>
+    </div>
+
+    <div class="highlight-block">
+      <h3>Die Kernidee in einem Satz</h3>
+      <p>Du schickst dir selbst eine Telegram-Nachricht vom iPhone — und Claude auf deinem Mac liest sie, bearbeitet die Aufgabe, und antwortet dir zurück im Chat. Keine neue Session, kein Cowork öffnen, keine Kontext-Übergabe. Claude ist in derselben Session, mit demselben Dateizugriff, mit dem vollen Cowork OS Kontext.</p>
+    </div>
+
+    <div class="section-label">Das Lücken-Füller-Konzept</div>
+    <table class="styled-table">
+      <thead><tr><th>Funktion</th><th>Was sie tut</th><th>Gut für</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Claude Code im Web</strong></td><td>Startet neue Cloud-Sandbox, geklont von GitHub</td><td>Delegieren in sich geschlossener Async-Arbeit</td></tr>
+        <tr><td><strong>Claude in Slack</strong></td><td>Startet neue Web-Session von @Claude-Erwähnung</td><td>Aufgaben aus Team-Chat-Kontext starten</td></tr>
+        <tr><td><strong>Standard MCP-Server</strong></td><td>Claude fragt ihn während einer Aufgabe ab</td><td>Claude On-Demand Zugriff auf ein System geben</td></tr>
+        <tr><td><strong>Remote Control</strong></td><td>Du steuerst lokale Session vom Browser</td><td>Laufende Session vom Handy steuern</td></tr>
+        <tr class="compare-winner"><td><strong>Channels ← das hier</strong></td><td>Externe Ereignisse in laufende lokale Session pushen</td><td>Claude auf Dinge reagieren lassen, die passieren</td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-label">Channels vs. die Alternativen — wann was?</div>
+    <div class="card-grid two-col">
+      <div class="card teal">
+        <div class="card-icon">📡</div>
+        <h3>Channel — wenn du Ereignisse rein pushst</h3>
+        <p>"Schick dir eine Telegram-Nachricht und Claude reagiert in deiner laufenden Session auf deinem Mac, mit deinen echten Dateien." Bidirektional möglich. Event-driven, nicht polling-driven.</p>
+      </div>
+      <div class="card coral">
+        <div class="card-icon">🖱️</div>
+        <h3>Remote Control — wenn du Claude steuerst</h3>
+        <p>"Du willst den nächsten Prompt selbst eintippen, aber von deinem iPhone aus." Kein externer Event — du gibst aktiv Input. Channel vs. Remote Control: Push vs. Pull.</p>
+      </div>
+    </div>
+
+    <div class="highlight-block amber">
+      <h3>Research Preview — was das bedeutet</h3>
+      <p>Channels sind noch in der Research Preview. Anforderungen: Claude Code v2.1.80+, claude.ai Login (kein API Key), Bun installiert. Nur offizielle Anthropic-Plugins sind freigegeben (Telegram, Discord, iMessage, Fakechat). Eigene Channels funktionieren mit dem <kbd class="kbd">--dangerously-load-development-channels</kbd> Flag.</p>
+    </div>
+
+    <div class="tags">
+      <span class="tag rose">Research Preview</span>
+      <span class="tag teal">Event-driven</span>
+      <span class="tag">MCP-basiert</span>
+      <span class="tag amber">Bidirektional möglich</span>
+      <span class="tag navy">Lokal auf Mac</span>
+    </div>
+  </div>
+
+  <!-- KAPITEL 2: Wie funktioniert es? -->
+  <div class="chapter" id="ch1">
+    <div class="chapter-header">
+      <div class="chapter-tag">Kapitel 2 · Architektur</div>
+      <h2>Wie funktioniert ein Channel technisch?</h2>
+      <p>Ein Channel ist ein MCP-Server, der auf deinem Mac läuft. Claude Code startet ihn als Subprocess und kommuniziert über stdio. Der Channel-Server ist die Brücke zwischen externen Systemen und deiner Session.</p>
+    </div>
+
+    <div class="section-label">Architektur-Überblick</div>
+    <div class="arch-diagram">
+      <span style="color:#94a3b8">EXTERNE WELT</span>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span style="color:#94a3b8">DEIN MAC</span>
+      <br><br>
+      <span class="arch-node ext">📱 Telegram Bot API</span>
+      <span style="color:#64748b"> ──→ </span>
+      <span class="arch-node channel">🔌 Channel Server (MCP)</span>
+      <span style="color:#64748b"> ──stdio──→ </span>
+      <span class="arch-node claude">🤖 Claude Code Session</span>
+      <br><br>
+      <span class="arch-node ext">🔔 Webhook / CI</span>
+      <span style="color:#64748b"> ──→ </span>
+      <span class="arch-node channel">🔌 Channel Server (HTTP+MCP)</span>
+      <span style="color:#64748b"> ──────────→ </span>
+      <span class="arch-node claude">🤖 Claude Code Session</span>
+      <br><br>
+      <span class="arch-node ext">📲 iMessage DB</span>
+      <span style="color:#64748b"> ──→ </span>
+      <span class="arch-node channel">🔌 Channel Server (AppleScript)</span>
+      <span style="color:#64748b"> ────→ </span>
+      <span class="arch-node claude">🤖 Claude Code Session</span>
+    </div>
+
+    <div class="card-grid two-col">
+      <div class="card teal">
+        <div class="card-icon">🔌</div>
+        <h3>Chat-Plattformen (Telegram, Discord)</h3>
+        <p>Plugin läuft lokal und <strong>pollt</strong> die Platform-API. Wenn jemand dem Bot schreibt, leitet das Plugin die Nachricht an Claude weiter. Keine URL muss öffentlich sein — alles bleibt lokal.</p>
+      </div>
+      <div class="card violet">
+        <div class="card-icon">🪝</div>
+        <h3>Webhooks (CI, Monitoring)</h3>
+        <p>Server lauscht auf lokalem HTTP-Port. Externe Systeme senden POST-Requests dorthin, der Server pusht den Payload zu Claude. Auch intern anwendbar: eigene Scripts, Cron-Jobs, Notion Automationen.</p>
+      </div>
+    </div>
+
+    <div class="section-label">Was in der Session ankommt — das Channel-Tag</div>
+    <div class="code-block"><code><span class="comment"># So sieht Claude das Ereignis in seiner Session:</span>
+&lt;channel source=<span class="string">"telegram"</span> chat_id=<span class="string">"123456"</span>&gt;
+  Capture Session: [Wispr-Transkript rein pushen]
+&lt;/channel&gt;
+
+<span class="comment"># Oder ein CI-Webhook:</span>
+&lt;channel source=<span class="string">"webhook"</span> severity=<span class="string">"high"</span> run_id=<span class="string">"1234"</span>&gt;
+  build failed on main: https://ci.example.com/run/1234
+&lt;/channel&gt;</code></div>
+
+    <div class="section-label">Wie Claude Code den Channel startet</div>
+    <div class="code-block"><code><span class="comment"># Claude Code mit einem Channel starten:</span>
+claude --channels plugin:telegram@claude-plugins-official
+
+<span class="comment"># Mit mehreren Channels gleichzeitig:</span>
+claude --channels plugin:telegram@claude-plugins-official plugin:discord@claude-plugins-official
+
+<span class="comment"># Eigenen/Dev-Channel (Development Mode):</span>
+claude --dangerously-load-development-channels server:mein-webhook</code></div>
+
+    <div class="highlight-block">
+      <h3>Wichtig: Channel ist nur aktiv solange die Session läuft</h3>
+      <p>Events kommen nur an, während die Session offen ist. Für ein Always-On-Setup: Claude in einem Hintergrundprozess oder persistenten Terminal-Tab laufen lassen. In Cowork Desktop App kannst du eine dauerhaft offene Session einrichten.</p>
+    </div>
+
+    <div class="section-label">Wie Claude reagiert — der Response-Flow</div>
+    <div class="card-grid three-col">
+      <div class="card green">
+        <div class="card-icon">📥</div>
+        <h3>1. Event empfangen</h3>
+        <p>Channel-Server pusht das Ereignis als <code>&lt;channel&gt;</code>-Tag in Claudes Kontext. Claude sieht es wie eine Nachricht.</p>
+      </div>
+      <div class="card amber">
+        <div class="card-icon">⚡</div>
+        <h3>2. Claude handelt</h3>
+        <p>Claude liest, plant, führt aus — mit deinen echten Dateien, deinem Cowork OS, deiner Methoden-Bibliothek. Keine neue Session, kein Kontext-Verlust.</p>
+      </div>
+      <div class="card teal">
+        <div class="card-icon">📤</div>
+        <h3>3. Antwort zurückschicken</h3>
+        <p>Bei bidirektionalem Channel ruft Claude das Reply-Tool auf. Antwort landet im selben Telegram/Discord-Chat. Im Terminal siehst du den Tool-Call, nicht den Response-Text.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- KAPITEL 3: Unterstützte Kanäle -->
+  <div class="chapter" id="ch2">
+    <div class="chapter-header">
+      <div class="chapter-tag">Kapitel 3 · Verfügbare Kanäle</div>
+      <h2>Unterstützte Kanäle</h2>
+      <p>Vier Kanäle sind in der Research Preview verfügbar. Alle sind Plugins aus dem offiziellen Anthropic-Marketplace und brauchen Bun als Runtime.</p>
+    </div>
+
+    <div class="channel-pills">
+      <span class="channel-pill telegram">✈️ Telegram</span>
+      <span class="channel-pill discord">🎮 Discord</span>
+      <span class="channel-pill imessage">💬 iMessage</span>
+      <span class="channel-pill fakechat">🧪 Fakechat (Demo)</span>
+    </div>
+
+    <div class="card-grid two-col">
+      <div class="card teal">
+        <div class="card-icon">✈️</div>
+        <h3>Telegram</h3>
+        <p>Telegram-Bot erstellen via BotFather, Plugin installieren, Token konfigurieren, Konto koppeln. Bidirektional: Claude antwortet direkt im Telegram-Chat. Kein API-Server nötig — Plugin pollt Telegram API lokal.</p>
+        <div class="tags" style="margin-top:10px">
+          <span class="tag teal">Bidirektional</span>
+          <span class="tag">Kostenlos</span>
+          <span class="tag navy">5 Schritte Setup</span>
+        </div>
+      </div>
+      <div class="card violet">
+        <div class="card-icon">🎮</div>
+        <h3>Discord</h3>
+        <p>Discord Developer Portal, Bot erstellen, Message Content Intent aktivieren, Bot einladen, Plugin installieren. Antwortet in DMs. Gut für Entwickler-Workflows.</p>
+        <div class="tags" style="margin-top:10px">
+          <span class="tag violet">Bidirektional</span>
+          <span class="tag">Dev-nah</span>
+          <span class="tag navy">7 Schritte Setup</span>
+        </div>
+      </div>
+      <div class="card green">
+        <div class="card-icon">💬</div>
+        <h3>iMessage</h3>
+        <p>Kein Bot-Token, kein externer Service. Liest Messages-Datenbank direkt (<code>~/Library/Messages/chat.db</code>). Antwortet via AppleScript. Nur macOS. Full Disk Access nötig. Schreib dir selbst — Claude antwortet.</p>
+        <div class="tags" style="margin-top:10px">
+          <span class="tag green">Nur macOS</span>
+          <span class="tag">Kein Konto nötig</span>
+          <span class="tag amber">Disk Access</span>
+        </div>
+      </div>
+      <div class="card amber">
+        <div class="card-icon">🧪</div>
+        <h3>Fakechat (Demo)</h3>
+        <p>Localhost Chat-UI auf <code>http://localhost:8787</code>. Kein Account, keine Auth, kein Setup außer Plugin. Perfekt zum Testen des Channel-Konzepts bevor man echte Plattform verbindet.</p>
+        <div class="tags" style="margin-top:10px">
+          <span class="tag amber">Demo</span>
+          <span class="tag">Kein Account</span>
+          <span class="tag green">Sofort nutzbar</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Setup-Übersicht: Was braucht was?</div>
+    <table class="styled-table">
+      <thead><tr><th>Kanal</th><th>Bun</th><th>Bot/Account</th><th>Kopplung nötig</th><th>macOS-only</th><th>Empfehlung</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Telegram</strong></td><td>✅</td><td>Telegram-Account + BotFather</td><td>✅ Pairing-Code</td><td>—</td><td>Beste Wahl für dich</td></tr>
+        <tr><td><strong>Discord</strong></td><td>✅</td><td>Discord Developer Portal</td><td>✅ Pairing-Code</td><td>—</td><td>Wenn du Discord nutzt</td></tr>
+        <tr><td><strong>iMessage</strong></td><td>✅</td><td>Apple ID (schon vorhanden)</td><td>—</td><td>✅</td><td>Schnellster Start</td></tr>
+        <tr><td><strong>Fakechat</strong></td><td>✅</td><td>Nichts</td><td>—</td><td>—</td><td>Erst testen</td></tr>
+      </tbody>
+    </table>
+
+    <div class="highlight-block green">
+      <h3>Empfehlung für dich: iMessage zuerst, dann Telegram</h3>
+      <p>iMessage brauchst du schon: Apple ID vorhanden, Mac mit Messages. Einrichten in 4 Schritten, kein Bot-Setup. Schreib dir selbst und Claude antwortet. Danach Telegram für den zweiten Schritt: Du hast vermutlich bereits Telegram, und Telegram gibt dir Pairing-Kontrolle wer Nachrichten senden kann.</p>
+    </div>
+  </div>
+
+  <!-- KAPITEL 4: Quickstart -->
+  <div class="chapter" id="ch3">
+    <div class="chapter-header">
+      <div class="chapter-tag">Kapitel 4 · Quickstart</div>
+      <h2>Erster Start: Fakechat &amp; iMessage</h2>
+      <p>Zwei Wege zum ersten Channel-Erlebnis. Fakechat zum Konzept verstehen (5 Minuten), iMessage für den echten ersten produktiven Einsatz.</p>
+    </div>
+
+    <div class="section-label">Voraussetzung: Bun installieren</div>
+    <div class="code-block"><code><span class="comment"># Bun installieren (einmalig)</span>
+curl -fsSL https://bun.sh/install | bash
+
+<span class="comment"># Prüfen:</span>
+bun --version</code></div>
+
+    <div class="section-label">Weg A: Fakechat — Konzept verstehen (5 Min)</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Plugin installieren</h4>
+          <p>In Claude Code oder Cowork Terminal:</p>
+          <div class="code-block"><code>/plugin install fakechat@claude-plugins-official</code></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Claude mit aktiviertem Channel starten</h4>
+          <div class="code-block"><code>claude --channels plugin:fakechat@claude-plugins-official</code></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Browser öffnen und Nachricht senden</h4>
+          <p>Öffne <strong>http://localhost:8787</strong> und tippe:</p>
+          <div class="code-block"><code><span class="string">"Was liegt gerade in meinem Cowork OS 03_Sonstiges Ordner?"</span></code></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">4</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Claude reagiert</h4>
+          <p>Die Nachricht kommt als <code>&lt;channel source="fakechat"&gt;</code> in Claudes Session. Claude liest, arbeitet, antwortet im Browser-Chat.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">Weg B: iMessage — Produktiv vom iPhone</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Full Disk Access gewähren</h4>
+          <p>System Settings → Privacy &amp; Security → Full Disk Access → Terminal (oder deinen bevorzugten Terminal) hinzufügen. Ohne das scheitert der Channel sofort.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Plugin installieren</h4>
+          <div class="code-block"><code>/plugin install imessage@claude-plugins-official</code></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Claude mit iMessage Channel starten</h4>
+          <div class="code-block"><code>claude --channels plugin:imessage@claude-plugins-official</code></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">4</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Dir selbst schreiben</h4>
+          <p>Öffne Messages auf deinem iPhone → schreib dir selbst (deine eigene Nummer oder Apple ID). Erste Antwort triggert macOS-Prompt: "Darf Terminal Messages steuern?" → OK klicken.</p>
+          <div class="code-block"><code><span class="comment"># Erste Testnachricht an dich selbst (vom iPhone):</span>
+<span class="string">"Capture Session Prep: CHS Weekly heute mit Sarah Schnitzler"</span></code></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Telegram Setup (für dauerhaften produktiven Einsatz)</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-left"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Bot bei BotFather erstellen</h4>
+          <p>In Telegram: <strong>@BotFather</strong> öffnen → <code>/newbot</code> senden → Name vergeben → Bot-Token kopieren.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Plugin installieren &amp; konfigurieren</h4>
+          <div class="code-block"><code>/plugin install telegram@claude-plugins-official
+/reload-plugins
+/telegram:configure DEIN_BOT_TOKEN</code></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Mit Channel starten &amp; koppeln</h4>
+          <div class="code-block"><code>claude --channels plugin:telegram@claude-plugins-official
+<span class="comment"># Telegram: Nachricht an deinen Bot senden → Pairing-Code erhalten</span>
+/telegram:access pair DEIN_CODE
+/telegram:access policy allowlist  <span class="comment"># nur du kannst schreiben</span></code></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-block violet">
+      <h3>Pro-Tipp: Cowork immer mit Channel starten</h3>
+      <p>Wenn du Claude Code täglich nutzt, kannst du einen Alias anlegen der Claude immer mit deinem bevorzugten Channel startet:</p>
+      <div class="code-block" style="margin-top:8px"><code><span class="comment"># In ~/.zshrc oder ~/.bashrc:</span>
+alias cc='claude --channels plugin:imessage@claude-plugins-official'
+<span class="comment"># Dann einfach: cc</span></code></div>
+    </div>
+  </div>
+
+  <!-- KAPITEL 5: Bidirektional & Sicherheit -->
+  <div class="chapter" id="ch4">
+    <div class="chapter-header">
+      <div class="chapter-tag">Kapitel 5 · Fortgeschritten</div>
+      <h2>Bidirektional, Sicherheit &amp; Permission Relay</h2>
+      <p>Channels können mehr als Einweg-Push. Mit Reply-Tools antwortet Claude zurück in den Chat. Mit Permission Relay genehmigst du Claudes Aktionen vom iPhone aus.</p>
+    </div>
+
+    <div class="section-label">Einweg vs. Bidirektional</div>
+    <div class="card-grid two-col">
+      <div class="card teal">
+        <div class="card-icon">→</div>
+        <h3>Einweg-Channel (One-way)</h3>
+        <p>Externe Ereignisse kommen rein, Claude handelt in der Session. Keine Antwort zurück in den externen Kanal. Ideal für: Webhook-Empfänger, CI-Alerts, Monitoring-Events, Notion-Trigger.</p>
+        <div class="tags" style="margin-top:10px">
+          <span class="tag teal">Einfacher</span>
+          <span class="tag">Kein Reply-Tool nötig</span>
+        </div>
+      </div>
+      <div class="card violet">
+        <div class="card-icon">⇆</div>
+        <h3>Bidirektionaler Channel (Chat-Bridge)</h3>
+        <p>Claude antwortet zurück über denselben Kanal. Du fragst von Telegram, Claude antwortet in Telegram. Telegram/Discord/iMessage sind alle bidirektional. Braucht ein Reply-Tool im Server.</p>
+        <div class="tags" style="margin-top:10px">
+          <span class="tag violet">Mächtiger</span>
+          <span class="tag">Reply-Tool nötig</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Sicherheit — Allowlists</div>
+    <div class="highlight-block rose">
+      <h3>Wichtig: Ungated Channel = Prompt Injection Risiko</h3>
+      <p>Jeder, der eine Nachricht an deinen Channel senden kann, kann Text in Claudes Kontext schreiben. Deshalb: Sender-Allowlist immer konfigurieren. Die offiziellen Plugins (Telegram, Discord) koppeln über einen Pairing-Code und sperren dann auf Allowlist. iMessage erlaubt automatisch deine eigene Apple ID; andere Kontakte musst du explizit erlauben.</p>
+    </div>
+
+    <div class="card-grid three-col">
+      <div class="card teal">
+        <div class="card-icon">🔐</div>
+        <h3>Telegram/Discord</h3>
+        <p>Pairing-Code bei erster Nachricht → Code in Claude bestätigen → Sender-ID auf Allowlist. Dann: <code>/telegram:access policy allowlist</code></p>
+      </div>
+      <div class="card green">
+        <div class="card-icon">🍎</div>
+        <h3>iMessage</h3>
+        <p>Du selbst → automatisch erlaubt. Andere Kontakte: <code>/imessage:access allow +49XXXXXXX</code>. Handles sind Telefonnummern oder Apple ID-Mails.</p>
+      </div>
+      <div class="card violet">
+        <div class="card-icon">🪝</div>
+        <h3>Eigener Webhook</h3>
+        <p>Allowlist im Code: <code>const allowed = new Set(['dev', 'mein-token'])</code> — Sender aus Header prüfen bevor Event an Claude gepusht wird.</p>
+      </div>
+    </div>
+
+    <div class="section-label">Permission Relay — Claudes Aktionen vom iPhone genehmigen</div>
+    <div class="highlight-block">
+      <h3>Das mächtigste Feature</h3>
+      <p>Wenn Claude eine Aktion ausführen will, die Genehmigung braucht (Datei schreiben, Shell-Befehl), erscheint normalerweise ein Dialog im Terminal und die Session wartet. Mit Permission Relay kommt derselbe Prompt auch in deinen Chat-Kanal. Du antwortest mit <code>yes abcde</code> oder <code>no abcde</code> und Claude macht weiter — ohne dass du am Mac sitzen musst.</p>
+    </div>
+
+    <div class="section-label">Permission Relay — Ablauf</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-left"><div class="step-dot" style="background:var(--violet)">1</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Claude will Aktion ausführen (z.B. Datei schreiben)</h4>
+          <p>Lokaler Terminal-Dialog öffnet sich. Session pausiert.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot" style="background:var(--violet)">2</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Channel-Server empfängt Permission Request</h4>
+          <p>Mit <code>request_id</code> (5 Kleinbuchstaben), Tool-Name, Beschreibung und Input-Vorschau.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot" style="background:var(--violet)">3</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Prompt erscheint in deinem Chat</h4>
+          <div class="code-block"><code><span class="comment"># Was in Telegram/iMessage ankommt:</span>
+Claude wants to run Write: Schreibt in Coach HQ/CHS/_mandat-akte.md
+
+Reply "yes abcde" or "no abcde"</code></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-left"><div class="step-dot" style="background:var(--violet)">4</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <h4>Du antwortest vom iPhone</h4>
+          <div class="code-block"><code>yes abcde</code></div>
+          <p>Lokaler Dialog schließt sich, Claude führt die Aktion aus. Wer zuerst antwortet (Terminal oder Handy), gewinnt.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-block amber">
+      <h3>Permission Relay nur mit vertrauenswürdigen Sendern</h3>
+      <p>Wer über den Channel antworten kann, kann Tool-Nutzung in deiner Session genehmigen. Deshalb Allowlist immer eng halten — nur du selbst oder wenige explizit vertraute Personen.</p>
+    </div>
+  </div>
+
+  <!-- KAPITEL 6: Use Cases -->
+  <div class="chapter" id="ch5">
+    <div class="chapter-header">
+      <div class="chapter-tag">Kapitel 6 · Deine Praxis</div>
+      <h2>Deine Use Cases im Cowork OS</h2>
+      <p>Sechs konkrete Szenarien, wie Channels dein Cowork OS erweitern — speziell zugeschnitten auf Coaching-Praxis, Mandat-Arbeit und Selbstständigkeits-Aufbau.</p>
+    </div>
+
+    <div class="usecase-item">
+      <div class="usecase-header">
+        <div class="usecase-num">1</div>
+        <h3>Capture Session Prep vom iPhone — unterwegs vor dem Coaching-Termin</h3>
+      </div>
+      <p>Du bist im Zug auf dem Weg zu einem Klienten. Schreib dir selbst via iMessage einen kurzen Kontext-Dump. Claude in deiner laufenden Session auf dem Mac liest es, greift auf die Mandat-Akte zu und sendet dir eine kompakte Vorbereitungs-Notiz zurück.</p>
+      <div class="prompt-label">Beispiel-Nachricht an dich selbst (iMessage/Telegram)</div>
+      <div class="code-block"><code><span class="string">"Capture Session Prep: CHS IT-Führungsrunde heute 14:00.
+Letzte Session war Dual Excellence-Diagnose.
+Bereite mir 3 Fragen und Methodenempfehlung vor."</span></code></div>
+      <div class="prompt-label" style="margin-top:10px">Was Claude zurückschickt</div>
+      <p style="font-size:13px;color:var(--text-muted)">Lädt Mandat-Akte, liest letzte Gesprächs-Spur, sendet kompakte Session-Vorbereitung zurück in deinen Chat.</p>
+    </div>
+
+    <div class="usecase-item coral">
+      <div class="usecase-header">
+        <div class="usecase-num coral">2</div>
+        <h3>Capture Reasoning direkt nach der Session — Diktat via Telegram</h3>
+      </div>
+      <p>Statt Wispr-Transkript manuell in Cowork zu übergeben: Du gehst aus der Session, sprichst 90 Sekunden in Telegram, Claude empfängt das Diktat und schreibt es direkt in die Reasoning-Spur der Mandat-Akte.</p>
+      <div class="prompt-label coral">Ablauf</div>
+      <div class="code-block"><code><span class="comment"># In Telegram an deinen Bot:</span>
+<span class="string">"Capture Reasoning: CHS IT heute. Sarah hatte wieder den Reflex,
+jedes Problem sofort zu lösen bevor sie es vollständig gehört hat.
+Ich hab es dieses Mal gespiegelt ohne zu konfrontieren. Sie hat...
+[90 Sekunden Diktat]"</span>
+
+<span class="comment"># Claude schreibt direkt in die Reasoning-Spur von _mandat-akte.md</span>
+<span class="comment"># Claude sendet dir Bestätigung zurück in Telegram</span></code></div>
+    </div>
+
+    <div class="usecase-item amber">
+      <div class="usecase-header">
+        <div class="usecase-num amber">3</div>
+        <h3>Triage unterwegs — Inbox leeren vom iPhone</h3>
+      </div>
+      <p>Du hast im Laufen 3 Sprach-Memos auf dem iPhone aufgenommen. Per iMessage pushst du die transkribierten Texte an Claude, der sie klassifiziert und routet — Capture-Befehl als Vorschlag oder direkt ausführen.</p>
+      <div class="prompt-label amber">Nachricht</div>
+      <div class="code-block"><code><span class="string">"Triage das:
+[Transkript 1: hatte ein Gespräch mit Decadia über neues IT-Mandat...]
+[Transkript 2: Idee für Venture Radar: Buchhaltungs-Automatisierung...]
+[Transkript 3: Erinnere mich: nächste Woche KIT Alumni-Treffen...]"</span></code></div>
+      <p style="font-size:13px;color:var(--text-muted);margin-top:8px">Claude klassifiziert: 1 = Capture Lead/Mandat, 2 = Capture Marktimpuls, 3 = Privates HQ Reminder. Schreibt entsprechend oder schlägt Befehle vor.</p>
+    </div>
+
+    <div class="usecase-item violet">
+      <div class="usecase-header">
+        <div class="usecase-num violet">4</div>
+        <h3>Eigenmarke HQ: CI/CD-Alert wenn Build fehlschlägt</h3>
+      </div>
+      <p>Dein machs-fuer-mich-site Repo auf GitHub hat einen fehlgeschlagenen Build. Ein Webhook von GitHub Actions schickt den Fehler-Report direkt in deine Claude-Session. Claude analysiert, identifiziert die Ursache und schlägt Fix vor — ohne dass du aktiv GitHub checken muss.</p>
+      <div class="prompt-label violet">Webhook-Payload der ankommt</div>
+      <div class="code-block"><code>&lt;channel source=<span class="string">"github-webhook"</span> severity=<span class="string">"high"</span>&gt;
+  Build failed: machs-fuer-mich-site main branch
+  Error: Cloudflare Worker: Cannot find module '@anthropic-ai/sdk'
+  Run: https://github.com/jaymanuzon/machs-fuer-mich/actions/runs/1234
+&lt;/channel&gt;</code></div>
+    </div>
+
+    <div class="usecase-item green">
+      <div class="usecase-header">
+        <div class="usecase-num green">5</div>
+        <h3>Venture Radar: Externen Alert wenn ein Kandidat interessant wird</h3>
+      </div>
+      <p>Der Venture Radar läuft als Schedule. Wenn ein besonders starker Kandidat (Equity-Score ≥ 4) identifiziert wird, pusht er einen Alert über einen Webhook an deine Session. Claude erweitert die Analyse und sendet dir eine Kurzfassung via Telegram.</p>
+      <div class="prompt-label">Webhook aus dem Schedule-Script</div>
+      <div class="code-block"><code><span class="comment"># Am Ende des Venture-Radar-Scripts:</span>
+curl -X POST localhost:8788 \
+  -d <span class="string">"High-Score Kandidat: KI-gestützte Steuerberatung für KMU
+  Equity-Score: 4/5, Marktreife: 3/5, AI-Takeover: 5/5
+  Bitte erweiterte Analyse erstellen."</span></code></div>
+    </div>
+
+    <div class="usecase-item blue">
+      <div class="usecase-header">
+        <div class="usecase-num blue">6</div>
+        <h3>Permission Relay: Claude-Aktionen vom iPhone genehmigen</h3>
+      </div>
+      <p>Du hast Claude eine komplexe Schreib-Aufgabe gegeben (neuen Skill bauen, Mandat-Akte aktualisieren) und bist dann weg vom Mac. Claude braucht Genehmigung zum Schreiben. Mit Permission Relay kommt der Prompt in deinen Chat — du antwortest mit yes/no und Claude macht weiter.</p>
+      <div class="prompt-label">Was du auf dem iPhone siehst</div>
+      <div class="code-block"><code><span class="comment"># In Telegram/iMessage:</span>
+Claude wants to run Write:
+Schreibt neue Session-Vorbereitung in
+Coach HQ/.../CHS/_mandat-akte.md
+
+Reply "yes xkzmn" or "no xkzmn"
+
+<span class="comment"># Deine Antwort:</span>
+yes xkzmn</code></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="highlight-block">
+      <h3>Empfehlung: Zwei-Phasen-Einführung</h3>
+      <p><strong>Phase 1 (heute):</strong> iMessage-Channel einrichten — 4 Schritte, kein Bot-Setup, sofort nutzbar. Teste Use Case #1 (Session Prep) und #3 (Triage). Kein Permission Relay, kein Webhook. Nur: Nachricht rein, Claude reagiert.</p>
+      <p style="margin-top:8px"><strong>Phase 2 (wenn Phase 1 sitzt):</strong> Telegram-Channel mit Permission Relay einrichten. Use Case #2 (Capture Reasoning) und #6 (Permission Relay vom iPhone) schalten eine neue Qualität frei: du kannst lange autonome Tasks starten und sie vom iPhone steuern.</p>
+    </div>
+  </div>
+
+</main>
+
+<div class="footer">
+  Claude Channels Schulung · Claude Tools Workstation · Stand Juni 2026
+  · Quelle: <a href="https://code.claude.com/docs/de/channels" target="_blank">code.claude.com/docs/de/channels</a>
+</div>
+
+<script>
+  const chapters = document.querySelectorAll('.chapter');
+  const navBtns = document.querySelectorAll('.nav-btn');
+
+  function showChapter(idx) {
+    chapters.forEach((ch, i) => ch.classList.toggle('active', i === idx));
+    navBtns.forEach((btn, i) => btn.classList.toggle('active', i === idx));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
