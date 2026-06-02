@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coaching Abend-Refresher · 2. Juni 2026</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #1C1009; color: #F5E6C8;
+  font-family: Georgia, 'Times New Roman', serif;
+  padding: 2.5rem 1.25rem; min-height: 100vh;
+}
+.page { max-width: 720px; margin: 0 auto; }
+
+/* HEADER */
+.header { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid rgba(239,159,39,0.3); }
+.header-label { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #BA7517; margin-bottom: 0.5rem; }
+.header-title { font-size: 22px; font-weight: normal; color: #FAC775; line-height: 1.35; }
+.header-date { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 13px; color: #6B4010; margin-top: 0.4rem; }
+
+/* METHOD CARDS */
+.card { border-radius: 12px; padding: 1.75rem 2rem; margin-bottom: 2rem; }
+.card-amber { background: #241406; border: 1px solid rgba(239,159,39,0.35); }
+.card-coral { background: #1E0C07; border: 1px solid rgba(216,90,48,0.35); }
+.badge { display: inline-block; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; padding: 3px 10px; border-radius: 4px; margin-bottom: 1rem; }
+.badge-amber { background: rgba(239,159,39,0.18); color: #EF9F27; border: 0.5px solid rgba(239,159,39,0.4); }
+.badge-coral { background: rgba(216,90,48,0.18); color: #D85A30; border: 0.5px solid rgba(216,90,48,0.4); }
+.card-title { font-size: 19px; font-weight: normal; margin-bottom: 0.9rem; }
+.amber .card-title { color: #FAC775; } .coral .card-title { color: #F5C4B3; }
+.mood { font-style: italic; font-size: 16px; line-height: 1.6; margin-bottom: 1.1rem; padding-left: 1rem; border-left: 2px solid; }
+.amber .mood { color: #FAC775; border-color: rgba(239,159,39,0.5); }
+.coral .mood { color: #F5C4B3; border-color: rgba(216,90,48,0.5); }
+.section-label { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin: 1.4rem 0 0.5rem; }
+.amber .section-label { color: #BA7517; } .coral .section-label { color: #993C1D; }
+.body-text { font-size: 14px; line-height: 1.75; }
+.amber .body-text { color: #E8C68A; } .coral .body-text { color: #E8B49A; }
+ol.steps { font-size: 13.5px; line-height: 1.72; padding-left: 1.2rem; }
+ol.steps li { margin-bottom: 0.55rem; }
+.amber ol.steps { color: #E8C68A; } .coral ol.steps { color: #E8B49A; }
+ol.steps strong { font-weight: 600; }
+.amber ol.steps strong { color: #FAC775; } .coral ol.steps strong { color: #F5C4B3; }
+.divider { height: 1px; margin: 1.4rem 0; }
+.amber .divider { background: rgba(239,159,39,0.2); } .coral .divider { background: rgba(216,90,48,0.2); }
+.prompt-box { border-radius: 8px; padding: 1rem 1.2rem; }
+.amber .prompt-box { background: rgba(239,159,39,0.1); border: 0.5px solid rgba(239,159,39,0.3); }
+.coral .prompt-box { background: rgba(216,90,48,0.1); border: 0.5px solid rgba(216,90,48,0.3); }
+.prompt-label { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.45rem; }
+.amber .prompt-label { color: #BA7517; } .coral .prompt-label { color: #993C1D; }
+.prompt-q { font-style: italic; font-size: 14px; line-height: 1.65; }
+.amber .prompt-q { color: #FAC775; } .coral .prompt-q { color: #F5C4B3; }
+.fit-note { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 12.5px; line-height: 1.6; margin-top: 1rem; }
+.amber .fit-note { color: #854F0B; } .coral .fit-note { color: #712B13; }
+.table-link { display: inline-block; margin-top: 1.1rem; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: #EF9F27; text-decoration: none; border: 1px solid rgba(239,159,39,0.4); border-radius: 4px; padding: 5px 13px; }
+.table-link:hover { background: rgba(239,159,39,0.1); }
+
+/* ROUTING TABLE SECTION */
+.routing-section { background: #1A0E04; border: 1px solid rgba(239,159,39,0.22); border-radius: 12px; padding: 1.75rem 2rem; margin-bottom: 2rem; scroll-margin-top: 2rem; }
+.routing-section h2 { font-size: 17px; font-weight: normal; color: #FAC775; margin-bottom: 0.35rem; }
+.routing-meta { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 11.5px; color: #5A380A; line-height: 1.6; margin-bottom: 1.4rem; }
+.routing-meta .note { color: #7A5020; }
+table.rt { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.5; }
+table.rt thead th { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 9.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: #7A4F10; padding: 0.55rem 0.65rem; border-bottom: 1px solid rgba(239,159,39,0.22); text-align: left; }
+table.rt thead th:first-child { width: 26px; text-align: center; }
+table.rt tbody tr { border-bottom: 1px solid rgba(239,159,39,0.06); }
+table.rt tbody tr:hover { background: rgba(239,159,39,0.04); }
+table.rt tbody tr:last-child { border-bottom: none; }
+table.rt tbody td { padding: 0.55rem 0.65rem; vertical-align: top; }
+table.rt tbody td:first-child { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 10px; color: #3E2508; text-align: center; padding-top: 0.7rem; }
+.tc { color: #B08040; font-style: italic; font-size: 12.5px; }
+
+/* TOOL BUTTONS */
+.tool-btn {
+  display: inline-block;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  font-size: 11px; line-height: 1;
+  padding: 3px 9px; margin: 2px 3px 2px 0;
+  border-radius: 3px; white-space: nowrap;
+  cursor: pointer; border: none; text-align: left;
+  transition: background 0.12s;
+}
+.tool-btn.linked {
+  background: rgba(239,159,39,0.14);
+  border: 0.5px solid rgba(239,159,39,0.4);
+  color: #FAC775;
+}
+.tool-btn.linked:hover { background: rgba(239,159,39,0.28); color: #FFD580; }
+.tool-btn.unlinked {
+  background: rgba(255,255,255,0.03);
+  border: 0.5px solid rgba(255,255,255,0.08);
+  color: #4A3518; cursor: default;
+}
+
+/* LEGEND */
+.legend { display: flex; gap: 1.25rem; margin-top: 1.2rem; flex-wrap: wrap; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 11px; }
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.dot { width: 8px; height: 8px; border-radius: 2px; }
+.dot-l { background: rgba(239,159,39,0.3); border: 0.5px solid rgba(239,159,39,0.6); }
+.dot-u { background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.12); }
+.leg-l { color: #7A4F10; } .leg-u { color: #3A2508; }
+
+/* MODAL OVERLAY */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75); z-index: 1000;
+  justify-content: center; align-items: flex-start;
+  padding: 1.5rem 1rem; overflow-y: auto;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: #241406; border: 1px solid rgba(239,159,39,0.4);
+  border-radius: 14px; max-width: 620px; width: 100%;
+  padding: 2rem 2rem 1.5rem; position: relative;
+  margin: auto; flex-shrink: 0;
+}
+.modal-close {
+  position: absolute; top: 1rem; right: 1rem;
+  background: none; border: none; cursor: pointer;
+  color: #7A5020; font-size: 20px; line-height: 1;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  padding: 4px 8px; border-radius: 4px;
+}
+.modal-close:hover { background: rgba(255,255,255,0.08); color: #FAC775; }
+.modal-badge { display: inline-block; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 9.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; padding: 2px 9px; border-radius: 3px; margin-bottom: 0.75rem; background: rgba(239,159,39,0.15); color: #BA7517; border: 0.5px solid rgba(239,159,39,0.35); }
+.modal-title { font-size: 19px; font-weight: normal; color: #FAC775; margin-bottom: 0.75rem; }
+.modal-section { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 9.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #7A4F10; margin: 1.1rem 0 0.4rem; }
+.modal-text { font-size: 13.5px; line-height: 1.72; color: #E8C68A; }
+.modal-steps { font-size: 13px; line-height: 1.7; color: #D4A860; padding-left: 1.1rem; }
+.modal-steps li { margin-bottom: 0.35rem; }
+.modal-when { font-size: 12.5px; color: #9A6C30; font-family: 'Helvetica Neue', Arial, sans-serif; line-height: 1.65; }
+.modal-hf { font-size: 12.5px; color: #7A5020; font-family: 'Helvetica Neue', Arial, sans-serif; font-style: italic; line-height: 1.6; border-top: 1px solid rgba(239,159,39,0.15); margin-top: 1rem; padding-top: 0.9rem; }
+
+/* FOOTER */
+.footer { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(239,159,39,0.12); font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 11.5px; color: #3A2008; text-align: center; }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="header">
+  <p class="header-label">Coaching Abend-Refresher</p>
+  <h1 class="header-title">Stimmung, Gefühl und Präzision<br>der Methode</h1>
+  <p class="header-date">2. Juni 2026 · alle Methoden eingebettet</p>
+</div>
+
+<!-- CARD 1 -->
+<div class="card card-amber amber">
+  <span class="badge badge-amber">Meta-Werkzeug · Routing</span>
+  <h2 class="card-title">Coaching-Format-Routing</h2>
+  <p class="mood">„Wer immer mit demselben Werkzeug ans Thema geht, hört irgendwann auf zu zuhören."</p>
+  <p class="section-label">Kern-Essenz</p>
+  <p class="body-text">Das Format-Routing ist kein Algorithmus — es ist ein Coach-interner Spiegel. Die Tabelle übersetzt Coachee-Selbstsprache direkt in Format-Hypothesen: Inneres Team, Glaubenssätze, Wahrnehmungspositionen, Ressourcen-Arbeit. Keine Zeile sucht eine Diagnose — sie sucht eine Einladung.</p>
+  <p class="section-label">Choreografie</p>
+  <ol class="steps">
+    <li>Hör, welche Phrase der Coachee selbst wählt — nicht deine Übersetzung davon.</li>
+    <li>Lies den Eintrag vollständig: viele Themen führen auf Kombinationen, nicht ein einzelnes Tool.</li>
+    <li>Prüfe, ob du das vorgeschlagene Format wirklich beherrschst — oder ob du es nur kennst.</li>
+    <li>Kein Treffer? Signal: Thema braucht mehr Klärung. Zurück zur Phänomenebene.</li>
+    <li>Die Tabelle bleibt deins — nie vor dem Coachee verwenden.</li>
+  </ol>
+  <div class="divider"></div>
+  <div class="prompt-box">
+    <p class="prompt-label">Reflexion für heute Abend</p>
+    <p class="prompt-q">„Wenn ich morgen in die Sitzung gehe — welches Format habe ich schon im Kopf, bevor der Coachee den ersten Satz gesagt hat?"</p>
+  </div>
+  <p class="fit-note">Passt am besten als stille Vorsitzungs-Prüfung oder Mid-Session-Reorientierung. Die Tabelle bleibt deins — nie vor dem Coachee zeigen.</p>
+  <a href="#routing-tabelle" class="table-link">↓ Zur Routing-Tabelle (18 Einträge)</a>
+</div>
+
+<!-- CARD 2 -->
+<div class="card card-coral coral">
+  <span class="badge badge-coral">NLP · Robert Dilts</span>
+  <h2 class="card-title">Logische Ebenen</h2>
+  <p class="mood">„Wenn ein Ziel keine Energie hat, fehlt nicht die Klarheit — es fehlt die Höhe."</p>
+  <p class="section-label">Kern-Essenz</p>
+  <p class="body-text">Sechs Ebenen von Umwelt bis Systemische Einbindung — ressourcen-erzeugende Reise im Als-ob-Modus. Zentrale Intuition: ein Problem lässt sich selten auf derselben Ebene lösen. Das Drehbuch: vorwärts durch alle Ebenen (Ressourcen sammeln), rückwärts (integrieren), dann Future Pace.</p>
+  <p class="section-label">Choreografie</p>
+  <ol class="steps">
+    <li><strong>Teil 1:</strong> Ziel wohlgeformt setzen → sechs Bodenanker → von Ebene 1 (Umwelt) bis Ebene 6 (Systemische Einbindung). Fehlen Ressourcen: eine Ebene höher, holen, zurück.</li>
+    <li><strong>Teil 2:</strong> Rückweg — Ressourcen einsammeln, jede Ebene durch die anderen anreichern lassen.</li>
+    <li><strong>Teil 3:</strong> Future Pace — Erkenntnisse in die Zukunft verankern, nicht in die Session.</li>
+  </ol>
+  <div class="divider"></div>
+  <div class="prompt-box">
+    <p class="prompt-label">Reflexion für heute Abend</p>
+    <p class="prompt-q">„Wenn mein Coachee morgen sagt: 'Ich weiß was ich will, aber ich komme nicht in Bewegung' — auf welcher Ebene vermute ich den Block, und was würde mich überraschen?"</p>
+  </div>
+  <p class="fit-note">Passt wenn ein Ziel klar, aber energielos ist. Zurücklegen, wenn Identitäts-Ebene unverarbeitete Lebensbrüche berühren könnte.</p>
+</div>
+
+<!-- ROUTING TABLE -->
+<div id="routing-tabelle" class="routing-section">
+  <h2>Coaching Format-Routing — 18 Einträge</h2>
+  <p class="routing-meta">
+    Quelle: Quelldeck S. 4–5, <em>Auswahl von Coaching-Formaten.</em><br>
+    <span class="note">Amber-Tags sind klickbar → öffnen Methoden-Kurzprofil direkt hier.</span>
+  </p>
+  <table class="rt">
+    <thead><tr><th>#</th><th>Thema des Coachee</th><th>Mögliche Tools</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="tc">Entscheidung treffen</td><td><button class="tool-btn linked" onclick="showMethod('Entscheidungsmatrix')">Entscheidungsmatrix</button></td></tr>
+      <tr><td>2</td><td class="tc">Zwei Teile blockieren sich</td><td><button class="tool-btn linked" onclick="showMethod('Angel_Technik')">Angel-Technik</button> <button class="tool-btn linked" onclick="showMethod('Inneres_Team')">Inneres Team</button></td></tr>
+      <tr><td>3</td><td class="tc">Bedürfnisse, Motive unklar</td><td><button class="tool-btn linked" onclick="showMethod('Angel_Technik')">"Angel"-Technik</button></td></tr>
+      <tr><td>4</td><td class="tc">„Kuddel-Muddel" im Inneren</td><td><button class="tool-btn linked" onclick="showMethod('Inneres_Team')">Inneres Team</button></td></tr>
+      <tr><td>5</td><td class="tc">„Überzogenes" Verhalten</td><td><button class="tool-btn linked" onclick="showMethod('Entwicklungs_Quadrat')">Werte-Quadrat</button> <button class="tool-btn linked" onclick="showMethod('Driver_Model')">Antreiber-Modell</button></td></tr>
+      <tr><td>6</td><td class="tc">Erhöhte Komplexität</td><td><button class="tool-btn linked" onclick="showMethod('Ordnungsstrukturen')">HO: Ordnungs-Strukturen</button> <span class="tool-btn unlinked">Systemanalyse</span> <span class="tool-btn unlinked">Visualisierung</span></td></tr>
+      <tr><td>7</td><td class="tc">Ziel ist unklar</td><td><button class="tool-btn linked" onclick="showMethod('Zielkriterien')">Ziele-Arbeit</button> <button class="tool-btn linked" onclick="showMethod('Time_Line')">Time-Line</button></td></tr>
+      <tr><td>8</td><td class="tc">Ziel ist denkbar, hat aber keine Ladung</td><td><button class="tool-btn linked" onclick="showMethod('Logische_Ebenen')">Logische Ebenen</button></td></tr>
+      <tr><td>9</td><td class="tc">Teil kann nicht → muss / würde gerne</td><td><button class="tool-btn linked" onclick="showMethod('Ressourcen_Ankern')">Ressourcen generieren</button> <button class="tool-btn linked" onclick="showMethod('Angel_Technik')">Angeln</button> <button class="tool-btn linked" onclick="showMethod('Sekundaerer_Gewinn')">sek. Gewinn erfragen</button></td></tr>
+      <tr><td>10</td><td class="tc">Perspektive fehlt</td><td><button class="tool-btn linked" onclick="showMethod('Visions_Arbeit')">Visions-Arbeit</button></td></tr>
+      <tr><td>11</td><td class="tc">(Konflikt-) Gesprächsvorbereitung, äußeres Feindbild</td><td><button class="tool-btn linked" onclick="showMethod('Wahrnehmungspositionen')">Wahrnehmungspositionen</button></td></tr>
+      <tr><td>12</td><td class="tc">Ressourcen fehlen</td><td><button class="tool-btn linked" onclick="showMethod('Time_Line')">Time-Line</button></td></tr>
+      <tr><td>13</td><td class="tc">Hohe System-Dynamik</td><td><button class="tool-btn linked" onclick="showMethod('Sueße_Aufstellung')">Süße Aufstellung</button></td></tr>
+      <tr><td>14</td><td class="tc">Unklare Bedürfnis-Struktur</td><td><button class="tool-btn linked" onclick="showMethod('Beduerfnis_Profil')">Bedürfnis-Profil</button></td></tr>
+      <tr><td>15</td><td class="tc">Ressourcen fehlen <em style="color:#2E1A08;font-style:normal;font-size:10.5px">(Var. 2)</em></td><td><button class="tool-btn linked" onclick="showMethod('Time_Line')">Time-Line</button> <button class="tool-btn linked" onclick="showMethod('Wahrnehmungspositionen')">Perspektivwechsel</button> <button class="tool-btn linked" onclick="showMethod('Dritter_Stuhl')">3ter Stuhl</button></td></tr>
+      <tr><td>16</td><td class="tc">Innere Blockade</td><td><button class="tool-btn linked" onclick="showMethod('Inneres_Team')">Inneres Team</button> <button class="tool-btn linked" onclick="showMethod('Glaubenssaetze')">Glaubens-Sätze</button> <button class="tool-btn linked" onclick="showMethod('Driver_Model')">Innere Antreiber</button></td></tr>
+      <tr><td>17</td><td class="tc">Selbstmanagement ist suboptimal</td><td><button class="tool-btn linked" onclick="showMethod('Inneres_Team')">Regisseur</button> <button class="tool-btn linked" onclick="showMethod('Driver_Model')">Innere Antreiber</button> <button class="tool-btn linked" onclick="showMethod('Dissoziieren')">Dissoziieren</button> <button class="tool-btn linked" onclick="showMethod('Meta_Position')">Meta-Position</button></td></tr>
+      <tr><td>18</td><td class="tc">„Mechanisches", unangemessenes Verhalten</td><td><button class="tool-btn linked" onclick="showMethod('Ich_Zustaende')">Ich-Zustände</button> <button class="tool-btn linked" onclick="showMethod('Schneemann')">Schneemann-Übung</button> <button class="tool-btn linked" onclick="showMethod('Driver_Model')">Antreiber-Modell</button> <button class="tool-btn linked" onclick="showMethod('Dritter_Stuhl')">3ter Stuhl</button></td></tr>
+    </tbody>
+  </table>
+  <div class="legend">
+    <div class="legend-item"><div class="dot dot-l"></div><span class="leg-l">Klickbar — öffnet Methoden-Kurzprofil</span></div>
+    <div class="legend-item"><div class="dot dot-u"></div><span class="leg-u">Generisches Tool ohne eigenes Profil</span></div>
+  </div>
+</div>
+
+<div class="footer">Coaching Abend-Refresher · 2026-06-02 ·  · standalone</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeOnOverlay(event)">
+  <div class="modal-box" id="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <span class="modal-badge" id="m-badge">Methode</span>
+    <h2 class="modal-title" id="m-title">Titel</h2>
+    <p class="modal-section">Worum geht es</p>
+    <p class="modal-text" id="m-purpose"></p>
+    <p class="modal-section">Wann einsetzen</p>
+    <p class="modal-when" id="m-when"></p>
+    <p class="modal-section">Choreografie</p>
+    <ol class="modal-steps" id="m-steps"></ol>
+    <p class="modal-hf" id="m-hf"></p>
+  </div>
+</div>
+
+<script>
+const M = {
+  Inneres_Team: {
+    badge: 'Schulz von Thun',
+    title: 'Inneres Team',
+    purpose: 'Innere Stimmen als personifiziertes Team sichtbar und ansprechbar machen. Ziel ist Integration, nicht Auflösung: jede Stimme bekommt Name, Symbol und Platz. Coachee gewinnt die Oberhaupt-Position — moderiert statt verdrängt.',
+    when: 'Innere Zerrissenheit · Ambivalenz · Rollendilemmata · Wiederkehrende Selbstkritik',
+    steps: ['Herausfordernde Situation wählen.', 'Innere Stimmen sammeln (max. 5 Akteure) — Name, Symbol, Kernaussage pro Akteur.', 'Räumliche Aufstellung mit Bodenankern.', 'Jeder Akteur kommt zu Wort.', 'Oberhaupt-Position einnehmen: wer moderiert das Team?', 'Lösungsbild für das Team finden.'],
+    hf: 'Sehr hoch: jeder Anteil bekommt einen Platz — und keinen Wertungs-Stempel.'
+  },
+  Entwicklungs_Quadrat: {
+    badge: 'Schulz von Thun',
+    title: 'Entwicklungs-Quadrat / Werte-Quadrat',
+    purpose: 'Vier-Quadranten-Modell: jeder Wert braucht einen Schwester-Wert als Balance-Pol, sonst kippt er pathologisch. Coaching-Anwendung: nicht "mehr X", sondern "X in Balance mit seinem Schwester-Y".',
+    when: 'Übersteigertes/überzogenes Verhalten · Werte-Reflexion · Antreiber-Arbeit',
+    steps: ['Problematisches Verhalten benennen (z.B. "Geiz").', 'Positiven Kern freilegen ("Sparsamkeit").', 'Schwester-Wert bestimmen ("Großzügigkeit").', 'Übersteigerung des Schwester-Werts ("Verschwendung").', 'Quadrant visualisieren.', 'Wo bewegt sich der Coachee? → In Richtung Balance-Mitte arbeiten.'],
+    hf: 'Sehr hoch: jede Übersteigerung hat eine ehemals positive Schwester. Kein Wert ist "schlecht".'
+  },
+  Driver_Model: {
+    badge: 'NLP · Transaktionsanalyse',
+    title: 'Driver Model / Antreiber-Modell',
+    purpose: 'Die fünf inneren Antreiber (Sei perfekt · Mach es allen recht · Streng dich an · Sei stark · Beeil dich) bewusst machen, die unter Stress automatisch das Verhalten steuern. Jeder Antreiber hat eine funktionale und dysfunktionale Seite.',
+    when: 'Übersteigertes Verhalten · Stress-Muster · Innere Blockade · Selbstmanagement',
+    steps: ['Fünf Antreiber erklären und Selbst-Einschätzung: Welcher ist primär?', 'Vorteil und Nachteil des dominanten Antreibers benennen.', 'Enabler-Botschaft finden: Was ist die erlaubende Gegenbotschaft? (z.B. "Sei stark" → "Es ist OK, Hilfe zu nehmen").', 'Neue Haltung verankern — Ressourcen-Anker setzen.'],
+    hf: 'Sehr hoch: Antreiber sind Fähigkeiten in Überdosis, die einmal adaptiv waren — kein Makel.'
+  },
+  Zielkriterien: {
+    badge: 'NLP-Methode',
+    title: 'Zielkriterien / Wohlgeformtheit (10 Kriterien)',
+    purpose: 'Zehn-Kriterien-Prüfung der Wohlgeformtheit eines Ziels. Geht über SMART hinaus: Attraktivität, sinnliche Konkretheit, Eigeninitiative und ökologische Verträglichkeit werden explizit geprüft.',
+    when: 'Jede formulierte Ziel-Definition · G-Stufe in TGROW · Vor Coaching-Sitzung',
+    steps: ['Attraktiv & motivierend · 2. Positiv formuliert · 3. Kein Vergleich · 4. Eigene Initiative · 5. Konkret & sinnesspezifisch · 6. Kontext definiert · 7. Ökologisch (schadet niemandem) · 8. Ressourcen vorhanden? · 9. Erreichbar · 10. Future Pace.', 'Pro Kriterium 2–3 Fragen. Coachee antwortet — Coach hört.'],
+    hf: 'Hoch: jedes Kriterium macht den Coachee zum Sprecher. Kriterium 1 (Attraktivität) und 7 (Ökologie) sind humanistisch zentral.'
+  },
+  Time_Line: {
+    badge: 'NLP-Methode',
+    title: 'Time-Line-Arbeit (10-Jahres-Vision)',
+    purpose: 'Strukturierte 10-Jahres-Vision mit fünf Frage-Clustern. Erst Werte-Anker, dann Strategie davon ableiten — nicht "Was tust du?" sondern "Was ist dir wichtig, und was folgt daraus?"',
+    when: 'Ziel unklar · Ressourcen fehlen · Lebens-Entwurfs-Arbeit · Karriere-Übergänge',
+    steps: ['Cluster 1: "Wie könnte sich dein Leben optimalerweise entwickeln?" (Meilensteine).', 'Cluster 2: "Was ist dir dabei wichtig?" (Werte).', 'Cluster 3: "Was ist deine Strategie?"', 'Cluster 4: "Welche Ressourcen hast du?"', 'Cluster 5: "Wo liegt dein Kraft-Fokus?"', 'Jeden Cluster sinnesreich erzählen lassen.'],
+    hf: 'Hoch: Werte, Strategie und Ressourcen kommen ausschließlich vom Coachee.'
+  },
+  Ressourcen_Ankern: {
+    badge: 'NLP-Methode',
+    title: 'Ressourcen auf Finger ankern (5-Finger-Anker)',
+    purpose: 'Fünf Ressourcen-Zustände auf die fünf Finger ankern, dann über eine Faust-Geste zu einem Gesamt-Anker verschmelzen. Der Anker ist am Körper — jederzeit verfügbar, ohne dass es sichtbar ist.',
+    when: 'Ressourcen fehlen · Transfersicherung nach Coaching-Sitzung · Vor Präsentationen/schwierigen Gesprächen',
+    steps: ['Daumen = Ziel-Ressource.', 'Zeigefinger = Erfolg aus Vergangenheit.', 'Mittelfinger = Vorbild/Modell.', 'Ringfinger = Physische Stärke.', 'Kleiner Finger = Sinn/Spirituelle Ressource.', 'Faust = Gesamt-Anker. Pro Finger Ziel-Hypnose. Abschluss: Future Pace.'],
+    hf: 'Im Kern humanistisch: Coachee bringt fünf eigene Ressourcen ein — Coach hält den Container.'
+  },
+  Visions_Arbeit: {
+    badge: 'Humanistisch',
+    title: 'Visions-Coaching-Praxis',
+    purpose: 'Familie austauschbarer Übungs-Vorlagen — von biografischer Ressourcenaktivierung (Vergangenheit) über Gegenwarts-Diagnose bis zur Zukunfts-Exploration. Modulartig: Coach wählt 2–4 Module je nach Bedarf.',
+    when: 'Perspektive fehlt · Lebens-Entwurfs-Arbeit · Sinn-Krise · Karriere-Übergang',
+    steps: ['Modul A: Diagnose aktueller Situation (Ressourcen + Baustellen + Träume).', 'Modul B: Kraft aus Vergangenheit (Stolz, Stärken, Wendepunkte).', 'Modul C: Visions-Erzählung oder Collage.', 'Modul D: Ressourcen für die Vision.', 'Modul E: Konkretisierung in Meilensteine.', 'Modul F: Engagement für Veränderung.'],
+    hf: 'Sehr hoch: "Nicht der Coach ist der Experte für die Thematik, sondern der Coachee."'
+  },
+  Wahrnehmungspositionen: {
+    badge: 'NLP-Methode',
+    title: 'Wahrnehmungspositionen wechseln (Ich · Du · Meta)',
+    purpose: 'Drei Wahrnehmungspositionen räumlich getrennt einnehmen und aus jeder heraus sprechen. Coachee spricht aus jeder Position — nicht über sie. Erkenntnis durch vollständige Perspektivenübernahme.',
+    when: 'Konflikt-/Gesprächsvorbereitung · Äußeres Feindbild · Perspektivwechsel bei Ressourcen-Arbeit',
+    steps: ['Drei Positionen mit Karten markieren: Meta · Ich · Du.', 'Ich-Position: eigene Sicht, assoziiert.', 'Du-Position: in die andere Person schlüpfen — Coach adressiert als diese Person.', 'Meta-Position: wohlwollende Außenperspektive, dissoziiert.', 'Rückkehr zu Ich: was hat sich verändert?', 'Gesprächsvorbereitung aus neuem Stand.'],
+    hf: 'Sehr humanistisch: übt Perspektivenübernahme. Du-Position bleibt Hypothese — kein Wissen über den Anderen.'
+  },
+  Glaubenssaetze: {
+    badge: 'NLP-Methode',
+    title: 'Einschränkende / Erweiternde Glaubenssätze',
+    purpose: 'Identifikation einschränkender Glaubenssätze und ihre Überführung in erweiternde. Drei Typen: Hoffnungslosigkeit · Hilflosigkeit · Wertlosigkeit. Glaubenssätze sind keine Wahrheiten, sondern individuelle Wirklichkeit aus Verallgemeinerungen.',
+    when: 'Innere Blockade · Coachee "kommt nicht voran" · Identitäts-Klärung',
+    steps: ['Einschränkenden Satz identifizieren: "Ich kann nicht…" / "Es ist unmöglich…".', 'Typ bestimmen: Hoffnungslosigkeit / Hilflosigkeit / Wertlosigkeit.', 'Gegenbeweis suchen: "Wann war das einmal anders?"', 'Reframing: "Was wäre ein Satz, der dich vorwärts trägt?"', 'Neuen Glaubenssatz verankern.'],
+    hf: 'Hoch, wenn Reframing-Move gespielt wird: "Dieser Satz hat dich einmal geschützt." Kein aufgezwungener "besserer" Satz.'
+  },
+  Ich_Zustaende: {
+    badge: 'Transaktionsanalyse · Eric Berne',
+    title: 'Ich-Zustände (TA)',
+    purpose: 'Diagnostisches Modell: sechs Ich-Zustände zeigen sich in Verhalten, Wortwahl, Tonfall, Mimik, Haltung, Gestik. Keine Persönlichkeitstypen — Zustände. Die Beweglichkeit zwischen ihnen ist entscheidend.',
+    when: 'Mechanisches Verhalten · Konflikt-Diagnose · Führungskräfte-Coaching',
+    steps: ['Sechs Zustände kennen: kEl (kontrollierend) · fEl (fürsorglich) · ErwI (Erwachsenen-Ich) · fKi (freies Kind) · aKi (angepasstes Kind) · rKi (rebellierendes Kind).', 'Im Gespräch: aus welchem Zustand spricht der Coachee gerade?', 'Welcher Zustand fehlt oder dominiert?', 'Ziel-Zustand (Erwachsenen-Ich) aktivieren.', 'Bei Konflikt: Transaktions-Analyse der Interaktion.'],
+    hf: 'TA-Grundprämisse "I\'m OK — You\'re OK" ist humanistisch in der DNA.'
+  },
+  Schneemann: {
+    badge: 'Coaching-Praxis',
+    title: 'Schneemann-Übung',
+    purpose: 'Visualisierte Lebens-Bilanzierungs-Übung: aktuelle Aufteilung von Zeit/Energie auf Lebensbereiche als übereinanderliegende Kugeln sichtbar machen. Aktuelles vs. gewünschtes Bild kontrastieren.',
+    when: 'Mechanisches Verhalten · Work-Life-Balance · Selbstmanagement · Sinn-Krise',
+    steps: ['Lebensbereiche als Kugeln benennen (Job, Familie, Gesundheit, Hobby…).', 'Pro Bereich: Prozent-Anteile auf Sub-Themen verteilen (bis 100%).', 'Aktuelles Bild zeichnen.', 'Gewünschtes Bild zeichnen.', 'Lücken benennen: Was müsste sich ändern?', 'Ersten konkreten Schritt definieren.'],
+    hf: 'Vermutlich hoch: Coachee führt die Bilanzierung selbst — Coach hält den Container.'
+  },
+  Logische_Ebenen: {
+    badge: 'NLP · Robert Dilts',
+    title: 'Logische Ebenen (Dilts)',
+    purpose: 'Sechs-Ebenen-Hierarchie (Umwelt → Verhalten → Fähigkeiten → Glauben/Werte → Identität → Systemische Einbindung). Problem auf einer Ebene lässt sich nicht auf derselben lösen — Lösung liegt eine Ebene höher.',
+    when: 'Ziel ist denkbar, hat aber keine Ladung · Identitäts-/Sinn-Klärung · Lebensentscheidungen',
+    steps: ['Ziel wohlgeformt setzen → sechs Bodenanker auslegen.', 'Ebene 1 (Umwelt): Wo bist du? Was siehst, hörst, riechst du?', 'Ebene 4 (Glauben/Werte): Was ist dir wichtig? Warum tust du es?', 'Ebene 5 (Identität): Wer bist du hier? Als was siehst du dich?', 'Ebene 6 (Systemische Einbindung): Wozu gehörst du? Welche Mission?', 'Rückweg: Ressourcen einsammeln. Abschluss: Future Pace.'],
+    hf: 'Humanistisch: keine Ebene ist "besser". Ebene 6 öffnet spirituelles Register, ohne es zu besetzen.'
+  },
+  Angel_Technik: {
+    badge: 'Coaching-Praxis',
+    title: 'Angel-Technik / Angeln',
+    purpose: 'Langsames, geduldiges Herausarbeiten des verborgenen Bedürfnisses hinter einem Block, Widerspruch oder einer Ambivalenz. Die Methode fragt nicht nach Lösungen, sondern nach dem, was eine Position schützen will. Annahme: jeder blockierende Teil verfolgt eine positive Absicht.',
+    when: 'Bedürfnisse/Motive unklar · Zwei Teile blockieren sich · Teil kann nicht, würde aber gerne',
+    steps: ['Thema benennen lassen.', 'Erste Frage nach der Absicht: "Was will dieser Teil — was schützt er?"', 'Rekursiv vertiefen: "Und wenn er das sicherstellt — was wird dann möglich?"', 'Grundbedürfnis benennen und spiegeln: "Habe ich richtig gehört — was du brauchst, ist…?"', 'Übergabe entscheiden: Inneres Team / Ressourcen-Arbeit / Sekundärer Gewinn.'],
+    hf: 'Stark humanistisch: jeder Teil hat eine Berechtigung. Risiko: Coach fischt nach einem Bedürfnis, das er selbst vermutet — Coachee spürt das.'
+  },
+  Entscheidungsmatrix: {
+    badge: 'Coaching-Tool',
+    title: 'Entscheidungsmatrix',
+    purpose: 'Strukturiertes Abwägen von Optionen gegen explizit gemachte Kriterien. Die Matrix erzwingt, dass Coachee seine eigenen Werte benennt, bevor er bewertet. Das eigentliche Coaching-Moment liegt oft in der Krise davor: Welches Kriterium bekommt welches Gewicht?',
+    when: 'Wahl zwischen klar abgrenzbaren Optionen · Emotionale Überladung bei Entscheidungen',
+    steps: ['Optionen benennen (max. 4–5).', 'Kriterien sammeln: "Was ist dir wirklich wichtig?"', '100 Punkte auf Kriterien verteilen — erzwingt eine Rangordnung.', 'Optionen pro Kriterium bewerten (1–10).', 'Ergebnis lesen — nicht übernehmen. Wenn es "falsch anfühlt": das ist das eigentliche Coaching-Thema.', 'Entscheidungs-Test: "Was wäre der schlimmste realisierbare Fall?"'],
+    hf: 'Humanistisch neutral: das Ergebnis gehört dem Coachee. Er darf es ignorieren — das Ignorieren ist oft das eigentliche Material.'
+  },
+  Dritter_Stuhl: {
+    badge: 'Gestalt · Psychodrama',
+    title: 'Dritter Stuhl (3ter Stuhl)',
+    purpose: 'Drei physische Stühle repräsentieren drei Wahrnehmungspositionen. Erkenntnis durch Verkörperung: man weiß rational, dass andere Sichtweisen existieren — man erlebt sie erst, wenn man die Position physisch wechselt.',
+    when: 'Ressourcen fehlen (Perspektivwechsel) · Mechanisches Verhalten · Konflikt-Vorbereitung',
+    steps: ['Stuhl 1 = Ich (assoziiert, eigene Sicht).', 'Stuhl 2 = Der Andere / ein innerer Teil.', 'Stuhl 3 = Beobachter / Meta-Position (neutral, dissoziiert).', 'Stuhl 1 → Stuhl 2 (physisch schütteln, Rolle wechseln) → Stuhl 3 (was siehst du von außen?) → Rückkehr Stuhl 1 → Integration.', 'Transfer: was nimmt der Coachee mit?'],
+    hf: 'Stark humanistisch: alle drei Positionen gleichwertig. Stuhl 2 gehört dem Coachee — nicht dem Coach.'
+  },
+  Dissoziieren: {
+    badge: 'NLP · Bandler/Grinder',
+    title: 'Dissoziieren',
+    purpose: 'Bewusstes Heraustreten aus einer erlebten Erfahrung — wie ein Film auf einer Leinwand. Verringert die emotionale Ladung, ohne den Inhalt zu verändern. Für Reflexion über Muster und als Vorbereitung auf Ressourcen-Arbeit.',
+    when: 'Emotionale Überflutung · Selbstmanagement · Verhaltensanalyse aus der Außenperspektive',
+    steps: ['Leinwand-Metapher: Coachee sitzt im Kino, sieht sich selbst im Film.', 'Bei hoher Ladung: Bild kleiner machen, schwarz-weiß, weiter weg (Sub-Modalitäten).', 'Bei sehr starker Ladung: Beobachter des Beobachters (mehrfache Dissoziation).', 'Reflexion aus der Außenperspektive: was fällt auf?', 'Reassoziieren — Einsicht mitnehmen.'],
+    hf: 'Humanistisch: Dissoziation ist ein natürlicher Selbstschutz — im Coaching bewusst genutzt, nicht unterdrückt.'
+  },
+  Meta_Position: {
+    badge: 'NLP · Bandler/Grinder',
+    title: 'Meta-Position',
+    purpose: 'Neutrale, dissoziierte Beobachterposition außerhalb des Geschehens. Von dort betrachtet der Coachee sich selbst ohne emotionale Verstrickung — wie ein wohlwollender Außenstehender. Ermöglicht Mustererkennung, die von innen nicht möglich ist.',
+    when: 'Selbstmanagement · Wiederkehrende Reaktionsmuster · Führungsreflexion',
+    steps: ['Coachee physisch heraustreten lassen (aufstehen, Seite wechseln).', 'Neutrale Außenperspektive: Coachee spricht in der dritten Person über sich selbst.', 'Wohlwollenden Beobachter aktivieren: "Was würde er der Person dort empfehlen?"', 'Muster benennen — was ist von innen nicht sichtbar?', 'Zurückkehren und Einsicht mitbringen.'],
+    hf: 'Stark humanistisch: fragt nach dem wohlwollenden Beobachter, nicht nach dem Kritiker.'
+  },
+  Sekundaerer_Gewinn: {
+    badge: 'Systemisch · NLP',
+    title: 'Sekundärer Gewinn erfragen',
+    purpose: 'Gezieltes Erkunden des unbewussten Nutzens aus einer Problemsituation. Der Block "zahlt sich" unbewusst aus — solange dieser Gewinn nicht erkannt wird, scheitern alle Lösungsversuche auf der Ebene des Problems.',
+    when: 'Hartnäckiges, wiederkehrendes Muster trotz Lösungsversuchen · Nach erfolgloser Angel-Technik',
+    steps: ['Neutralen Rahmen setzen: "Diese Frage klingt ungewöhnlich — sie ist nicht als Vorwurf gemeint."', '"Angenommen, dieses Hindernis bliebe — was wird dadurch möglich?"', 'Stille halten. Die Antwort kommt langsam.', 'Gewinn benennen lassen und spiegeln.', 'Bedürfnis hinter dem Gewinn erkunden.', 'Alternativen entwickeln: denselben Gewinn auf anderem Weg sichern.'],
+    hf: 'Humanistisch: der sekundäre Gewinn ist keine Schwäche, sondern menschliche Intelligenz. Die Technik ehriert, was der Block leistet — bevor sie ihn auflöst.'
+  },
+  Beduerfnis_Profil: {
+    badge: 'Coaching-Tool · GFK',
+    title: 'Bedürfnis-Profil',
+    purpose: 'Sichtbarmachen und Strukturieren der aktuell relevanten Bedürfnisse. Unterscheidet Bedürfnis (Tiefenstruktur) von Wunsch und Strategie (Oberfläche). Entsteht, wenn Coachee beschreibt was er nicht will, ohne zu benennen, was er braucht.',
+    when: 'Unklare Bedürfnis-Struktur · Viele Themen gleichzeitig · Vor Entscheidungsmatrix',
+    steps: ['Sechs Kategorien: Verbindung · Sicherheit · Autonomie · Anerkennung · Sinn · Genuss.', 'Pro Kategorie: (a) Wie wichtig? (b) Wie gut erfüllt?', 'Lücke = Coaching-Fokus.', 'Abschluss-Frage: "Welches Bedürfnis, wenn heute Abend besser erfüllt, würde den größten Unterschied machen?"'],
+    hf: 'Stark humanistisch: alle Bedürfnisse sind gleichwertig. Kein Bedürfnis ist "falsch".'
+  },
+  Ordnungsstrukturen: {
+    badge: 'Systemisch · Hellinger',
+    title: 'Systemische Ordnungs-Strukturen (HO)',
+    purpose: 'Drei Ordnungsprinzipien als Diagnose-Rahmen für Komplexitätssituationen: Zugehörigkeit (wer gehört dazu?), Rangordnung (was kam zuerst?), Ausgleich von Geben und Nehmen. Helfen, Dynamiken zu benennen, die sich "irgendwie falsch" anfühlen, ohne dass jemand sagen kann warum.',
+    when: 'Erhöhte Komplexität · System "festgefahren" ohne rationalen Grund · Organisations-/Teamkonflikte',
+    steps: ['Coachee beschreibt die komplexe Situation.', 'Coach hört auf Ordnungs-Signale: wer wird nicht erwähnt? Wessen Geschichte wird verschwiegen?', 'Hypothese benennen: "Ich habe die Hypothese, dass hier jemand nicht anerkannt wird."', 'Coachee validiert oder korrigiert.', 'Visualisierung: Systemkarte oder Objekt-Aufstellung.'],
+    hf: 'Humanistisch ambivalent: Prinzipien als Diagnose-Werkzeug, nicht als Normensystem. Kein "Das muss so sein."'
+  },
+  Sueße_Aufstellung: {
+    badge: 'Systemisch',
+    title: 'Süße Aufstellung (Einzel-Variante)',
+    purpose: 'Systemdynamiken durch räumliche Anordnung von Objekt-Stellvertretern auf einer Tischfläche sichtbar machen — ohne andere Personen, ohne großen Raumaufwand. Niedrigschwellig, schnell einsetzbar, auch mid-session.',
+    when: 'Hohe System-Dynamik · Viele Beteiligte mit unklaren Kräfteverhältnissen · Einstieg in Aufstellungsarbeit',
+    steps: ['Fragestellung klären.', 'Objekte intuitiv wählen (Figuren, Steine, Karten) — nach Gefühl, nicht nach Logik.', 'Auf Tischfläche aufstellen: Nähe, Distanz, Blickrichtung nach Gespür.', '"Was fällt dir auf?" — Coachee beschreibt, Coach fragt nach.', '"Wer fehlt? Was passiert, wenn diese Figur sich dreht?"', 'Lösungsbild finden → Transfer in Alltag.'],
+    hf: 'Stark humanistisch: gibt dem Nicht-Rationalen Raum. Coachee entscheidet das Lösungsbild selbst.'
+  }
+};
+
+function showMethod(key) {
+  const d = M[key]; if (!d) return;
+  document.getElementById('m-badge').textContent = d.badge;
+  document.getElementById('m-title').textContent = d.title;
+  document.getElementById('m-purpose').textContent = d.purpose;
+  document.getElementById('m-when').textContent = d.when;
+  const ol = document.getElementById('m-steps');
+  ol.innerHTML = '';
+  d.steps.forEach(s => { const li = document.createElement('li'); li.textContent = s; ol.appendChild(li); });
+  document.getElementById('m-hf').textContent = '↳ Humanistic Fit: ' + d.hf;
+  document.getElementById('modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeOnOverlay(e) {
+  if (e.target === document.getElementById('modal')) closeModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>
